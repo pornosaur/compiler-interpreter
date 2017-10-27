@@ -146,31 +146,25 @@ loop
     | do_while
     | foreach
     ;
-
-loop_body
-    :   block
-    |   'break' ';'
-    |   'continue' ';'
-    ;
-
+    
 loop_while
-    : 'while' '(' cond_head ')' '{' loop_body+  '}'
+    : 'while' '(' cond_head ')' '{' block  '}'
     ;
 
 do_while
-    : 'do' '{' loop_body* '}' 'while' '(' cond_head ')' ';'
+    : 'do' '{' block '}' 'while' '(' cond_head ')' ';'
     ;
 loop_for
-    : 'for' '(' data_type def ';' cond_head ';' def ')' '{' loop_body* '}'
+    : 'for' '(' data_type def ';' cond_head ';' def ')' '{' block '}'
     ;
 
 foreach
-    : 'foreach' '(' var_type ID ':' ID ')' '{' loop_body* '}'
+    : 'foreach' '(' var_type ID ':' ID ')' '{' block '}'
     ;
     
 s_switch
     :   'switch' '(' ID ')' '{' 
-        ( ('case' (num_def | str_def) ':')+ block* 'break'?)+
+        ( ('case' (num_def | str_def) ':')+ block 'break'?)+
         
         '}'
     ;
