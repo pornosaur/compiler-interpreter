@@ -1,66 +1,60 @@
 grammar gram;
 
 
-
 func
     :   var_type ID '(' param* ')' '{' block '}'
     ;
 
 var_type
     :   data_type
-    |   struct
+    |   array
     ;
 
 data_type
-    :   'string' 
-    |   'int'  
-    |   'bool'
+    :   'string'
+    |   'int'
+    |   'boolean'
     ;
 
-struct
+array
     :   data_type '[' ']'
     ;
 
-
-
 param
-    :   data_type ID
+    :   var_type ID
     ;
 
 block
-    :   (   declar 
+    :   (   declar
         |   def
         |   loop
-        |   cond     
-        |   s_switch    
+        |   cond
+        |   s_switch
         |   call_fnc
         |   cond_assig
         )*
-        r_return? 
+        r_return?
     ;
 
 declar
-    :   (var_type ID 
-        |   var_type def
-        )
-        ';'
+    :    var_type (ID | def) ';'
     ;
+
 value
     :   (   ID
         |   num_def
         |   str_def
-        |   bool_def
+        |   boolean_def
         )
-    ; 
+    ;
 def
     :   ID '='
         value
-        ';'
     ;
 
 num_def
     :   term( ( '+' | '-'  ) term )*
-    |   '+' term ( ( '+' | '-'  ) term )* 
+    |   '+' term ( ( '+' | '-'  ) term )*
     |   '-' term ( ( '+' | '-'  ) term )*
     ;
 
@@ -72,7 +66,7 @@ term
             |   '|'
             )
             factor
-        )*     
+        )*
     ;
 
 factor
@@ -84,7 +78,7 @@ factor
 num
     :   INT
     |   real
-    |   ID 
+    |   ID
     ;
 
 INT
@@ -94,23 +88,22 @@ INT
 real
     :
         INT ('.' INT)?
-        
+
     ;
 
 str_def
     :
-        str ('+' str)
+        str ('+' str)*
     ;
 
 str
-    :   '"' /*TODO*/ '"'
-    |   ID
+    :   '"'  (~SPECIAL_CHARS | ESCAPE)* '"'
     ;
-bool_def
-    :   bool (bin_oper bool)*
+boolean_def
+    :   boolean (bin_oper boolean)*
     ;
 
-bool
+boolean
     :   'true'
     |   'false'
     |   ID
@@ -122,8 +115,8 @@ cond
     ;
 
 cond_head
-    :   ( ( num_def comp_oper num_def ) | bool_def )
-        ( ( bin_oper num_def comp_oper num_def ) | bool_def )*
+    :   ( ( num_def comp_oper num_def ) | boolean_def )
+        ( ( bin_oper num_def comp_oper num_def ) | boolean_def )*
     ;
 
 bin_oper
@@ -146,7 +139,7 @@ loop
     | do_while
     | foreach
     ;
-    
+
 loop_while
     : 'while' '(' cond_head ')' '{' block  '}'
     ;
@@ -161,11 +154,11 @@ loop_for
 foreach
     : 'foreach' '(' var_type ID ':' ID ')' '{' block '}'
     ;
-    
+
 s_switch
-    :   'switch' '(' ID ')' '{' 
+    :   'switch' '(' ID ')' '{'
         ( ('case' (num_def | str_def) ':')+ block 'break'?)+
-        
+
         '}'
     ;
 
@@ -186,5 +179,30 @@ r_return
     ;
 
 ID
-    :   ('A'..'Z'|'a'..'z')('A'..'Z'|'a'..'z'|'0'..'9')*
+    :   (ALPHABET | SPECIAL) (ALPHABET_NUMERIC | SPECIAL)*
+    ;
+
+SPECIAL
+    : '_'
+    ;
+
+
+ALPHABET_NUMERIC
+    : ALPHABET | NUMERIC
+    ;
+
+ALPHABET
+    : ('A'..'Z'|'a'..'z')
+    ;
+
+NUMERIC
+    : ('0'..'9')
+    ;
+
+SPECIAL_CHARS
+    :   '"'
+    ;
+
+ESCAPE
+    :   '/' SPECIAL_CHARS
     ;
