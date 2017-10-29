@@ -2,12 +2,13 @@ grammar gram;
 
 
 func_def
-    :   var_type ID '(' param* ')' '{' block '}'
+    :   var_type ID '(' (param | 'void')')' '{' block '}'
     ;
 
 var_type
     :   data_type
     |   array
+    |   'void'
     ;
 
 data_type
@@ -21,7 +22,7 @@ array
     ;
 
 param
-    :   var_type ID
+    :   (var_type ID (',' var_type ID)*)?
     ;
 
 block
