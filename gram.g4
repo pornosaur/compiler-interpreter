@@ -1,7 +1,7 @@
 grammar gram;
 
 
-func
+func_def
     :   var_type ID '(' param* ')' '{' block '}'
     ;
 
@@ -31,13 +31,12 @@ block
         |   cond
         |   s_switch
         |   call_fnc
-        |   cond_assig
         )*
         r_return?
     ;
 
 declar
-    :    var_type (ID | def) ';'
+    :    var_type (ID | def | multiple_def) ';'
     ;
 
 value
@@ -45,17 +44,25 @@ value
         |   num_def
         |   str_def
         |   boolean_def
+        |   array_def
         )
     ;
 def
-    :   ID '='
-        value
+    :   ID '=' (ternar_oper | value)
+    ;
+
+multiple_def
+    :   ID ('=' ID)* '=' (value | ternar_oper)
     ;
 
 num_def
     :   term( ( '+' | '-'  ) term )*
     |   '+' term ( ( '+' | '-'  ) term )*
     |   '-' term ( ( '+' | '-'  ) term )*
+    ;
+
+array_def
+    :   '{' (ID (',' ID)*)? '}'
     ;
 
 term
@@ -70,9 +77,9 @@ term
     ;
 
 factor
-    :   num
-    |   '(' num_def ')'
-    |   '!' num
+    :   (num | boolean)
+    |   '!'? '(' (num_def | boolean_def)')'
+    |   '!' (num | boolean)
     ;
 
 num
@@ -82,7 +89,7 @@ num
     ;
 
 INT
-    :   ('0'..'9')+
+    :   NUMERIC+
     ;
 
 real
@@ -100,7 +107,11 @@ str
     :   '"'  (~SPECIAL_CHARS | ESCAPE)* '"'
     ;
 boolean_def
-    :   boolean (bin_oper boolean)*
+    :   factor
+        (
+             bin_oper
+             factor
+        )*
     ;
 
 boolean
@@ -131,6 +142,7 @@ comp_oper
     |   '>'
     |   '<'
     |   '!='
+    |   '==='
     ;
 
 loop
@@ -141,7 +153,7 @@ loop
     ;
 
 loop_while
-    : 'while' '(' cond_head ')' '{' block  '}'
+    : 'while' '(' cond_head ')' '{' block '}'
     ;
 
 do_while
@@ -158,22 +170,28 @@ foreach
 s_switch
     :   'switch' '(' ID ')' '{'
         ( ('case' (num_def | str_def) ':')+ block 'break'?)+
-
+          |
+        ( ('default:')+ block 'break'?)?
         '}'
     ;
 
 call_fnc
-    : ID '(' ID* ')' ';'
+    : func ';'
     ;
 
-cond_assig
-    : ID '=' '(' cond_head ')' '?' value ':' value';'
+func
+    : ID '(' (value (',' value)*)? ')'
+    ;
+
+ternar_oper
+    : cond_head '?' value ':' value
     ;
 
 r_return
     :   'return'
-        (   value
-        |   call_fnc
+        (   ternar_oper
+        |   value
+        |   func
         )
         ';'
     ;
