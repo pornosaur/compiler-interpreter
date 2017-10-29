@@ -1,27 +1,7 @@
 grammar gram;
 
-
 func_def
     :   (var_type | 'void') ID '(' (param | 'void') ')' '{' block '}'
-    ;
-
-var_type
-    :   data_type
-    |   array
-    ;
-
-data_type
-    :   'string'
-    |   'int'
-    |   'boolean'
-    ;
-
-array
-    :   data_type '[' ']'
-    ;
-
-param
-    :   (var_type ID (',' var_type ID)*)?
     ;
 
 block
@@ -36,12 +16,33 @@ block
         r_return?
     ;
 
+data_type
+    :   'string'
+    |   'int'
+    |   'boolean'
+    ;
+
+array
+    :   data_type '[' ']'
+    ;
+
+var_type
+    :   data_type
+    |   array
+    ;
+
+param
+    :   (var_type ID (',' var_type ID)*)?
+    ;
+
 declar
     :    var_type (ID | def | multiple_def) ';'
     ;
 
 const_declar
-    :   'const' var_type (def | multiple_def);
+    :   'const' var_type (def | multiple_def)
+    ;
+
 value
     :   (   ID
         |   num_def
@@ -50,6 +51,7 @@ value
         |   array_def
         )
     ;
+
 def
     :   ID '=' (ternar_oper | value)
     ;
@@ -59,78 +61,60 @@ multiple_def
     ;
 
 num_def
-    :   term( ( '+' | '-'  ) term )*
-    |   '+' term ( ( '+' | '-'  ) term )*
-    |   '-' term ( ( '+' | '-'  ) term )*
+    : sign? term (sign term)*
     ;
 
 array_def
-    :   '{' (ID (',' ID)*)? '}'
+    :   '{' (value (',' value)*)? '}'
     ;
 
 term
-    :   factor
-        (   (   '*'
-            |   '/'
-            |   '&'
-            |   '|'
-            )
-            factor
-        )*
+    :   factor (('*' | '/' | '&' | '|') factor)*
     ;
 
 factor
-    :   (num | boolean)
+    :  (num | boolean)
     |   '!'? '(' (num_def | boolean_def)')'
     |   '!' (num | boolean)
     ;
 
 num
-    :   INT
+    :   int
     |   real
     |   ID
     ;
 
-INT
-    :   NUMERIC+
+real
+    : int ('.' int)?
     ;
 
-real
-    :
-        INT ('.' INT)?
-
+int
+    :  NUMERIC+
     ;
 
 str_def
-    :
-        str ('+' str)*
+    :  str ('+' str)*
     ;
 
 str
     :   '"'  (~SPECIAL_CHARS | ESCAPE)* '"'
     ;
+
 boolean_def
-    :   factor
-        (
-             bin_oper
-             factor
-        )*
+    :   factor (bin_oper factor)*
     ;
 
 boolean
-    :   'true'
-    |   'false'
-    |   ID
+    :   'true' | 'false' | ID
     ;
 cond
-    :
-        'if' '(' cond_head ')' '{' block '}'
+    :   'if' '(' cond_head ')' '{' block '}'
         ( 'else' '{' block '}' )?
     ;
 
 cond_head
-    :   ( ( num_def comp_oper num_def ) | boolean_def )
-        ( ( bin_oper num_def comp_oper num_def ) | boolean_def )*
+    :   ((num_def comp_oper num_def) | boolean_def)
+        ((bin_oper num_def comp_oper num_def) | boolean_def)*
     ;
 
 bin_oper
@@ -199,25 +183,29 @@ r_return
         ';'
     ;
 
+sign
+    : '-'
+    | '+'
+    ;
+
 ID
-    :   (ALPHABET | SPECIAL) (ALPHABET_NUMERIC | SPECIAL)*
+    :   (ALPHABET | CHARS) (ALPHABET_NUMERIC | CHARS)*
     ;
 
-SPECIAL
-    : '_'
-    ;
-
-
-ALPHABET_NUMERIC
-    : ALPHABET | NUMERIC
-    ;
-
-ALPHABET
-    : ('A'..'Z'|'a'..'z')
+CHARS
+    :   '_'
     ;
 
 NUMERIC
-    : ('0'..'9')
+    :   ('0'..'9')
+    ;
+
+ALPHABET_NUMERIC
+    :   ALPHABET | NUMERIC
+    ;
+
+ALPHABET
+    :   ('A'..'Z' | 'a'..'z')
     ;
 
 SPECIAL_CHARS
@@ -227,3 +215,4 @@ SPECIAL_CHARS
 ESCAPE
     :   '/' SPECIAL_CHARS
     ;
+
