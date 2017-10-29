@@ -26,6 +26,7 @@ param
 
 block
     :   (   declar
+        |   const_declar
         |   def
         |   loop
         |   cond
@@ -40,7 +41,7 @@ declar
     ;
 
 const_declar
-    :   'const' declar;
+    :   'const' var_type (def | multiple_def);
 value
     :   (   ID
         |   num_def
