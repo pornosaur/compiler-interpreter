@@ -133,25 +133,25 @@ comp_oper
     ;
 
 loop
-    : loop_while
-    | loop_for
-    | do_while
-    | foreach
+    :   loop_while
+    |   loop_for
+    |   do_while
+    |   foreach
     ;
 
 loop_while
-    : 'while' '(' cond_head ')' '{' block '}'
+    :   'while' '(' cond_head ')' '{' block '}'
     ;
 
 do_while
-    : 'do' '{' block '}' 'while' '(' cond_head ')' ';'
+    :   'do' '{' block '}' 'while' '(' cond_head ')' ';'
     ;
 loop_for
-    : 'for' '(' data_type def ';' cond_head ';' def ')' '{' block '}'
+    :   'for' '(' data_type def ';' cond_head ';' def ')' '{' block '}'
     ;
 
 foreach
-    : 'foreach' '(' var_type ID ':' ID ')' '{' block '}'
+    :   'foreach' '(' var_type ID ':' ID ')' '{' block '}'
     ;
 
 s_switch
@@ -163,15 +163,15 @@ s_switch
     ;
 
 call_fnc
-    : func ';'
+    :   func ';'
     ;
 
 func
-    : ID '(' (value (',' value)*)? ')'
+    :   ID '(' (value (',' value)*)? ')'
     ;
 
 ternar_oper
-    : cond_head '?' value ':' value
+    :   cond_head '?' value ':' value
     ;
 
 r_return
