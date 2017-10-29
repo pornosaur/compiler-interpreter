@@ -39,6 +39,8 @@ declar
     :    var_type (ID | def | multiple_def) ';'
     ;
 
+const_declar
+    :   'const' declar;
 value
     :   (   ID
         |   num_def
