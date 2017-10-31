@@ -85,19 +85,19 @@ num
     ;
 
 real
-    : int ('.' int)?
+    :   int ('.' int)?
     ;
 
 int
-    :  NUMERIC+
+    :   NUMERIC+
     ;
 
 str_def
-    :  str ('+' str)*
+    :   str ('+' str)*
     ;
 
 str
-    :   '"'  (~SPECIAL_CHARS | ESCAPE)* '"'
+    :   '"' (~SPECIAL_CHARS | ESCAPE)* '"'
     ;
 
 boolean_def
