@@ -52,6 +52,14 @@ value
         )
     ;
 
+value_array
+    :   (   ID
+        |   num_def
+        |   str_def
+        |   boolean_def
+        )
+    ;
+
 def
     :   ID '=' (ternar_oper | value)
     ;
@@ -65,7 +73,7 @@ num_def
     ;
 
 array_def
-    :   '{' (value (',' value)*)? '}'
+    :   '{' (value_array (',' value_array)*)? '}'
     ;
 
 term
