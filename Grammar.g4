@@ -1,4 +1,4 @@
-grammar gram;
+grammar Grammar;
 
 func_def
     :   (var_type | 'void') ID '(' (param | 'void') ')' '{' block '}'
@@ -18,8 +18,8 @@ block
 
 data_type
     :   'string'
-    |   'int'
-    |   'boolean'
+    |   'integer'
+    |   'bool'
     ;
 
 array
@@ -47,7 +47,7 @@ value
     :   (   ID
         |   num_def
         |   str_def
-        |   boolean_def
+        |   bool_def
         |   array_def
         )
     ;
@@ -56,7 +56,7 @@ value_array
     :   (   ID
         |   num_def
         |   str_def
-        |   boolean_def
+        |   bool_def
         )
     ;
 
@@ -81,22 +81,22 @@ term
     ;
 
 factor
-    :  (num | boolean)
-    |   '!'? '(' (num_def | boolean_def)')'
-    |   '!' (num | boolean)
+    :  (num | bool)
+    |   '!'? '(' (num_def | bool)')'
+    |   '!' (num | bool)
     ;
 
 num
-    :   int
+    :   integer
     |   real
     |   ID
     ;
 
 real
-    :   int ('.' int)?
+    :   integer ('.' integer)?
     ;
 
-int
+integer
     :   NUMERIC+
     ;
 
@@ -108,11 +108,11 @@ str
     :   '"' (~SPECIAL_CHARS | ESCAPE)* '"'
     ;
 
-boolean_def
+bool_def
     :   factor (bin_oper factor)*
     ;
 
-boolean
+bool
     :   'true' | 'false' | ID
     ;
 cond
@@ -121,8 +121,8 @@ cond
     ;
 
 cond_head
-    :   ((num_def comp_oper num_def) | boolean_def)
-        ((bin_oper num_def comp_oper num_def) | boolean_def)*
+    :   ((num_def comp_oper num_def) | bool_def)
+        ((bin_oper num_def comp_oper num_def) | bool_def)*
     ;
 
 bin_oper
