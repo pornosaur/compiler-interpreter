@@ -1,4 +1,5 @@
 // Generated from P:/skola/KIV-FJP\Grammar.g4 by ANTLR 4.7
+package kiv.fjp.antlr_gen;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
