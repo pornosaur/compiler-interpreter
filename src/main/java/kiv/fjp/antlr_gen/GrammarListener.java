@@ -7,6 +7,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface GrammarListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#program}.
+	 * @param ctx the parse tree
+	 */
+	void enterProgram(GrammarParser.ProgramContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#program}.
+	 * @param ctx the parse tree
+	 */
+	void exitProgram(GrammarParser.ProgramContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#func_def}.
 	 * @param ctx the parse tree
 	 */

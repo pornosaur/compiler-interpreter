@@ -1,5 +1,9 @@
 grammar Grammar;
 
+program
+    :   const_declar//func_def*
+    ;
+
 func_def
     :   (var_type | 'void') ID '(' (param | 'void') ')' '{' block '}'
     ;

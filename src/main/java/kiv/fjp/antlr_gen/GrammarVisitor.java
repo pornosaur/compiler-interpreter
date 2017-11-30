@@ -10,6 +10,12 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#program}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProgram(GrammarParser.ProgramContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GrammarParser#func_def}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
