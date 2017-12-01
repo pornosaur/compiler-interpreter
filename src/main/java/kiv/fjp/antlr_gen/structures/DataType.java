@@ -3,23 +3,33 @@ package kiv.fjp.antlr_gen.structures;
 public class DataType {
 
     public enum Type {
-        STRING,
-        BOOL,
-        INTEGER;
+        STRING("string"),
+        BOOL("bool"),
+        INTEGER("integer");
 
         private final String text;
 
-        
+        private Type(final String text) {
+            this.text = text;
+        }
 
+        @Override
+        public String toString() {
+            return text;
+        }
     }
 
-    public Type type;
+    private Type type;
 
     DataType(String strType) {
-        if (strType.compareTo("string") == 0) {
-            type = Type.STRING;
-        } else if (strType.compareTo("bool") == 0) {
-            type = Type.
+        for (Type t : Type.values()) {
+            if (t.toString().compareTo(strType) == 0) {
+                type = t;
+            }
         }
+    }
+
+    public Type getType() {
+        return type;
     }
 }
