@@ -20,7 +20,7 @@ import kiv.fjp.antlr_gen.visitors.ProgramVisitor;
  */
 public class Main
 {
-    public static void main( String[] args )
+    public static void main(String[] args)
     {
     	String path = "test.c";
     	try {

@@ -228,3 +228,7 @@ ESCAPE
     :   '/' SPECIAL_CHARS
     ;
 
+WS
+    :   [ \t\n\r]+ -> skip
+    ;
+
