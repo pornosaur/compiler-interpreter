@@ -2,8 +2,7 @@ package kiv.fjp.antlr_gen.structures;
 
 public class Instruction {
 	
-	enum Color
-	{
+	public enum type{
 	    LIT,		//ulož konstantu A do zásobníku
 	    OPR, 		//proveď instrukci A
 	    LOD,		//ulož hodnotu proměnné z adr. L,A na vrchol zásobníku
