@@ -1,5 +1,7 @@
+package kiv.fjp.antlr_gen.structures;
 
 public class Instruction {
+	
 	enum Color
 	{
 	    LIT,		//ulož konstantu A do zásobníku
@@ -12,6 +14,7 @@ public class Instruction {
 	    JMC,		//proveď skok na adresu A, je-li hodnota na vrcholu zásobníku 0
 	    RET;  		//návrat z procedury (return)
 	}
+	
 	String funcName;
 	int level;
 	int address;
