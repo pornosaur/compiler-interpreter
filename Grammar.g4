@@ -13,7 +13,7 @@ block
         |   const_declar
         |   def
         |   loop
-        |   cond
+        |   statement
         |   s_switch
         |   call_fnc
         )*
@@ -51,7 +51,7 @@ value
     :   (   ID
         |   num_exp
         |   str_def
-        |   bool_def
+        |   bool_exp
         |   array_def
         )
     ;
@@ -60,7 +60,7 @@ value_array
     :   (   ID
         |   num_exp
         |   str_def
-        |   bool_def
+        |   bool_exp
         )
     ;
 
@@ -74,36 +74,17 @@ multiple_def
 
 
 num_exp
-    :   num_exp op=('*' | '/') num_exp     # multidiv
-    |   num_exp op=('+' | '-') num_exp     # plusminus
-    |   num                                # numerics
-    |   '(' num_exp ')'                    # brackets
-    |   sign num_exp                       # signed
+    :   num_exp op=('*' | '/') num_exp     # multiDiv
+    |   num_exp op=('+' | '-') num_exp     # plusMinus
+    |   integer                            # integers
+    |   integer ('.' integer)?            # real
+    |   ID                                 # numID
+    |   '(' num_exp ')'                    # numBrackets
+    |   sign=('+' | '-') num_exp           # signed
     ;
 
 array_def
     :   '{' (value_array (',' value_array)*)? '}'
-    ;
-
-
-term
-    :   factor (('*' | '/' | '&' | '|') factor)*
-    ;
-
-factor
-    :  (num | bool)
-    |   '!'? '(' (num_exp | bool)')'
-    |   '!' (num | bool)
-    ;
-
-num
-    :   integer
-    |   real
-    |   ID
-    ;
-
-real
-    :   integer ('.' integer)?
     ;
 
 integer
@@ -118,36 +99,23 @@ str
     :   '"' (~SPECIAL_CHARS | ESCAPE)* '"'
     ;
 
-bool_def
-    :   factor (bin_oper factor)*
+bool_exp
+    :   num_exp op=('<' | '>' | '==' | '<=' | '>=' | '!=') num_exp # boolNumExp
+    |   bool_exp op=('!=' | '==') bool_exp                         # boolCompare
+    |   bool_exp op=('&&' | '||') bool_exp                         # boolExp
+    |   bool                                                       # boolean
+    |   ID                                                         # boolID
+    |   '(' bool_exp ')'                                           # boolBrackets
+    |   '!' bool_exp                                               # boolNeg
     ;
 
 bool
-    :   'true' | 'false' | ID
+    :   'true' | 'false'
     ;
-cond
-    :   'if' '(' cond_head ')' '{' block '}'
+
+statement
+    :   'if' '(' bool_exp ')' '{' block '}'
         ( 'else' '{' block '}' )?
-    ;
-
-cond_head
-    :   ((num_exp comp_oper num_exp) | bool_def)
-        ((bin_oper num_exp comp_oper num_exp) | bool_def)*
-    ;
-
-bin_oper
-    :   '&&'
-    |   '||'
-    ;
-
-comp_oper
-    :   '=='
-    |   '>='
-    |   '<='
-    |   '>'
-    |   '<'
-    |   '!='
-    |   '==='
     ;
 
 loop
@@ -158,14 +126,14 @@ loop
     ;
 
 loop_while
-    :   'while' '(' cond_head ')' '{' block '}'
+    :   'while' '(' bool_exp ')' '{' block '}'
     ;
 
 do_while
-    :   'do' '{' block '}' 'while' '(' cond_head ')' ';'
+    :   'do' '{' block '}' 'while' '(' bool_exp ')' ';'
     ;
 loop_for
-    :   'for' '(' data_type def ';' cond_head ';' def ')' '{' block '}'
+    :   'for' '(' data_type def ';' bool_exp ';' def ')' '{' block '}'
     ;
 
 foreach
@@ -189,7 +157,7 @@ func
     ;
 
 ternar_oper
-    :   cond_head '?' value ':' value
+    :   bool_exp '?' value ':' value
     ;
 
 r_return
@@ -199,11 +167,6 @@ r_return
         |   func
         )
         ';'
-    ;
-
-sign
-    : '-'
-    | '+'
     ;
 
 ID
