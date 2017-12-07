@@ -5,7 +5,8 @@ import kiv.fjp.antlr_gen.GrammarParser;
 
 public class ProgramVisitor<T> extends GrammarBaseVisitor<T> {
 
-    @Override public T visitProgram(GrammarParser.ProgramContext ctx) {
+    @Override public T visitProgram(GrammarParser.ProgramContext ctx)  {
+
         return visitChildren(ctx);
     }
 

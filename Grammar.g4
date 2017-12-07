@@ -49,7 +49,7 @@ const_declar
 
 value
     :   (   ID
-        |   num_def
+        |   num_exp
         |   str_def
         |   bool_def
         |   array_def
@@ -58,7 +58,7 @@ value
 
 value_array
     :   (   ID
-        |   num_def
+        |   num_exp
         |   str_def
         |   bool_def
         )
@@ -72,13 +72,19 @@ multiple_def
     :   ID ('=' ID)* '=' (value | ternar_oper)
     ;
 
-num_def
-    : sign? term (sign term)*
+
+num_exp
+    :   num_exp op=('*' | '/') num_exp     # multidiv
+    |   num_exp op=('+' | '-') num_exp     # plusminus
+    |   num                                # numerics
+    |   '(' num_exp ')'                    # brackets
+    |   sign num_exp                       # signed
     ;
 
 array_def
     :   '{' (value_array (',' value_array)*)? '}'
     ;
+
 
 term
     :   factor (('*' | '/' | '&' | '|') factor)*
@@ -86,7 +92,7 @@ term
 
 factor
     :  (num | bool)
-    |   '!'? '(' (num_def | bool)')'
+    |   '!'? '(' (num_exp | bool)')'
     |   '!' (num | bool)
     ;
 
@@ -125,8 +131,8 @@ cond
     ;
 
 cond_head
-    :   ((num_def comp_oper num_def) | bool_def)
-        ((bin_oper num_def comp_oper num_def) | bool_def)*
+    :   ((num_exp comp_oper num_exp) | bool_def)
+        ((bin_oper num_exp comp_oper num_exp) | bool_def)*
     ;
 
 bin_oper
@@ -168,7 +174,7 @@ foreach
 
 s_switch
     :   'switch' '(' ID ')' '{'
-        ( ('case' (num_def | str_def) ':')+ block 'break'?)+
+        ( ('case' (num_exp | str_def) ':')+ block 'break'?)+
           |
         ( ('default:')+ block 'break'?)?
         '}'
@@ -226,6 +232,11 @@ SPECIAL_CHARS
 
 ESCAPE
     :   '/' SPECIAL_CHARS
+    ;
+
+
+MULTIDIV
+    :   '/' | '*'
     ;
 
 WS

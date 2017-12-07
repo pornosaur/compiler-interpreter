@@ -138,15 +138,65 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitMultiple_def(GrammarParser.Multiple_defContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GrammarParser#num_def}.
+	 * Enter a parse tree produced by the {@code multidiv}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
 	 */
-	void enterNum_def(GrammarParser.Num_defContext ctx);
+	void enterMultidiv(GrammarParser.MultidivContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GrammarParser#num_def}.
+	 * Exit a parse tree produced by the {@code multidiv}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
 	 */
-	void exitNum_def(GrammarParser.Num_defContext ctx);
+	void exitMultidiv(GrammarParser.MultidivContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code plusminus}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void enterPlusminus(GrammarParser.PlusminusContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code plusminus}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void exitPlusminus(GrammarParser.PlusminusContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code numerics}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void enterNumerics(GrammarParser.NumericsContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code numerics}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void exitNumerics(GrammarParser.NumericsContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code signed}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void enterSigned(GrammarParser.SignedContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code signed}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void exitSigned(GrammarParser.SignedContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code brackets}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void enterBrackets(GrammarParser.BracketsContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code brackets}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void exitBrackets(GrammarParser.BracketsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GrammarParser#array_def}.
 	 * @param ctx the parse tree

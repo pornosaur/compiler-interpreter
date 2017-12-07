@@ -89,11 +89,40 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMultiple_def(GrammarParser.Multiple_defContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link GrammarParser#num_def}.
+	 * Visit a parse tree produced by the {@code multidiv}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNum_def(GrammarParser.Num_defContext ctx);
+	T visitMultidiv(GrammarParser.MultidivContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code plusminus}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPlusminus(GrammarParser.PlusminusContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code numerics}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumerics(GrammarParser.NumericsContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code signed}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSigned(GrammarParser.SignedContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code brackets}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBrackets(GrammarParser.BracketsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#array_def}.
 	 * @param ctx the parse tree
