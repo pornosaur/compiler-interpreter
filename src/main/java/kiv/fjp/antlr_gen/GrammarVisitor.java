@@ -89,26 +89,33 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMultiple_def(GrammarParser.Multiple_defContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code multidiv}
+	 * Visit a parse tree produced by the {@code multiDiv}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMultidiv(GrammarParser.MultidivContext ctx);
+	T visitMultiDiv(GrammarParser.MultiDivContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code plusminus}
+	 * Visit a parse tree produced by the {@code plusMinus}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPlusminus(GrammarParser.PlusminusContext ctx);
+	T visitPlusMinus(GrammarParser.PlusMinusContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code numerics}
+	 * Visit a parse tree produced by the {@code numID}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumerics(GrammarParser.NumericsContext ctx);
+	T visitNumID(GrammarParser.NumIDContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code numBrackets}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumBrackets(GrammarParser.NumBracketsContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code signed}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
@@ -117,42 +124,25 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSigned(GrammarParser.SignedContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code brackets}
+	 * Visit a parse tree produced by the {@code real}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBrackets(GrammarParser.BracketsContext ctx);
+	T visitReal(GrammarParser.RealContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code integers}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntegers(GrammarParser.IntegersContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#array_def}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitArray_def(GrammarParser.Array_defContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#term}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTerm(GrammarParser.TermContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#factor}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFactor(GrammarParser.FactorContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#num}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNum(GrammarParser.NumContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#real}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitReal(GrammarParser.RealContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#integer}.
 	 * @param ctx the parse tree
@@ -172,11 +162,54 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStr(GrammarParser.StrContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link GrammarParser#bool_def}.
+	 * Visit a parse tree produced by the {@code boolean}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBool_def(GrammarParser.Bool_defContext ctx);
+	T visitBoolean(GrammarParser.BooleanContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolCompare}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolCompare(GrammarParser.BoolCompareContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolBrackets}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolBrackets(GrammarParser.BoolBracketsContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolExp}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolExp(GrammarParser.BoolExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolNumExp}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolNumExp(GrammarParser.BoolNumExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolNeg}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolNeg(GrammarParser.BoolNegContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolID}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolID(GrammarParser.BoolIDContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#bool}.
 	 * @param ctx the parse tree
@@ -184,29 +217,11 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBool(GrammarParser.BoolContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link GrammarParser#cond}.
+	 * Visit a parse tree produced by {@link GrammarParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCond(GrammarParser.CondContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#cond_head}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCond_head(GrammarParser.Cond_headContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#bin_oper}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBin_oper(GrammarParser.Bin_operContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#comp_oper}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitComp_oper(GrammarParser.Comp_operContext ctx);
+	T visitStatement(GrammarParser.StatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#loop}.
 	 * @param ctx the parse tree
@@ -267,10 +282,4 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitR_return(GrammarParser.R_returnContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#sign}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSign(GrammarParser.SignContext ctx);
 }
