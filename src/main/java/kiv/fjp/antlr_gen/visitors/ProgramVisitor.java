@@ -14,6 +14,14 @@ public class ProgramVisitor<T> extends GrammarBaseVisitor<T> {
         return visitChildren(ctx);
     }
 
+    @Override public T visitDef(GrammarParser.DefContext ctx) {
+        //TODO made multiple def in Expresion and call visit children
+        String identifier = ctx.ID().getText();
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(0);
+        expressionVisitor.visitValue(ctx.value());
+        return null;
+    }
+
     @Override public T visitVar_type(GrammarParser.Var_typeContext ctx) {
         return visitChildren(ctx);
     }

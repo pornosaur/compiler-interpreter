@@ -77,7 +77,7 @@ num_exp
     :   num_exp op=('*' | '/') num_exp     # multiDiv
     |   num_exp op=('+' | '-') num_exp     # plusMinus
     |   integer                            # integers
-    |   integer ('.' integer)?            # real
+    |   integer ('.' integer)?             # real
     |   ID                                 # numID
     |   '(' num_exp ')'                    # numBrackets
     |   sign=('+' | '-') num_exp           # signed

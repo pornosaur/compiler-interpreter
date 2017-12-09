@@ -2,7 +2,7 @@ package kiv.fjp.antlr_gen.structures;
 
 public class Instruction {
 	
-	public enum type{
+	public enum IntType{
 	    LIT,		//ulož konstantu A do zásobníku
 	    OPR, 		//proveď instrukci A
 	    LOD,		//ulož hodnotu proměnné z adr. L,A na vrchol zásobníku
@@ -13,15 +13,33 @@ public class Instruction {
 	    JMC,		//proveď skok na adresu A, je-li hodnota na vrcholu zásobníku 0
 	    RET;  		//návrat z procedury (return)
 	}
+
+	public enum OPRType {
+		UNUSED,			//Because to start from 1
+		UNARY_MINUS,
+		PLUS,
+		MINUS,
+		MULTI,
+		DIV,
+		MOD,
+		ODD,
+		TEST_EQ,
+		TEST_NONEQ,
+		LESS,
+		GREATER_EQ,
+		GREATER,
+		LESS_EQ
+
+	}
+
+	private IntType intstruction;
+	private int level;
+	private int value;
 	
-	String funcName;
-	int level;
-	int address;
-	
-	public Instruction(String funcName, int level, int address) {
-		this.funcName = funcName;
+	public Instruction(IntType instruction, int level, int value) {
+		this.intstruction = instruction;
 		this.level = level;
-		this.address = address;
+		this.value = value;
 	}
 	
 	
