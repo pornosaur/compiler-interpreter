@@ -3,12 +3,11 @@ package kiv.fjp.antlr_gen.visitors;
 import kiv.fjp.antlr_gen.GrammarBaseVisitor;
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.structures.Instruction;
+import kiv.fjp.antlr_gen.structures.Instruction.IntType;
+import kiv.fjp.antlr_gen.structures.Instruction.OPRType;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import kiv.fjp.antlr_gen.structures.Instruction.IntType;
-import kiv.fjp.antlr_gen.structures.Instruction.OPRType;
 
 public class ExpressionVisitor extends GrammarBaseVisitor<String>{
 
@@ -108,7 +107,8 @@ public class ExpressionVisitor extends GrammarBaseVisitor<String>{
 		ctx.getText();
 		return visitChildren(ctx);
 	}
-	
-	
-	
+
+    public List<Instruction> getInstructions() {
+        return instructions;
+    }
 }
