@@ -5,7 +5,11 @@ program
     ;
 
 func_def
-    :   (var_type | 'void') ID '(' (param | 'void') ')' '{' block '}'
+    :   return_type ID '(' param ')' '{' block '}'
+    ;
+
+return_type
+    :   var_type | 'void'
     ;
 
 block
@@ -40,7 +44,7 @@ param
     ;
 
 declar
-    :    var_type (ID | def | multiple_def) ';'
+    :    var_type (ID | def | multiple_def)
     ;
 
 const_declar
@@ -65,11 +69,11 @@ value_array
     ;
 
 def
-    :   ID '=' (ternar_oper | value)
+    :   ID '=' (ternar_oper | value) ';'
     ;
 
 multiple_def
-    :   ID ('=' ID)* '=' (value | ternar_oper)
+    :   ID ('=' ID)* '=' (value | ternar_oper) ';'
     ;
 
 
@@ -157,7 +161,7 @@ func
     ;
 
 ternar_oper
-    :   bool_exp '?' value ':' value
+    :   bool_exp '?' value ':' value ';'
     ;
 
 r_return
