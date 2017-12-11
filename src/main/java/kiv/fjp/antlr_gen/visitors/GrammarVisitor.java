@@ -9,4 +9,8 @@ import kiv.fjp.antlr_gen.structures.Instruction;
 public class GrammarVisitor<T> extends GrammarBaseVisitor<T>{
 	protected final List<Instruction> instructionList = new ArrayList<>();
     protected int level = 0;
+    
+    public List<Instruction> getInstructions(){
+    	return instructionList;
+    }
 }
