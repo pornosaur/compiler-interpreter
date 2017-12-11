@@ -1,7 +1,7 @@
 grammar Grammar;
 
 program
-    :   const_declar//func_def*
+    :   func_def*
     ;
 
 func_def

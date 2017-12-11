@@ -12,6 +12,7 @@ import java.util.List;
 public class ExpressionVisitor extends GrammarBaseVisitor<String>{
 
 	private List<Instruction> instructions;
+
 	private int level;
 
 	public ExpressionVisitor(int level) {
