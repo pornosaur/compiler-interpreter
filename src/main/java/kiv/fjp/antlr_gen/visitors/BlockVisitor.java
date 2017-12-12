@@ -14,8 +14,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class BlockVisitor extends GrammarVisitor<String>{
 
-	public static final int FIRST_ADR_VAR = 3;
-
 	SymbolTable symbolTable;
 	
 	public BlockVisitor(){
@@ -25,9 +23,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
 		for(int i = 0; i < ctx.getChildCount();i++) {
 			
 			if(ctx.getChild(i) instanceof StatementContext) { //TODO for another statements
-				symbolTable.backupSymbols();
+				symbolTable.addSymbolList();
 				visit(ctx.getChild(i));
-				symbolTable.restoreSymbols();
+				symbolTable.removeSymbolList();
 			}else { // its declar or define of variables
 				visit(ctx.getChild(i));
 			}
@@ -69,8 +67,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String id = ctx.ID().getText();
         String varType = ctx.var_type().getText();
 
-        //TODO adr according to size of symbol table
-        if(! symbolTable.addSymbol(new Symbol(id, varType, "", level, FIRST_ADR_VAR))) {
+        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, false, false))) {
             throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
         }
 
@@ -81,8 +78,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String id = ctx.def().ID().getText();
         String varType = ctx.var_type().getText();
 
-        //TODO adr according to size of symbol table
-        if(! symbolTable.addSymbol(new Symbol(id, varType, "", level, FIRST_ADR_VAR))) {
+        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, false, false))) {
             throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
         }
 
@@ -92,7 +88,6 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 	
 	@Override public String visitDef(GrammarParser.DefContext ctx) {
-        //TODO made multiple def in Expresion and call visit children
         String id = ctx.ID().getText();
 
 		Symbol symbol;
@@ -100,8 +95,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
 			throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
 		}
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(symbolTable, level);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(symbolTable, level, symbol.getType());
         expressionVisitor.visitValue(ctx.value());
+
         //TODO call also for ternary operator - visit children
 
         instructionList.addAll(expressionVisitor.getInstructions());
@@ -111,23 +107,42 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitMultiple_def(GrammarParser.Multiple_defContext ctx) {
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(symbolTable, level);
+        int sizeListID = ctx.ID().size() - 1;
+        String lastIDName = ctx.ID().get(sizeListID).getText();
+        Symbol lastID = symbolTable.findSymbol(lastIDName);
+        if (lastID == null) {
+            throw new ParseCancellationException("ParseError - identificator `" + lastIDName + "` is not declared.");
+        }
+
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(symbolTable, level, lastID.getType());
         //TODO call also ternary operator
         expressionVisitor.visitValue(ctx.value());
 
-        for (TerminalNode node : ctx.ID()) {
-            String id = node.getText();
+        instructionList.addAll(expressionVisitor.getInstructions());
+        instructionList.add(new Instruction(IntType.STO, level, lastID.getAdr()));
+
+        for (int i = sizeListID - 1; i >= 0; i--) {
+            String symbolID = ctx.ID(i).getText();
+
             Symbol symbol;
-            if((symbol = symbolTable.findSymbol(id)) == null) {
-                throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+            if ((symbol = symbolTable.findSymbol(symbolID)) == null) {
+                throw new ParseCancellationException("ParseError - identificator `" + symbolID + "` is not declared.");
             }
 
-            instructionList.addAll(expressionVisitor.getInstructions());
+            instructionList.add(new Instruction(IntType.LOD, level, lastID.getAdr()));
             instructionList.add(new Instruction(IntType.STO, level, symbol.getAdr()));
         }
 
 	    return null;
     }
+
+    @Override public String visitTernar_oper(GrammarParser.Ternar_operContext ctx) {
+
+
+	    return null;
+    }
+
+
 
     @Override public String visitVar_type(GrammarParser.Var_typeContext ctx) {
         return visitChildren(ctx);

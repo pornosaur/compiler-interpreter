@@ -33,7 +33,7 @@ public class SymbolTable {
 	
 	/**
 	 * Add new symbol to symbol list. If list contain the added symbol return false
-	 *  otherwise it add symbol to the list and return true
+	 * otherwise it add symbol to the list and return true
 	 * @param symbol added symbol
 	 * @return Return true if symbol was added.
 	 */

@@ -22,10 +22,13 @@ public class ExpressionVisitor extends GrammarBaseVisitor<String>{
 
 	private int level;
 
-	public ExpressionVisitor(SymbolTable symbolTable, int level) {
+	private DataType.Type dataType;
+
+	public ExpressionVisitor(SymbolTable symbolTable, int level, DataType.Type dataType) {
 		instructions = new ArrayList<>();
 		this.symbolTable = symbolTable;
 		this.level = level;
+		this.dataType = dataType;
 	}
 
 
@@ -39,18 +42,28 @@ public class ExpressionVisitor extends GrammarBaseVisitor<String>{
 
 	@Override
 	public String visitValue(GrammarParser.ValueContext ctx) {
-		if(ctx.str_def() != null) {
-			visitStr_def(ctx.str_def());
-		}
-		if(ctx.ID() != null) {
-			ctx.ID().getText();
-		}
-		if(ctx.num_exp() != null) {
+        if(ctx.bool_exp() != null) {
+            System.out.println("BOOL EXP");
+            visitChildren(ctx);
+            System.out.println("BOOL EXP END");
+        }else if(ctx.ID() != null) {
+            String id = ctx.ID().getText();
+            System.out.println("VISIT ID");
+
+            Symbol symbol;
+            if ((symbol = symbolTable.findSymbol(id)) == null) {
+                throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+            }
+
+            if (symbol.getType() != dataType) {
+                throw new ParseCancellationException("ParseError - bad conversion " + symbol.getType().toString() + " to " + dataType.toString());
+            }
+
+            instructions.add(new Instruction(IntType.LOD, level, symbol.getAdr()));
+        } else if(ctx.num_exp() != null) {
 			 visitChildren(ctx);
 		}
-		if(ctx.bool_exp() != null) {
-			 visitChildren(ctx);
-		}
+
 		return null;
 	}
 	
@@ -85,27 +98,6 @@ public class ExpressionVisitor extends GrammarBaseVisitor<String>{
     }
 
     @Override
-    public String visitNumID(GrammarParser.NumIDContext ctx){
-	    String id = ctx.getText();
-
-        Symbol symbol;
-        if((symbol = symbolTable.findSymbol(id)) == null) {
-            throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
-        }
-
-        //TODO what about REAL?
-        if (symbol.getType() != DataType.Type.INTEGER) {
-            throw new ParseCancellationException("ParseError - bad conversion " + symbol.getType().toString() + " to integer.");
-        }
-
-	    int value = Integer.valueOf(symbol.getAttribute());
-
-        instructions.add(new Instruction(IntType.LIT, level, value));
-
-	    return id;
-    }
-
-    @Override
     public String visitSigned(GrammarParser.SignedContext ctx){
         visit(ctx.num_exp());
 
@@ -114,6 +106,79 @@ public class ExpressionVisitor extends GrammarBaseVisitor<String>{
         }
 
 	    return ctx.getText();
+    }
+
+    @Override
+    public String visitBoolNumExp(GrammarParser.BoolNumExpContext ctx) {
+        visit(ctx.num_exp(0));
+        visit(ctx.num_exp(1));
+
+        OPRType oprType = OPRType.UNUSED;
+        String oprName = ctx.op.getText();
+
+        switch (oprName) {
+            case "<" :  oprType = OPRType.LESS;
+                break;
+            case "<=" : oprType = OPRType.LESS_EQ;
+                break;
+            case ">" :  oprType = OPRType.GREATER;
+                break;
+            case ">=" : oprType = OPRType.GREATER_EQ;
+                break;
+            case "==" : oprType = OPRType.TEST_EQ;
+                break;
+            case "!=" : oprType = OPRType.GREATER_EQ;
+                break;
+        }
+
+        instructions.add(new Instruction(IntType.OPR, level, oprType.ordinal()));
+
+        return null;
+    }
+
+    @Override
+    public String visitBoolCompare(GrammarParser.BoolCompareContext ctx) {
+        visit(ctx.bool_exp(0));
+        visit(ctx.bool_exp(1));
+
+        String op = ctx.op.getText();
+        OPRType oprType = op.compareTo("!=") == 0 ? OPRType.TEST_NONEQ : OPRType.TEST_EQ;
+
+        instructions.add(new Instruction(IntType.OPR, level, oprType.ordinal()));
+
+        return null;
+    }
+
+    @Override
+    public String visitBoolExp(GrammarParser.BoolExpContext ctx) {
+        visit(ctx.bool_exp(0));
+        visit(ctx.bool_exp(1));
+
+        String op = ctx.op.getText();
+        OPRType oprType = op.compareTo("&&") == 0 ? OPRType.MULTI : OPRType.PLUS;
+
+        instructions.add(new Instruction(IntType.OPR, level, oprType.ordinal()));
+
+        return null;
+    }
+
+    @Override
+    public String visitBoolNeg(GrammarParser.BoolNegContext ctx) {
+        instructions.add(new Instruction(IntType.LIT, level, 1));
+        instructions.add(new Instruction(IntType.OPR, level, OPRType.TEST_NONEQ.ordinal()));
+
+        return null;
+    }
+
+    @Override
+    public String visitBoolean(GrammarParser.BooleanContext ctx) {
+        System.out.println("VISIT BOOLEAN");
+        String op = ctx.bool().getText();
+        int value = op.compareTo("true") == 0 ? 1 : 0;
+
+        instructions.add(new Instruction(IntType.LIT, level, value));
+
+        return null;
     }
 
 	@Override

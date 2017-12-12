@@ -75,7 +75,7 @@ def
     ;
 
 multiple_def
-    :   ID ('=' ID)* '=' (value | ternar_oper) ';'
+    :   ID ('=' ID)+ '=' (value | ternar_oper) ';'
     ;
 
 
@@ -84,7 +84,6 @@ num_exp
     |   num_exp op=('+' | '-') num_exp     # plusMinus
     |   integer                            # integers
     |   integer ('.' integer)?             # real
-    |   ID                                 # numID
     |   '(' num_exp ')'                    # numBrackets
     |   sign=('+' | '-') num_exp           # signed
     ;
@@ -110,7 +109,6 @@ bool_exp
     |   bool_exp op=('!=' | '==') bool_exp                         # boolCompare
     |   bool_exp op=('&&' | '||') bool_exp                         # boolExp
     |   bool                                                       # boolean
-    |   ID                                                         # boolID
     |   '(' bool_exp ')'                                           # boolBrackets
     |   '!' bool_exp                                               # boolNeg
     ;

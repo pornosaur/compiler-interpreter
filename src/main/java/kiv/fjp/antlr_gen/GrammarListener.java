@@ -186,18 +186,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitPlusMinus(GrammarParser.PlusMinusContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code numID}
-	 * labeled alternative in {@link GrammarParser#num_exp}.
-	 * @param ctx the parse tree
-	 */
-	void enterNumID(GrammarParser.NumIDContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code numID}
-	 * labeled alternative in {@link GrammarParser#num_exp}.
-	 * @param ctx the parse tree
-	 */
-	void exitNumID(GrammarParser.NumIDContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code numBrackets}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
@@ -357,18 +345,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBoolNeg(GrammarParser.BoolNegContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code boolID}
-	 * labeled alternative in {@link GrammarParser#bool_exp}.
-	 * @param ctx the parse tree
-	 */
-	void enterBoolID(GrammarParser.BoolIDContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code boolID}
-	 * labeled alternative in {@link GrammarParser#bool_exp}.
-	 * @param ctx the parse tree
-	 */
-	void exitBoolID(GrammarParser.BoolIDContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GrammarParser#bool}.
 	 * @param ctx the parse tree

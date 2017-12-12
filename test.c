@@ -1,3 +1,5 @@
 void test() {
-     b = a = f = 5 + 5;
+    bool a = true;
+    bool b = a;
+
 }
