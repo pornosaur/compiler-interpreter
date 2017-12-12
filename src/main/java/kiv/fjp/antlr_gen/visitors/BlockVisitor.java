@@ -1,16 +1,12 @@
 package kiv.fjp.antlr_gen.visitors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.GrammarParser.StatementContext;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Symbol;
-import kiv.fjp.antlr_gen.structures.SymbolTable;
+import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class BlockVisitor extends GrammarVisitor<String>{
 	
@@ -60,12 +56,28 @@ public class BlockVisitor extends GrammarVisitor<String>{
         return visitChildren(ctx);
         
     }
+
+    @Override
+    public String visitConst_declar(GrammarParser.Const_declarContext ctx) {
+        String id = ctx.def().ID().getText();
+        String varType = ctx.var_type().getText();
+
+        Symbol symbol = new Symbol(id, varType, level, 0, SymbolType.VAR);
+        if (! symbolTable.addSymbol(symbol)) {
+            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+        }
+
+        visitDef(ctx.def());
+        symbol.setSymbolType(SymbolType.CONST_VAR);
+
+        return id;
+    }
 	
 	@Override public String visitDeclarID(GrammarParser.DeclarIDContext ctx) {
         String id = ctx.ID().getText();
         String varType = ctx.var_type().getText();
 
-        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, false, false))) {
+        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.VAR))) {
             throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
         }
 
@@ -76,7 +88,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String id = ctx.def().ID().getText();
         String varType = ctx.var_type().getText();
 
-        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, false, false))) {
+        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.VAR))) {
             throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
         }
 
@@ -89,9 +101,13 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String id = ctx.ID().getText();
 
 		Symbol symbol;
-		if((symbol = symbolTable.findSymbol(id)) == null) {
+		if ((symbol = symbolTable.findSymbol(id)) == null) {
 			throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
 		}
+
+		if (symbol.getSymbolType() == SymbolType.CONST_VAR) {
+            throw new ParseCancellationException("ParseError - identificator " + id + " is const.");
+        }
 
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, symbol.getType());
 		if (ctx.value() != null) {

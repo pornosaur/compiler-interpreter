@@ -1,21 +1,27 @@
 package kiv.fjp.antlr_gen.structures;
 
 public class Symbol {
+
+    public enum SymbolType {
+        VAR,
+        CONST_VAR,
+        FUNCTION;
+    }
+
 	private String indentificator;
 	private DataType type;
 	private int level;
 	private int adr;
 	private int size;
-	private boolean isFunc;
-	private boolean isConst;
+	private SymbolType symbolType;
 	private boolean isDefined;
-	public Symbol(String indentificator, String type, int level, int size, boolean isFunc, boolean isConst) {
+
+	public Symbol(String indentificator, String type, int level, int size, SymbolType symbolType) {
 		this.indentificator = indentificator;
 		this.type = new DataType(type);
 		this.level = level;
 		this.size = size;
-		this.isFunc = isFunc;
-		this.isConst = isConst;
+		this.symbolType = symbolType;
 		this.isDefined = false;
 	}
 
@@ -31,24 +37,15 @@ public class Symbol {
 		return type.getType();
 	}
 
-	
-	public boolean isFunc() {
-		return isFunc;
-	}
+    public SymbolType getSymbolType() {
+        return symbolType;
+    }
 
-	public void setFunc(boolean isFunc) {
-		this.isFunc = isFunc;
-	}
+    public void setSymbolType(SymbolType symbolType) {
+        this.symbolType = symbolType;
+    }
 
-	public boolean isConst() {
-		return isConst;
-	}
-
-	public void setConst(boolean isConst) {
-		this.isConst = isConst;
-	}
-
-	public boolean isDefined() {
+    public boolean isDefined() {
 		return isDefined;
 	}
 
