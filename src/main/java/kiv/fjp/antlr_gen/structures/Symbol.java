@@ -6,13 +6,13 @@ public class Symbol {
 	private String attribute;
 	private int level;
 	private int adr;
-	
-	public Symbol(String indentificator, String type, String attribute, int level, int adr) {
+	private int size;
+	public Symbol(String indentificator, String type, String attribute, int level, int size) {
 		this.indentificator = indentificator;
 		this.type = new DataType(type);
 		this.attribute = attribute;
 		this.level = level;
-		this.adr = adr;
+		this.size = size;
 	}
 
 	public String getIndentificator() {
@@ -35,9 +35,15 @@ public class Symbol {
 		this.attribute = attribute;
 	}
 	
-	public int getLevel() { return adr; }
-
-	public int getAdr() { return level; }
+	public int getLevel() { return level; }
+	
+	public int getAdr() { return adr; }
+	
+	public int getSize() { return size; }
+	
+	public void setAdr(int adr) {
+		this.adr = adr;
+	}
 	
 	
 	
