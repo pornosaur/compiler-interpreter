@@ -3,16 +3,20 @@ package kiv.fjp.antlr_gen.structures;
 public class Symbol {
 	private String indentificator;
 	private DataType type;
-	private String attribute;
 	private int level;
 	private int adr;
 	private int size;
-	public Symbol(String indentificator, String type, String attribute, int level, int size) {
+	private boolean isFunc;
+	private boolean isConst;
+	private boolean isDefined;
+	public Symbol(String indentificator, String type, int level, int size, boolean isFunc, boolean isConst) {
 		this.indentificator = indentificator;
 		this.type = new DataType(type);
-		this.attribute = attribute;
 		this.level = level;
 		this.size = size;
+		this.isFunc = isFunc;
+		this.isConst = isConst;
+		this.isDefined = false;
 	}
 
 	public String getIndentificator() {
@@ -27,14 +31,31 @@ public class Symbol {
 		return type.getType();
 	}
 
-	public String getAttribute() {
-		return attribute;
+	
+	public boolean isFunc() {
+		return isFunc;
 	}
 
-	public void setAttribute(String attribute) {
-		this.attribute = attribute;
+	public void setFunc(boolean isFunc) {
+		this.isFunc = isFunc;
 	}
-	
+
+	public boolean isConst() {
+		return isConst;
+	}
+
+	public void setConst(boolean isConst) {
+		this.isConst = isConst;
+	}
+
+	public boolean isDefined() {
+		return isDefined;
+	}
+
+	public void setDefined(boolean isDefined) {
+		this.isDefined = isDefined;
+	}
+
 	public int getLevel() { return level; }
 	
 	public int getAdr() { return adr; }

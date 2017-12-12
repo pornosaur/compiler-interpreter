@@ -19,14 +19,14 @@ public class SymbolTable {
 	}
 	
 
-	public void addSymbols() {
+	public void addSymbolList() {
 		symbolsStack.push( new ArrayList<>());
 	}
 	
 	/**
 	 * Set symbols from the top of the stack as actual symbols
 	 */
-	public void restoreSymbols() {
+	public void removeSymbolList() {
 		symbolsStack.pop();
 	}
 	
