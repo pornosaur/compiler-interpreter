@@ -21,14 +21,18 @@ public class ProgramVisitor<T> extends GrammarVisitor<T> {
         ctx.return_type();
         ctx.ID();
         ctx.param();
-        //TODO add fuction to symbol tabel symbolTable.addSymbol();..
+        symbolTable.addSymbol(new Symbol(ctx.ID().getText(),ctx.return_type().getText(), 0,
+                4, true, false));
+        instructionList.add(new Instruction(IntType.INT, 0, 4));
+
         symbolTable.addSymbolList();
         visit(ctx.block());
         symbolTable.removeSymbolList();
 
+        instructionList.add(new Instruction(IntType.RET, 0, 0));
         int pos = 0;
         for (Instruction i : instructionList) {
-            System.out.println(pos +": " +i.toString());
+            System.out.println(pos +" " +i.toString());
             pos++;
         }
 

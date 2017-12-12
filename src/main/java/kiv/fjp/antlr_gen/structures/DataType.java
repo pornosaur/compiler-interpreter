@@ -5,7 +5,8 @@ public class DataType {
     public enum Type {
         STRING("string"),
         BOOL("bool"),
-        INTEGER("integer");
+        INTEGER("integer"),
+        VOID("void");
 
         private final String text;
 
