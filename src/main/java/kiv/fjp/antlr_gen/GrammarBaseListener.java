@@ -112,13 +112,25 @@ public class GrammarBaseListener implements GrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeclar(GrammarParser.DeclarContext ctx) { }
+	@Override public void enterDeclarID(GrammarParser.DeclarIDContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDeclar(GrammarParser.DeclarContext ctx) { }
+	@Override public void exitDeclarID(GrammarParser.DeclarIDContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclarDef(GrammarParser.DeclarDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclarDef(GrammarParser.DeclarDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

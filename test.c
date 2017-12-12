@@ -1,1 +1,3 @@
-const     bool test = true;
+void test() {
+     b = a = f = 5 + 5;
+}

@@ -43,23 +43,23 @@ public class SymbolTable {
 	 * @return Return true if symbol was added.
 	 */
 	public boolean addSymbol(Symbol symbol) {
-		if(findSymbol(symbol.getIndentificator()) != null) {
+		if(findSymbol(symbol.getIndentificator()) == null) {
 			symbols.add(symbol);
 			return true;
-		}else {
-			return false;
 		}
+
+		return false;
 	}
 	/**
-	 * Find symbol in list of symbols by identificator. If list doesnt contain the search symbol return null
-	 *  otherwise it returns symbol
+	 * Find symbol in list of symbols by identificator. If list doesnt contain the search symbol return null,
+	 *  otherwise, it is returned a symbol.
 	 * 
-	 * @param symbolId Indeficator of search symbol
-	 * @return search symbol or null if list doest contain it.
+	 * @param symbolId Identification of search symbol.
+	 * @return search symbol or null if list doesnt contain it.
 	 */
-	private Symbol findSymbol(String symbolId) {
+	public Symbol findSymbol(String symbolId) {
 		for(Symbol symbol : symbols) {
-			if(symbol.getIndentificator().equals(symbolId)) {
+			if(symbol.getIndentificator().compareTo(symbolId) == 0) {
 				return symbol;
 			}
 		}

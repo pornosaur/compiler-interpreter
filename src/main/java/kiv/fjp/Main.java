@@ -2,8 +2,10 @@ package kiv.fjp;
 
 import java.io.IOException;
 
+import kiv.fjp.antlr_gen.structures.Symbol;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -32,6 +34,8 @@ public class Main
 			ProgramVisitor programVisitor = new ProgramVisitor();
 		    programVisitor.visitProgram(programContext);
 		    
+		} catch(ParseCancellationException ex) {
+			System.err.println(ex.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

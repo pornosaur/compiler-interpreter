@@ -2,9 +2,14 @@ package kiv.fjp.antlr_gen.visitors;
 
 import kiv.fjp.antlr_gen.GrammarBaseVisitor;
 import kiv.fjp.antlr_gen.GrammarParser;
+import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import kiv.fjp.antlr_gen.structures.Instruction.OPRType;
+import kiv.fjp.antlr_gen.structures.Symbol;
+import kiv.fjp.antlr_gen.structures.SymbolTable;
+
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +18,13 @@ public class ExpressionVisitor extends GrammarBaseVisitor<String>{
 
 	private List<Instruction> instructions;
 
+	private SymbolTable symbolTable;
+
 	private int level;
 
-	public ExpressionVisitor(int level) {
+	public ExpressionVisitor(SymbolTable symbolTable, int level) {
 		instructions = new ArrayList<>();
+		this.symbolTable = symbolTable;
 		this.level = level;
 	}
 
@@ -79,7 +87,18 @@ public class ExpressionVisitor extends GrammarBaseVisitor<String>{
     @Override
     public String visitNumID(GrammarParser.NumIDContext ctx){
 	    String id = ctx.getText();
-	    int value = 0;   //TODO find id in table symbols and set value of variable
+
+        Symbol symbol;
+        if((symbol = symbolTable.findSymbol(id)) == null) {
+            throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+        }
+
+        //TODO what about REAL?
+        if (symbol.getType() != DataType.Type.INTEGER) {
+            throw new ParseCancellationException("ParseError - bad conversion " + symbol.getType().toString() + " to integer.");
+        }
+
+	    int value = Integer.valueOf(symbol.getAttribute());
 
         instructions.add(new Instruction(IntType.LIT, level, value));
 

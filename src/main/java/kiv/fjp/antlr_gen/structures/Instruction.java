@@ -42,5 +42,7 @@ public class Instruction {
 		this.value = value;
 	}
 	
-	
+	public String toString() {
+		return intstruction.name()+ "\t" + level + " " + value;
+	}
 }

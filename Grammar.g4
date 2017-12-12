@@ -16,6 +16,7 @@ block
     :   (   declar
         |   const_declar
         |   def
+        |   multiple_def
         |   loop
         |   statement
         |   s_switch
@@ -44,11 +45,12 @@ param
     ;
 
 declar
-    :    var_type (ID | def | multiple_def)
+    :   var_type ID ';'         # declarID
+    |   var_type def            # declarDef
     ;
 
 const_declar
-    :   'const' var_type (def | multiple_def)
+    :   'const' var_type def
     ;
 
 value

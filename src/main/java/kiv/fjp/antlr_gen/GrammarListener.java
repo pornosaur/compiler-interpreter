@@ -88,15 +88,29 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitParam(GrammarParser.ParamContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GrammarParser#declar}.
+	 * Enter a parse tree produced by the {@code declarID}
+	 * labeled alternative in {@link GrammarParser#declar}.
 	 * @param ctx the parse tree
 	 */
-	void enterDeclar(GrammarParser.DeclarContext ctx);
+	void enterDeclarID(GrammarParser.DeclarIDContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GrammarParser#declar}.
+	 * Exit a parse tree produced by the {@code declarID}
+	 * labeled alternative in {@link GrammarParser#declar}.
 	 * @param ctx the parse tree
 	 */
-	void exitDeclar(GrammarParser.DeclarContext ctx);
+	void exitDeclarID(GrammarParser.DeclarIDContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declarDef}
+	 * labeled alternative in {@link GrammarParser#declar}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclarDef(GrammarParser.DeclarDefContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declarDef}
+	 * labeled alternative in {@link GrammarParser#declar}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclarDef(GrammarParser.DeclarDefContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GrammarParser#const_declar}.
 	 * @param ctx the parse tree

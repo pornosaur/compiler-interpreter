@@ -59,11 +59,19 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParam(GrammarParser.ParamContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link GrammarParser#declar}.
+	 * Visit a parse tree produced by the {@code declarID}
+	 * labeled alternative in {@link GrammarParser#declar}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDeclar(GrammarParser.DeclarContext ctx);
+	T visitDeclarID(GrammarParser.DeclarIDContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declarDef}
+	 * labeled alternative in {@link GrammarParser#declar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclarDef(GrammarParser.DeclarDefContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#const_declar}.
 	 * @param ctx the parse tree
