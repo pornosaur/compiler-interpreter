@@ -94,9 +94,11 @@ public class BlockVisitor extends GrammarVisitor<String>{
 		}
 
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, symbol.getType());
-        expressionVisitor.visitValue(ctx.value());
-
-        //TODO call also for ternary operator - visit children
+		if (ctx.value() != null) {
+            expressionVisitor.visitValue(ctx.value());
+        } else {
+		    expressionVisitor.visitTernar_oper(ctx.ternar_oper());
+        }
 
         instructionList.add(new Instruction(IntType.STO, level, symbol.getAdr()));
 
@@ -112,8 +114,11 @@ public class BlockVisitor extends GrammarVisitor<String>{
         }
 
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, lastID.getType());
-        //TODO call also ternary operator
-        expressionVisitor.visitValue(ctx.value());
+        if (ctx.value() != null) {
+            expressionVisitor.visitValue(ctx.value());
+        } else {
+            expressionVisitor.visitTernar_oper(ctx.ternar_oper());
+        }
 
         instructionList.add(new Instruction(IntType.STO, level, lastID.getAdr()));
 
@@ -131,14 +136,6 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
 	    return null;
     }
-
-    @Override public String visitTernar_oper(GrammarParser.Ternar_operContext ctx) {
-
-
-	    return null;
-    }
-
-
 
     @Override public String visitVar_type(GrammarParser.Var_typeContext ctx) {
         return visitChildren(ctx);

@@ -1,4 +1,3 @@
 void test() {
-    bool a = true;
-    bool b = a;
+    bool a = 1==1 ? true : false;
 }

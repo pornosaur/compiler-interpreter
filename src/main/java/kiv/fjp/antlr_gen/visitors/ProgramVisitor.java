@@ -26,8 +26,10 @@ public class ProgramVisitor<T> extends GrammarVisitor<T> {
         visit(ctx.block());
         symbolTable.removeSymbolList();
 
+        int pos = 0;
         for (Instruction i : instructionList) {
-            System.out.println(i.toString());
+            System.out.println(pos +": " +i.toString());
+            pos++;
         }
 
         return null;

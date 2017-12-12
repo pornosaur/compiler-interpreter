@@ -10,7 +10,7 @@ import kiv.fjp.antlr_gen.structures.Symbol;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class ExpressionVisitor extends GrammarVisitor<String>{
-    
+
 	private int level;
 
 	private DataType.Type dataType;
@@ -42,7 +42,8 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
             }
 
             if (symbol.getType() != dataType) {
-                throw new ParseCancellationException("ParseError - bad conversion " + symbol.getType().toString() + " to " + dataType.toString());
+                throw new ParseCancellationException("ParseError - bad conversion " + symbol.getType().toString()
+                        + " to " + dataType.toString());
             }
 
             instructionList.add(new Instruction(IntType.LOD, level, symbol.getAdr()));
@@ -162,6 +163,25 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         int value = op.compareTo("true") == 0 ? 1 : 0;
 
         instructionList.add(new Instruction(IntType.LIT, level, value));
+
+        return null;
+    }
+
+    @Override
+    public String visitTernar_oper(GrammarParser.Ternar_operContext ctx) {
+        visit(ctx.bool_exp());
+        Instruction jmcInt = new Instruction(IntType.JMC, level, 0);
+        instructionList.add(jmcInt);
+
+        visit(ctx.value(0));
+        Instruction jmpEndElse = new Instruction(IntType.JMP, level, 0);
+        instructionList.add(jmpEndElse);
+
+        int elseJmp = instructionList.size();
+        visit(ctx.value(1));
+
+        jmcInt.setValue(elseJmp);
+        jmpEndElse.setValue(instructionList.size());
 
         return null;
     }

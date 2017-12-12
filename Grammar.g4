@@ -161,7 +161,7 @@ func
     ;
 
 ternar_oper
-    :   bool_exp '?' value ':' value ';'
+    :   bool_exp '?' value ':' value
     ;
 
 r_return
