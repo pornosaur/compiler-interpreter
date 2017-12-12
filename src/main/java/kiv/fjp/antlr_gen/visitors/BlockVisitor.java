@@ -19,6 +19,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
 	public BlockVisitor(){
 		this.symbolTable = new SymbolTable();
 	}
+
 	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
 		for(int i = 0; i < ctx.getChildCount();i++) {
 			
@@ -95,12 +96,11 @@ public class BlockVisitor extends GrammarVisitor<String>{
 			throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
 		}
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(symbolTable, level, symbol.getType());
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, symbol.getType());
         expressionVisitor.visitValue(ctx.value());
 
         //TODO call also for ternary operator - visit children
 
-        instructionList.addAll(expressionVisitor.getInstructions());
         instructionList.add(new Instruction(IntType.STO, level, symbol.getAdr()));
 
         return id;
@@ -114,11 +114,10 @@ public class BlockVisitor extends GrammarVisitor<String>{
             throw new ParseCancellationException("ParseError - identificator `" + lastIDName + "` is not declared.");
         }
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(symbolTable, level, lastID.getType());
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, lastID.getType());
         //TODO call also ternary operator
         expressionVisitor.visitValue(ctx.value());
 
-        instructionList.addAll(expressionVisitor.getInstructions());
         instructionList.add(new Instruction(IntType.STO, level, lastID.getAdr()));
 
         for (int i = sizeListID - 1; i >= 0; i--) {
