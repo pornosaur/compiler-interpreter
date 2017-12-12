@@ -16,6 +16,7 @@ public class SymbolTable {
 	 */
 	public SymbolTable() {
 		this.symbolsStack = new Stack<>();
+		symbolsStack.add(new ArrayList<>());
 	}
 	
 
