@@ -129,6 +129,10 @@ public class BlockVisitor extends GrammarVisitor<String>{
             throw new ParseCancellationException("ParseError - identificator `" + lastIDName + "` is not declared.");
         }
 
+        if (lastID.getSymbolType() == SymbolType.CONST_VAR) {
+            throw new ParseCancellationException("ParseError - identificator " + lastIDName + " is const.");
+        }
+
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, lastID.getType());
         if (ctx.value() != null) {
             expressionVisitor.visitValue(ctx.value());
@@ -144,6 +148,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
             Symbol symbol;
             if ((symbol = symbolTable.findSymbol(symbolID)) == null) {
                 throw new ParseCancellationException("ParseError - identificator `" + symbolID + "` is not declared.");
+            }
+            if (symbol.getSymbolType() == SymbolType.CONST_VAR) {
+                throw new ParseCancellationException("ParseError - identificator " + symbolID + " is const.");
             }
 
             instructionList.add(new Instruction(IntType.LOD, level, lastID.getAdr()));
