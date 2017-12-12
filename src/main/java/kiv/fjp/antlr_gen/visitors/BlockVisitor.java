@@ -13,11 +13,8 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class BlockVisitor extends GrammarVisitor<String>{
-
-	SymbolTable symbolTable;
 	
 	public BlockVisitor(){
-		this.symbolTable = new SymbolTable();
 	}
 
 	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
