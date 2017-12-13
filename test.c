@@ -1,21 +1,8 @@
-void test(integer a, integer b) {
-    integer f = 5;
-    if (true) {
-        integer e = 10;
-    }
-
-    integer e = 111;
-
-    return 0;
+integer test() {
+    integer a = 55;
+    return a;
 }
 
-void test(integer a, integer b) {
-    integer f = 5;
-    if (true) {
-        integer e = 10;
-    }
-
-    integer e = 111;
-
-    return 0;
+void test2() {
+    integer a = test();
 }

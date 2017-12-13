@@ -22,7 +22,7 @@ public class DataType {
 
     private Type type;
 
-    DataType(String strType) {
+    public DataType(String strType) {
         for (Type t : Type.values()) {
             if (t.toString().compareTo(strType) == 0) {
                 type = t;

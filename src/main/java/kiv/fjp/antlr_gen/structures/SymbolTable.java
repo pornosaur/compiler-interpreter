@@ -18,7 +18,7 @@ public class SymbolTable {
 	public SymbolTable() {
 		this.symbolsStack = new Stack<>();
 		symbolsStack.add(new ArrayList<>());
-		lastAdr = 0;
+		lastAdr = 1;
 	}
 	
 
@@ -88,5 +88,13 @@ public class SymbolTable {
             }
         }
         return null;
+    }
+
+    public int getActualSize() {
+	    return symbolsStack.peek().size();
+    }
+
+    public int getLastAdr() {
+	    return lastAdr;
     }
 }

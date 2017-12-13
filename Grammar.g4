@@ -5,7 +5,7 @@ program
     ;
 
 func_def
-    :   return_type ID '(' param ')' '{' block '}'
+    :   return_type ID '(' param ')' '{' block  r_return? '}'
     ;
 
 return_type
@@ -22,7 +22,6 @@ block
         |   s_switch
         |   call_fnc
         )*
-        r_return?
     ;
 
 data_type
@@ -71,11 +70,11 @@ value_array
     ;
 
 def
-    :   ID '=' (ternar_oper | value) ';'
+    :   ID '=' (func | ternar_oper | value) ';'
     ;
 
 multiple_def
-    :   ID ('=' ID)+ '=' (value | ternar_oper) ';'
+    :   ID ('=' ID)+ '=' (func |value | ternar_oper) ';'
     ;
 
 
