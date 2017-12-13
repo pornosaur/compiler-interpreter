@@ -178,9 +178,6 @@ public class GrammarParser extends Parser {
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
-		public R_returnContext r_return() {
-			return getRuleContext(R_returnContext.class,0);
-		}
 		public Func_defContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -203,7 +200,6 @@ public class GrammarParser extends Parser {
 	public final Func_defContext func_def() throws RecognitionException {
 		Func_defContext _localctx = new Func_defContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_func_def);
-		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -221,17 +217,7 @@ public class GrammarParser extends Parser {
 			match(T__2);
 			setState(76);
 			block();
-			setState(78);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==T__42) {
-				{
-				setState(77);
-				r_return();
-				}
-			}
-
-			setState(80);
+			setState(77);
 			match(T__3);
 			}
 		}
@@ -273,7 +259,7 @@ public class GrammarParser extends Parser {
 		Return_typeContext _localctx = new Return_typeContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_return_type);
 		try {
-			setState(84);
+			setState(81);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__5:
@@ -281,14 +267,14 @@ public class GrammarParser extends Parser {
 			case T__7:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(82);
+				setState(79);
 				var_type();
 				}
 				break;
 			case T__4:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(83);
+				setState(80);
 				match(T__4);
 				}
 				break;
@@ -356,6 +342,9 @@ public class GrammarParser extends Parser {
 		public Call_fncContext call_fnc(int i) {
 			return getRuleContext(Call_fncContext.class,i);
 		}
+		public R_returnContext r_return() {
+			return getRuleContext(R_returnContext.class,0);
+		}
 		public BlockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -382,69 +371,79 @@ public class GrammarParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(96);
+			setState(93);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
-					setState(94);
+					setState(91);
 					_errHandler.sync(this);
-					switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
+					switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 					case 1:
 						{
-						setState(86);
+						setState(83);
 						declar();
 						}
 						break;
 					case 2:
 						{
-						setState(87);
+						setState(84);
 						const_declar();
 						}
 						break;
 					case 3:
 						{
-						setState(88);
+						setState(85);
 						def();
 						}
 						break;
 					case 4:
 						{
-						setState(89);
+						setState(86);
 						multiple_def();
 						}
 						break;
 					case 5:
 						{
-						setState(90);
+						setState(87);
 						loop();
 						}
 						break;
 					case 6:
 						{
-						setState(91);
+						setState(88);
 						statement();
 						}
 						break;
 					case 7:
 						{
-						setState(92);
+						setState(89);
 						s_switch();
 						}
 						break;
 					case 8:
 						{
-						setState(93);
+						setState(90);
 						call_fnc();
 						}
 						break;
 					}
 					} 
 				}
-				setState(98);
+				setState(95);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
+			}
+			setState(97);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+			case 1:
+				{
+				setState(96);
+				r_return();
+				}
+				break;
 			}
 			}
 		}
@@ -3084,12 +3083,12 @@ public class GrammarParser extends Parser {
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
 		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\4 \t \4!"+
-		"\t!\3\2\7\2D\n\2\f\2\16\2G\13\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3Q\n"+
-		"\3\3\3\3\3\3\4\3\4\5\4W\n\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\7\5a\n\5\f"+
-		"\5\16\5d\13\5\3\6\3\6\3\7\3\7\3\7\3\7\3\b\3\b\5\bn\n\b\3\t\3\t\3\t\3\t"+
-		"\3\t\3\t\7\tv\n\t\f\t\16\ty\13\t\5\t{\n\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n"+
-		"\5\n\u0084\n\n\3\13\3\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\5\f\u008f\n\f\3"+
-		"\r\3\r\3\r\3\r\5\r\u0095\n\r\3\16\3\16\3\16\3\16\3\16\5\16\u009c\n\16"+
+		"\t!\3\2\7\2D\n\2\f\2\16\2G\13\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
+		"\4\3\4\5\4T\n\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\7\5^\n\5\f\5\16\5a\13"+
+		"\5\3\5\5\5d\n\5\3\6\3\6\3\7\3\7\3\7\3\7\3\b\3\b\5\bn\n\b\3\t\3\t\3\t\3"+
+		"\t\3\t\3\t\7\tv\n\t\f\t\16\ty\13\t\5\t{\n\t\3\n\3\n\3\n\3\n\3\n\3\n\3"+
+		"\n\5\n\u0084\n\n\3\13\3\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\5\f\u008f\n\f"+
+		"\3\r\3\r\3\r\3\r\5\r\u0095\n\r\3\16\3\16\3\16\3\16\3\16\5\16\u009c\n\16"+
 		"\3\16\3\16\3\17\3\17\3\17\6\17\u00a3\n\17\r\17\16\17\u00a4\3\17\3\17\3"+
 		"\17\3\17\5\17\u00ab\n\17\3\17\3\17\3\20\3\20\3\20\3\20\3\20\5\20\u00b4"+
 		"\n\20\3\20\3\20\3\20\3\20\3\20\3\20\3\20\5\20\u00bd\n\20\3\20\3\20\3\20"+
@@ -3112,7 +3111,7 @@ public class GrammarParser extends Parser {
 		"\n\37\3\37\3\37\3 \3 \3 \3 \3 \3 \3!\3!\3!\3!\5!\u0189\n!\3!\3!\3!\2\4"+
 		"\36(\"\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<"+
 		">@\2\n\3\2\b\n\3\2\23\24\3\2\21\22\3\2\63\63\3\2\26\33\4\2\30\30\33\33"+
-		"\3\2\34\35\3\2\37 \2\u01aa\2E\3\2\2\2\4H\3\2\2\2\6V\3\2\2\2\bb\3\2\2\2"+
+		"\3\2\34\35\3\2\37 \2\u01aa\2E\3\2\2\2\4H\3\2\2\2\6S\3\2\2\2\b_\3\2\2\2"+
 		"\ne\3\2\2\2\fg\3\2\2\2\16m\3\2\2\2\20z\3\2\2\2\22\u0083\3\2\2\2\24\u0085"+
 		"\3\2\2\2\26\u008e\3\2\2\2\30\u0094\3\2\2\2\32\u0096\3\2\2\2\34\u009f\3"+
 		"\2\2\2\36\u00bc\3\2\2\2 \u00c9\3\2\2\2\"\u00d7\3\2\2\2$\u00db\3\2\2\2"+
@@ -3121,11 +3120,11 @@ public class GrammarParser extends Parser {
 		"\2\28\u016b\3\2\2\2:\u016d\3\2\2\2<\u0170\3\2\2\2>\u017e\3\2\2\2@\u0184"+
 		"\3\2\2\2BD\5\4\3\2CB\3\2\2\2DG\3\2\2\2EC\3\2\2\2EF\3\2\2\2F\3\3\2\2\2"+
 		"GE\3\2\2\2HI\5\6\4\2IJ\7.\2\2JK\7\3\2\2KL\5\20\t\2LM\7\4\2\2MN\7\5\2\2"+
-		"NP\5\b\5\2OQ\5@!\2PO\3\2\2\2PQ\3\2\2\2QR\3\2\2\2RS\7\6\2\2S\5\3\2\2\2"+
-		"TW\5\16\b\2UW\7\7\2\2VT\3\2\2\2VU\3\2\2\2W\7\3\2\2\2Xa\5\22\n\2Ya\5\24"+
-		"\13\2Za\5\32\16\2[a\5\34\17\2\\a\5.\30\2]a\5,\27\2^a\58\35\2_a\5:\36\2"+
-		"`X\3\2\2\2`Y\3\2\2\2`Z\3\2\2\2`[\3\2\2\2`\\\3\2\2\2`]\3\2\2\2`^\3\2\2"+
-		"\2`_\3\2\2\2ad\3\2\2\2b`\3\2\2\2bc\3\2\2\2c\t\3\2\2\2db\3\2\2\2ef\t\2"+
+		"NO\5\b\5\2OP\7\6\2\2P\5\3\2\2\2QT\5\16\b\2RT\7\7\2\2SQ\3\2\2\2SR\3\2\2"+
+		"\2T\7\3\2\2\2U^\5\22\n\2V^\5\24\13\2W^\5\32\16\2X^\5\34\17\2Y^\5.\30\2"+
+		"Z^\5,\27\2[^\58\35\2\\^\5:\36\2]U\3\2\2\2]V\3\2\2\2]W\3\2\2\2]X\3\2\2"+
+		"\2]Y\3\2\2\2]Z\3\2\2\2][\3\2\2\2]\\\3\2\2\2^a\3\2\2\2_]\3\2\2\2_`\3\2"+
+		"\2\2`c\3\2\2\2a_\3\2\2\2bd\5@!\2cb\3\2\2\2cd\3\2\2\2d\t\3\2\2\2ef\t\2"+
 		"\2\2f\13\3\2\2\2gh\5\n\6\2hi\7\13\2\2ij\7\f\2\2j\r\3\2\2\2kn\5\n\6\2l"+
 		"n\5\f\7\2mk\3\2\2\2ml\3\2\2\2n\17\3\2\2\2op\5\16\b\2pw\7.\2\2qr\7\r\2"+
 		"\2rs\5\16\b\2st\7.\2\2tv\3\2\2\2uq\3\2\2\2vy\3\2\2\2wu\3\2\2\2wx\3\2\2"+
@@ -3219,7 +3218,7 @@ public class GrammarParser extends Parser {
 		"\u0183\5\26\f\2\u0183?\3\2\2\2\u0184\u0188\7-\2\2\u0185\u0189\5> \2\u0186"+
 		"\u0189\5\26\f\2\u0187\u0189\5<\37\2\u0188\u0185\3\2\2\2\u0188\u0186\3"+
 		"\2\2\2\u0188\u0187\3\2\2\2\u0189\u018a\3\2\2\2\u018a\u018b\7\16\2\2\u018b"+
-		"A\3\2\2\2*EPV`bmwz\u0083\u008e\u0094\u009b\u00a4\u00aa\u00b3\u00bc\u00c4"+
+		"A\3\2\2\2*ES]_cmwz\u0083\u008e\u0094\u009b\u00a4\u00aa\u00b3\u00bc\u00c4"+
 		"\u00c6\u00cf\u00d2\u00d9\u00e0\u00e6\u00e8\u00fa\u0102\u0104\u0115\u011b"+
 		"\u014f\u0155\u0159\u015d\u0162\u0166\u0168\u016b\u0177\u017a\u0188";
 	public static final ATN _ATN =

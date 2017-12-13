@@ -5,7 +5,7 @@ program
     ;
 
 func_def
-    :   return_type ID '(' param ')' '{' block  r_return? '}'
+    :   return_type ID '(' param ')' '{' block '}'
     ;
 
 return_type
@@ -22,6 +22,7 @@ block
         |   s_switch
         |   call_fnc
         )*
+         r_return?
     ;
 
 data_type

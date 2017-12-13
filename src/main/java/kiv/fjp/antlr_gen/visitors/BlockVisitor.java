@@ -118,6 +118,18 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 
 	    return null;
     }
+
+    @Override public Integer visitR_return(GrammarParser.R_returnContext ctx) {
+	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+
+	    if (ctx.value() != null ||ctx.ternar_oper() != null) {
+	        expressionVisitor.visit(ctx);
+        } else {
+	        visitFunc(ctx.func());
+        }
+
+	    return null;
+    }
 	
 	@Override public Integer visitDef(GrammarParser.DefContext ctx) {
         String id = ctx.ID().getText();
@@ -190,11 +202,15 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     public Integer visitFunc(GrammarParser.FuncContext ctx) {
         String id = ctx.ID().getText();
 
-        Symbol symbol = symbolTable.findSymbol("test", SymbolType.FUNCTION);
+
+        Symbol symbol = symbolTable.findSymbol(id, SymbolType.FUNCTION);
         if (symbol == null) {
             throw new ParseCancellationException("ParseError - function " + id + " is not declared before.");
         }
+        System.out.println("ID: " + id +" - " + symbol.getAdr());
 
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+        expressionVisitor.visit(ctx);
         instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store for return value
         instructionList.add(new Instruction(IntType.CAL, 0, symbol.getAdr()));
 

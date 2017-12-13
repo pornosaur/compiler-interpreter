@@ -35,8 +35,8 @@ public class Main
 			ProgramVisitor programVisitor = new ProgramVisitor();
 		    programVisitor.visitProgram(programContext);
 
-			int pos = 0;
-
+			int pos = 1;
+            System.out.println("0 JMP\t0\t13");
 			for (Object in : programVisitor.getInstructions()) {
 				System.out.println(pos +" " +in.toString());
 				pos++;

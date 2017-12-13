@@ -1,8 +1,12 @@
+integer test3() {
+    return 5;
+}
+
 integer test() {
-    integer a = 55;
-    return a;
+    return test3();
 }
 
 void test2() {
-    integer a = test();
+    integer f = test();
 }
+

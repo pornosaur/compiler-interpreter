@@ -209,7 +209,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         }
         */
 
-        instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), symbol.getAdr()));
+        instructionList.add(new Instruction(IntType.LOD, level, symbol.getAdr()));
     }
 
 }
