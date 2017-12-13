@@ -16,10 +16,6 @@ public class ProgramVisitor<T> extends GrammarVisitor<T> {
     }
     
     @Override public T visitFunc_def(GrammarParser.Func_defContext ctx)  {
-        ctx.return_type();
-        ctx.ID();
-        ctx.param();
-
         int stackSize = DEF_SIZE_STACK;
         level = DEF_LEVEL;
 
@@ -42,11 +38,6 @@ public class ProgramVisitor<T> extends GrammarVisitor<T> {
         symbolTable.removeSymbolList();
         instructionList.add(new Instruction(IntType.RET, 0, 0));
 
-        int pos = 0;
-        for (Instruction i : instructionList) {
-            System.out.println(pos +" " +i.toString());
-            pos++;
-        }
 
         return null;
     }
