@@ -181,6 +181,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
     public String visitFunc(GrammarParser.FuncContext ctx) {
         String id = ctx.ID().getText();
 
+        Symbol symbol =symbolTable.findSymbol("test", SymbolType.FUNCTION);
 
 
 	    return null;

@@ -1,11 +1,21 @@
-void test(integer b) {
-    integer a = 5;
-    if (a > 1) {
-        a = 8;
-        integer f = 22;
-        integer h = 44;
-    } else {
-        a = 9;
+void test(integer a, integer b) {
+    integer f = 5;
+    if (true) {
+        integer e = 10;
     }
+
     integer e = 111;
+
+    return 0;
+}
+
+void test(integer a, integer b) {
+    integer f = 5;
+    if (true) {
+        integer e = 10;
+    }
+
+    integer e = 111;
+
+    return 0;
 }

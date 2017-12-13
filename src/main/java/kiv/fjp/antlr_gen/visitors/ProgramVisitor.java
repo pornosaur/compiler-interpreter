@@ -8,7 +8,7 @@ import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 
 public class ProgramVisitor<T> extends GrammarVisitor<T> {
 
-    private static final int DEF_SIZE_STACK = 4;
+    private static final int DEF_SIZE_STACK = 4;        //D+S+RET_ADR+RET_VAL
     private static final int DEF_LEVEL = 0;
 
     @Override public T visitProgram(GrammarParser.ProgramContext ctx)  {
@@ -31,12 +31,14 @@ public class ProgramVisitor<T> extends GrammarVisitor<T> {
                 stackSize, SymbolType.FUNCTION));
         instructionList.add(new Instruction(IntType.INT, 0, stackSize));
 
-        symbolTable.addSymbolList();
+
+        symbolTable.addSymbolList(DEF_SIZE_STACK);
         if (ctx.param() != null) {
             visit(ctx.param());
         }
 
         visit(ctx.block());
+
         symbolTable.removeSymbolList();
         instructionList.add(new Instruction(IntType.RET, 0, 0));
 
