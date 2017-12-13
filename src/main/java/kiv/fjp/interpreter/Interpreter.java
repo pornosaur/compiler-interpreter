@@ -17,13 +17,15 @@ public class Interpreter {
 	public Interpreter(ArrayList<Instruction> instructions) {
 		this.instructions = instructions;
 		stack = new int[STACK_SIZE];
-		base = 0;
-		stackPointer = 0;
+		base = 1;
+		stackPointer = -1;
 	}
 	
 	public void runInterpret() {
-		while(stackPointer != 0) {
+		while(true) {
+			
 			Instruction instruction = instructions.get(instructionPointer);
+			System.out.println(instructionPointer+" "+instruction.toString());
 			switch (instruction.getIntstruction()) {
 			case JMP:
 				instructionPointer = instruction.getValue();
@@ -37,33 +39,65 @@ public class Interpreter {
 			case OPR:
 				processOPR(instruction.getValue());
 			case LIT:
-				if(stackPointer <= STACK_SIZE) {
-					//TODO throw exception stack overflow
-				}
-				
-				stack[stackPointer] = instruction.getValue();
 				stackPointer++;
+				stack[stackPointer] = instruction.getValue();
+				
 				instructionPointer++;
 				break;
 			case LOD:
 				//TODO
 				break;
 			case STO:
-				//TODO
+				
+				stack[findNewBaseByLevel(instruction.getLevel())+instruction.getValue()-1] = stack[stackPointer];
+				stackPointer--;
+				instructionPointer++;
 				break;
 			case CAL:
-				//TODO
+				
+				stack[stackPointer + 1] = findNewBaseByLevel(instruction.getLevel());
+				stack[stackPointer + 2] = base;
+				stack[stackPointer + 3] = instructionPointer + 1;
+				base = stackPointer + 1 + 1; //TODO
+				instructionPointer = instruction.getValue();
+				
 				break;
 			case INT:
-				//TODO
+				
+				if(stackPointer == -1) {
+					
+					stack[stackPointer + 1] = 0;
+					stack[stackPointer + 2] = 0;
+					stack[stackPointer + 3] = -1;
+				}
+				stackPointer += instruction.getValue();
+				instructionPointer++;
 				break;
 			case RET:
+				instructionPointer = instructions.get(base + 3).getValue();
+				stackPointer = base - 1;
+				base = stack[base];
 				//TODO
-				break;
+				
+				return;
+				
 			}
+			System.out.println("Instruction: "+instructionPointer);
+			System.out.println("Base: "+ base);
+			System.out.println("Stack pointer: " + (stackPointer + 1));
+			for(int i = 0; i <= stackPointer; i++) {
+				System.out.println(i+1 +" " + stack[i] );
+			}
+			System.out.println("---------------------------------------------");
 		}
 	}
-	
+	private int findNewBaseByLevel(int level){
+		int newBase = base;
+		for(int i = 0; i < level; i++) {
+			newBase = stack[newBase];
+		}
+		return newBase;
+	}
 	private void processOPR(int value) {
 		
 	
@@ -95,9 +129,10 @@ public class Interpreter {
 			break;
 		case LESS_EQ:			
 			break;
-
-		default:
+		case UNUSED:
 			break;
+
 		}
 	}
+
 }
