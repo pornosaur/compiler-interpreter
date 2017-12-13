@@ -117,6 +117,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPlusMinus(GrammarParser.PlusMinusContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code numID}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumID(GrammarParser.NumIDContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code numBrackets}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
@@ -210,6 +217,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBoolNeg(GrammarParser.BoolNegContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolID}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolID(GrammarParser.BoolIDContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#bool}.
 	 * @param ctx the parse tree

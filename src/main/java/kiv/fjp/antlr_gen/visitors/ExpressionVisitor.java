@@ -1,7 +1,6 @@
 package kiv.fjp.antlr_gen.visitors;
 
 import kiv.fjp.antlr_gen.GrammarParser;
-import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import kiv.fjp.antlr_gen.structures.Instruction.OPRType;
@@ -13,17 +12,14 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
 	private int level;
 
-	private DataType.Type dataType;
-
-	public ExpressionVisitor(int level, DataType.Type dataType) {
+	public ExpressionVisitor(int level) {
 		this.level = level;
-		this.dataType = dataType;
 	}
 
 
     @Override
     public String visitIntegers(GrammarParser.IntegersContext ctx) {
-        instructionList.add(new Instruction(IntType.LIT, level, Integer.valueOf(ctx.getText())));
+        instructionList.add(new Instruction(IntType.LIT, 0, Integer.valueOf(ctx.getText())));
 
         return ctx.getText();
     }
@@ -35,18 +31,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
             visitChildren(ctx);
         }else if(ctx.ID() != null) {
             String id = ctx.ID().getText();
-
-            Symbol symbol;
-            if ((symbol = symbolTable.findSymbol(id)) == null) {
-                throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
-            }
-
-            if (symbol.getType() != dataType) {
-                throw new ParseCancellationException("ParseError - bad conversion " + symbol.getType().toString()
-                        + " to " + dataType.toString());
-            }
-
-            instructionList.add(new Instruction(IntType.LOD, level, symbol.getAdr()));
+            visitID(id);
         } else if(ctx.num_exp() != null) {
 			 visitChildren(ctx);
 		}
@@ -60,7 +45,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 		visit(ctx.num_exp(1));
 
         OPRType oprType = (ctx.op.getText().compareTo("*") == 0) ? OPRType.MULTI : OPRType.DIV;
-        instructionList.add(new Instruction(IntType.OPR, level, oprType.ordinal()));
+        instructionList.add(new Instruction(IntType.OPR, 0, oprType.ordinal()));
 
 		return null;
 	}
@@ -71,7 +56,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 		visit(ctx.num_exp(1));
 
 		OPRType oprType = (ctx.op.getText().compareTo("+") == 0) ? OPRType.PLUS : OPRType.MINUS;
-        instructionList.add(new Instruction(IntType.OPR, level, oprType.ordinal()));
+        instructionList.add(new Instruction(IntType.OPR, 0, oprType.ordinal()));
 
 		return null;
 	}
@@ -89,7 +74,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         visit(ctx.num_exp());
 
         if (ctx.sign.getText().compareTo("-") == 0) {
-            instructionList.add(new Instruction(IntType.OPR, level, OPRType.UNARY_MINUS.ordinal()));
+            instructionList.add(new Instruction(IntType.OPR, 0, OPRType.UNARY_MINUS.ordinal()));
         }
 
 	    return ctx.getText();
@@ -131,7 +116,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         String op = ctx.op.getText();
         OPRType oprType = op.compareTo("!=") == 0 ? OPRType.TEST_NONEQ : OPRType.TEST_EQ;
 
-        instructionList.add(new Instruction(IntType.OPR, level, oprType.ordinal()));
+        instructionList.add(new Instruction(IntType.OPR, 0, oprType.ordinal()));
 
         return null;
     }
@@ -144,15 +129,15 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         String op = ctx.op.getText();
         OPRType oprType = op.compareTo("&&") == 0 ? OPRType.MULTI : OPRType.PLUS;
 
-        instructionList.add(new Instruction(IntType.OPR, level, oprType.ordinal()));
+        instructionList.add(new Instruction(IntType.OPR, 0, oprType.ordinal()));
 
         return null;
     }
 
     @Override
     public String visitBoolNeg(GrammarParser.BoolNegContext ctx) {
-        instructionList.add(new Instruction(IntType.LIT, level, 1));
-        instructionList.add(new Instruction(IntType.OPR, level, OPRType.TEST_NONEQ.ordinal()));
+        instructionList.add(new Instruction(IntType.LIT, 0, 1));
+        instructionList.add(new Instruction(IntType.OPR, 0, OPRType.TEST_NONEQ.ordinal()));
 
         return null;
     }
@@ -162,7 +147,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         String op = ctx.bool().getText();
         int value = op.compareTo("true") == 0 ? 1 : 0;
 
-        instructionList.add(new Instruction(IntType.LIT, level, value));
+        instructionList.add(new Instruction(IntType.LIT, 0, value));
 
         return null;
     }
@@ -170,11 +155,11 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
     @Override
     public String visitTernar_oper(GrammarParser.Ternar_operContext ctx) {
         visit(ctx.bool_exp());
-        Instruction jmcInt = new Instruction(IntType.JMC, level, 0);
+        Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
         instructionList.add(jmcInt);
 
         visit(ctx.value(0));
-        Instruction jmpEndElse = new Instruction(IntType.JMP, level, 0);
+        Instruction jmpEndElse = new Instruction(IntType.JMP, 0, 0);
         instructionList.add(jmpEndElse);
 
         int elseJmp = instructionList.size();
@@ -184,6 +169,18 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         jmpEndElse.setValue(instructionList.size());
 
         return null;
+    }
+
+    @Override
+    public String visitNumID(GrammarParser.NumIDContext ctx) {
+        visitID(ctx.getText());
+        return ctx.getText();
+    }
+
+    @Override
+    public String visitBoolID(GrammarParser.BoolIDContext ctx) {
+        visitID(ctx.getText());
+        return ctx.getText();
     }
 
 	@Override
@@ -197,5 +194,22 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 		ctx.getText();
 		return visitChildren(ctx);
 	}
+
+	private void visitID(String id) {
+        Symbol symbol;
+        if ((symbol = symbolTable.findSymbol(id)) == null) {
+            throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+        }
+
+        /*
+        //TODO make conversion but on different place, not here!
+        if (symbol.getType() != dataType) {
+            throw new ParseCancellationException("ParseError - bad conversion " + symbol.getType().toString()
+                    + " to " + dataType.toString());
+        }
+        */
+
+        instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), symbol.getAdr()));
+    }
 
 }

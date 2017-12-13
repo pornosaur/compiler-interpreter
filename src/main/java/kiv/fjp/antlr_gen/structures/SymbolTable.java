@@ -5,7 +5,7 @@ import java.util.Stack;
 
 
 public class SymbolTable {
-	int FIRST_ADR_POS = 3; 
+	int FIRST_ADR_POS = 4;
 	/**
 	 * Stack with list of symbols
 	 */
@@ -44,13 +44,10 @@ public class SymbolTable {
 				return false;
 			}
 		}
-		if(findSymbol(symbol.getIndentificator()) == null) {
-			symbol.setAdr(symbolsStack.peek().size() + FIRST_ADR_POS);
-			symbolsStack.peek().add(symbol);
-			return true;
-		}
-		
-		return false;
+    int i = symbolsStack.peek().size() + FIRST_ADR_POS;
+        symbol.setAdr(symbolsStack.peek().size() + FIRST_ADR_POS);
+        symbolsStack.peek().add(symbol);
+        return true;
 	}
 	/**
 	 * Find symbol in list of symbols by identificator. If list doesnt contain the search symbol return null,
