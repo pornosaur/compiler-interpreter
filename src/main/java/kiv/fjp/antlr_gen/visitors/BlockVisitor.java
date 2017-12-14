@@ -39,24 +39,17 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 
         Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
         instructionList.add(jmcInt);
-        Instruction intInstructionSize = new Instruction(IntType.INT, 0 ,0);
 
         Instruction jmpEndElse = new Instruction(IntType.JMP, 0, 0);
         if (ctx.block().size() > 0) {
-            instructionList.add(intInstructionSize);
             visit(ctx.block(0));
-            intInstructionSize.setValue(symbolTable.getActualSize());
-            instructionList.add(new Instruction(IntType.INT, 0, -symbolTable.getActualSize()));
             instructionList.add(jmpEndElse);
         }
 
-        int jmpEndElsePos = instructionList.size(), elseJmpPos = instructionList.size();
+        int jmpEndElsePos = instructionList.size() + 1, elseJmpPos = instructionList.size() + 1;
 		if(ctx.block().size() == 2) {
-            instructionList.add(intInstructionSize);
 			visit(ctx.block(1));
-			intInstructionSize.setValue(symbolTable.getActualSize());
-            instructionList.add(new Instruction(IntType.INT, 0, -symbolTable.getActualSize()));
-            jmpEndElsePos = instructionList.size();
+            jmpEndElsePos = instructionList.size() + 1;
 		}
 
         jmpEndElse.setValue(jmpEndElsePos);
@@ -66,10 +59,19 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 	
 	@Override public Integer visitLoop_while(GrammarParser.Loop_whileContext ctx) {
-		//TODO
-		visit(ctx.bool_exp());
-		visit(ctx.block());
-        return visitChildren(ctx);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+        int jmpBoolAdr = symbolTable.getLastAdr();
+        expressionVisitor.visit(ctx.bool_exp());
+
+        Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
+        instructionList.add(jmcInt);
+
+        visit(ctx.block());
+
+        instructionList.add(new Instruction(IntType.JMP, 0, jmpBoolAdr));
+        jmcInt.setValue(instructionList.size() + 1); //+1 => jump out of wile
+
+        return null;
         
     }
 	

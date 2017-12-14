@@ -1,12 +1,8 @@
-integer test3() {
-    return 5;
-}
+void test() {
+    if (3 > 5) {
+        integer f = 888;
+    } else {
+        integer a = 999;
+    }
 
-integer test() {
-    return test3();
 }
-
-void test2() {
-    integer f = test();
-}
-
