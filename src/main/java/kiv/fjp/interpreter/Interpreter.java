@@ -75,7 +75,7 @@ public class Interpreter {
 				break;
 			case RET:
 				instructionPointer = stack[base + 1];
-				stackPointer = base - 1;
+				stackPointer = base - 2;
 				base = stack[base];
 				break;
 			}
