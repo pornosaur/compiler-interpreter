@@ -1,7 +1,7 @@
 void test() {
-   integer a = 0;
-   do {
-      a = a + 1;
-   }
-   while (a < 3);
+   integer a;
+   integer b;
+   integer c;
+
+   {a,b,c} = {1,1+1,3};
 }

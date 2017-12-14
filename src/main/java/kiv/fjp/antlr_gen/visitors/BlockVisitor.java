@@ -138,6 +138,39 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 	    return null;
     }
 
+    @Override public Integer visitParallel_def(GrammarParser.Parallel_defContext ctx) {
+	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+        int idSize = ctx.ID().size();
+        int valSize = ctx.value() == null ? ctx.func().size() : ctx.value().size();
+
+        if (idSize != valSize ){
+            throw new ParseCancellationException("ParseError - size of both sides must be equal.");
+        }
+
+        for (int i = 0; i < idSize; i++) {
+            String id = ctx.ID(i).getText();
+
+            Symbol symbol;
+            if ((symbol = symbolTable.findSymbol(id)) == null) {
+                throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+            }
+
+            if (symbol.getSymbolType() == SymbolType.CONST_VAR) {
+                throw new ParseCancellationException("ParseError - identificator " + id + " is const.");
+            }
+
+            if (ctx.value() != null) {
+                expressionVisitor.visitValue(ctx.value(i));
+            } else {
+                visitFunc(ctx.func(i));
+            }
+
+            instructionList.add(new Instruction(IntType.STO, symbol.getLevel(), symbol.getAdr()));
+        }
+
+	    return null;
+    }
+
     @Override public Integer visitR_return(GrammarParser.R_returnContext ctx) {
 	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
 

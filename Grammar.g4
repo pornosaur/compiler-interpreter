@@ -80,7 +80,7 @@ multiple_def
     ;
 
 parallel_def
-    : '{'ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}'
+    : '{'ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}' ';'
     ;
 
 num_exp
