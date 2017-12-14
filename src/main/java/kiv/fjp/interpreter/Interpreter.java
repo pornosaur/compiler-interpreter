@@ -45,7 +45,9 @@ public class Interpreter {
 				instructionPointer++;
 				break;
 			case LOD:
-				//TODO
+				stack[stackPointer] = stack[findNewBaseByLevel(instruction.getLevel())+instruction.getValue()];
+				stackPointer++;
+				instructionPointer++;
 				break;
 			case STO:
 				
