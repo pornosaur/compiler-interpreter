@@ -1,8 +1,7 @@
 void test() {
-    if (3 > 5) {
-        integer f = 888;
-    } else {
-        integer a = 999;
-    }
-
+   integer a = 0;
+   do {
+      a = a + 1;
+   }
+   while (a < 3);
 }

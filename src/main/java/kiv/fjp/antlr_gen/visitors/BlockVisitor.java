@@ -46,6 +46,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
             instructionList.add(jmpEndElse);
         }
 
+        //+1 because of jump end of if or else
         int jmpEndElsePos = instructionList.size() + 1, elseJmpPos = instructionList.size() + 1;
 		if(ctx.block().size() == 2) {
 			visit(ctx.block(1));
@@ -60,8 +61,10 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 	
 	@Override public Integer visitLoop_while(GrammarParser.Loop_whileContext ctx) {
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
-        int jmpBoolAdr = symbolTable.getLastAdr();
+
+        int jmpBoolAdr = instructionList.size() + 1;
         expressionVisitor.visit(ctx.bool_exp());
+
 
         Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
         instructionList.add(jmcInt);
@@ -69,10 +72,24 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         visit(ctx.block());
 
         instructionList.add(new Instruction(IntType.JMP, 0, jmpBoolAdr));
-        jmcInt.setValue(instructionList.size() + 1); //+1 => jump out of wile
+        jmcInt.setValue(instructionList.size() + 1); //+1 => jump out of while
 
         return null;
-        
+    }
+
+    @Override public Integer visitDo_while(GrammarParser.Do_whileContext ctx) {
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+        int jmpToDo = instructionList.size() + 1;
+
+        visitBlock(ctx.block());
+        expressionVisitor.visit(ctx.bool_exp());
+
+        instructionList.add(new Instruction(IntType.LIT, 0, 1));
+        instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.TEST_NONEQ.ordinal()));
+        instructionList.add(new Instruction(IntType.JMC, 0, jmpToDo));
+
+        return null;
+
     }
 	
 	@Override public Integer visitLoop_for(GrammarParser.Loop_forContext ctx) {
