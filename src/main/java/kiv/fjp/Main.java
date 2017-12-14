@@ -14,8 +14,6 @@ import kiv.fjp.antlr_gen.GrammarBaseVisitor;
 import kiv.fjp.antlr_gen.GrammarLexer;
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.visitors.ProgramVisitor;
-import kiv.fjp.interpreter.InstructionLoader;
-import kiv.fjp.interpreter.Interpreter;
 
 
 
@@ -27,7 +25,7 @@ public class Main
 {
     public static void main(String[] args)
     {
-    	/*String path = "test.c";
+    	String path = "test.c";
     	try {
 			GrammarLexer grammarLexer = new GrammarLexer(CharStreams.fromFileName(path));
 			CommonTokenStream commonTokenStream = new CommonTokenStream(grammarLexer);
@@ -49,10 +47,6 @@ public class Main
 			System.err.println(ex.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
-    	String path = "test_int";
-    	InstructionLoader instLoader = new InstructionLoader(path);
-    	Interpreter interpreter = new Interpreter(instLoader.loadInstructions());
-    	interpreter.runInterpret();
+		}
     }
 }
