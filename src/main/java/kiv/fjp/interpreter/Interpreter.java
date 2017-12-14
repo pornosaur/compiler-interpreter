@@ -22,7 +22,7 @@ public class Interpreter {
 	}
 	
 	public void runInterpret() {
-		while(true) {
+		while(instructionPointer != -1) {
 			
 			Instruction instruction = instructions.get(instructionPointer);
 			System.out.println(instructionPointer+" "+instruction.toString());
@@ -74,13 +74,10 @@ public class Interpreter {
 				instructionPointer++;
 				break;
 			case RET:
-				instructionPointer = instructions.get(base + 3).getValue();
+				instructionPointer = stack[base + 1];
 				stackPointer = base - 1;
 				base = stack[base];
-				//TODO
-				
-				return;
-				
+				break;
 			}
 			System.out.println("Instruction: "+instructionPointer);
 			System.out.println("Base: "+ base);
