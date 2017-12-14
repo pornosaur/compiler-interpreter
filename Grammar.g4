@@ -17,6 +17,7 @@ block
         |   const_declar
         |   def
         |   multiple_def
+        |   parallel_def
         |   loop
         |   statement
         |   s_switch
@@ -78,6 +79,9 @@ multiple_def
     :   ID ('=' ID)+ '=' (func |value | ternar_oper) ';'
     ;
 
+parallel_def
+    : '{'ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}'
+    ;
 
 num_exp
     :   num_exp op=('*' | '/') num_exp     # multiDiv

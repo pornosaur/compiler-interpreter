@@ -162,6 +162,16 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitMultiple_def(GrammarParser.Multiple_defContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#parallel_def}.
+	 * @param ctx the parse tree
+	 */
+	void enterParallel_def(GrammarParser.Parallel_defContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#parallel_def}.
+	 * @param ctx the parse tree
+	 */
+	void exitParallel_def(GrammarParser.Parallel_defContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code multiDiv}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree

@@ -103,6 +103,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMultiple_def(GrammarParser.Multiple_defContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#parallel_def}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParallel_def(GrammarParser.Parallel_defContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code multiDiv}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
