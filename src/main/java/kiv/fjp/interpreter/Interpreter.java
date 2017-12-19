@@ -1,6 +1,7 @@
 package kiv.fjp.interpreter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import kiv.fjp.antlr_gen.structures.Instruction;
 
@@ -10,12 +11,14 @@ public class Interpreter {
 
 	private int base;
 	private int[] stack;
+	private ArrayList<int[]> heap;
 	private int stackPointer;
 	private int instructionPointer;
 
 	public Interpreter(ArrayList<Instruction> instructions) {
 		this.instructions = instructions;
 		stack = new int[STACK_SIZE];
+		heap = new ArrayList<>();
 		base = 1;
 		stackPointer = -1;
 	}
@@ -75,6 +78,17 @@ public class Interpreter {
 				instructionPointer = stack[base + 1];
 				stackPointer = base - 2;
 				base = stack[base];
+				break;
+			case ALC:
+				heap.add(new int[stack[stackPointer]]);
+				stack[stackPointer] = heap.size()-1;
+				instructionPointer++;
+				break;
+			case POS:
+				int tmp = heap.get(stack[stackPointer-1])[stack[stackPointer]];
+				stackPointer--;
+				stack[stackPointer] = tmp;
+				instructionPointer++;
 				break;
 			}
 			System.out.println("Instruction: " + instructionPointer);

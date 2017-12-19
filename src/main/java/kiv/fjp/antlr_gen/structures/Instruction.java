@@ -11,7 +11,10 @@ public class Instruction {
 	    INT,		//zvyš obsah top-registru zásobníku o hodnotu A
 	    JMP,		//proveď skok na adresu A
 	    JMC,		//proveď skok na adresu A, je-li hodnota na vrcholu zásobníku 0
-	    RET;  		//návrat z procedury (return)
+	    RET,  		//návrat z procedury (return)
+		ALC,  		//alokuj místo pro pole/string podle hodnoty na vrcholu zásobníku
+		POS;		//pozice v poli, ze ktere se precte hodnota. Bere posledni dve hodnoty na zasobniku.
+					//Prvni urcuje pozici pole v halde a druha udava posun(index) .
 	}
 
 	public enum OPRType {
