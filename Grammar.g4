@@ -46,8 +46,9 @@ param
     ;
 
 declar
-    :   var_type ID ';'         # declarID
-    |   var_type def            # declarDef
+    :   var_type ID ';'        	 	# declarID
+    	data_type '[' (integer | ID) ']'; 	# declarArray
+    |   var_type def            	# declarDef
     ;
 
 const_declar
