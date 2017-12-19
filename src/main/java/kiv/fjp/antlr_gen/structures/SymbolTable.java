@@ -25,7 +25,6 @@ public class SymbolTable {
 		symbolsStack.add(new ArrayList<>());
 		lastAdr = 1;
 	}
-	
 
 	public void addSymbolList(int incAdr) {
 	    lastAdr = incAdr;

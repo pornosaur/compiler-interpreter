@@ -213,6 +213,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         int sizeListID = ctx.ID().size() - 1;
         String lastIDName = ctx.ID().get(sizeListID).getText();
         Symbol lastID = symbolTable.findSymbol(lastIDName);
+
         if (lastID == null) {
             throw new ParseCancellationException("ParseError - identificator `" + lastIDName + "` is not declared.");
         }
