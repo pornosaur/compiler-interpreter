@@ -82,7 +82,10 @@ multiple_def
 parallel_def
     : '{'ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}' ';'
     ;
-
+    
+array_def
+    : 	ID '['value']' '=' (func | ternar_oper | value) ';'
+    ;
 num_exp
     :   num_exp op=('*' | '/') num_exp     # multiDiv
     |   num_exp op=('+' | '-') num_exp     # plusMinus
@@ -91,10 +94,6 @@ num_exp
     |   ID                                 # numID
     |   '(' num_exp ')'                    # numBrackets
     |   sign=('+' | '-') num_exp           # signed
-    ;
-
-array_def
-    :   '{' (value_array (',' value_array)*)? '}'
     ;
 
 integer
