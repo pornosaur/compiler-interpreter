@@ -6,12 +6,11 @@ import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 
-public class ProgramVisitor<T> extends GrammarVisitor<Integer> {
+public class ProgramVisitor extends GrammarVisitor<Integer> {
 
-    private static final int DEF_SIZE_STACK = 4;        //D+S+RET_ADR+RET_VAL
+    private static final int DEF_SIZE_STACK = 3;        //D+S+RET_ADR+RET_VAL
     private static final int DEF_LEVEL = 0;
     
     @Override public Integer visitFunc_def(GrammarParser.Func_defContext ctx)  {
@@ -48,9 +47,7 @@ public class ProgramVisitor<T> extends GrammarVisitor<Integer> {
             }*/
 
 
-            instructionList.add(new Instruction(IntType.STO, 0, 3)); //store ret. value at adr = 3;
-            instructionList.add(new Instruction(IntType.INT, 0, -(stackSize+1))); //store return value behind actual base.
-            instructionList.add(new Instruction(IntType.LOD, 0, 3));
+            instructionList.add(new Instruction(IntType.STO, 0, -1)); //store ret. value at adr = 3;
         }
 
        /* if (returnType.getType() == DataType.Type.VOID && isReturn) {
@@ -76,6 +73,7 @@ public class ProgramVisitor<T> extends GrammarVisitor<Integer> {
             symbolTable.addSymbol(symbol);
             instructionList.add(new Instruction(IntType.STO, 0, symbol.getAdr()));
         }
+
         instructionList.add(new Instruction(IntType.INT, 0, -stack+ ctx.var_type().size()));
         return null;
     }

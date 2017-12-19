@@ -1,6 +1,7 @@
 package kiv.fjp.antlr_gen.structures;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Stack;
 
 
@@ -11,7 +12,11 @@ public class SymbolTable {
 	 */
 	private Stack<ArrayList<Symbol>> symbolsStack;
 
-	private int lastAdr;
+    /**
+     * The last possible used address for symbol.
+     */
+    private int lastAdr;
+
 	/**
 	 * Constructor for symbol table. Init symbols and backup of symbols.
 	 */
@@ -38,27 +43,27 @@ public class SymbolTable {
 	    lastAdr -= symbolsStack.peek().size();
 		symbolsStack.pop();
 	}
-	
-	/**
+
+    /**
 	 * Add new symbol to symbol list. If list contain the added symbol return false
 	 * otherwise it add symbol to the list and return true
 	 * @param symbol added symbol
 	 * @return Return true if symbol was added.
 	 */
 	public boolean addSymbol(Symbol symbol) {
-		for (Symbol tmpSymbol : symbolsStack.peek()) {
-			if (symbol.getIndentificator().compareTo(tmpSymbol.getIndentificator()) == 0) {
-				//TODO throw exception
-				return false;
-			}
-		}
+        for (Symbol tmpSymbol : symbolsStack.peek()) {
+            if (symbol.getIndentificator().compareTo(tmpSymbol.getIndentificator()) == 0) {
+                //TODO throw exception
+                return false;
+            }
+        }
 
         symbol.setAdr(lastAdr);
-		lastAdr++;
+        lastAdr++;
         symbolsStack.peek().add(symbol);
+
         return true;
 	}
-
 
 	/**
 	 * Find symbol in list of symbols by identificator. If list doesnt contain the search symbol return null,
@@ -92,9 +97,5 @@ public class SymbolTable {
 
     public int getActualSize() {
 	    return symbolsStack.peek().size();
-    }
-
-    public int getLastAdr() {
-	    return lastAdr;
     }
 }

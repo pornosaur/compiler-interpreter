@@ -1,7 +1,7 @@
-void test() {
-   integer a;
-   integer b;
-   integer c;
+integer a() {
+    return 1;
+}
 
-   {a,b,c} = {1,1+1,3};
+void test() {
+   a();
 }
