@@ -85,9 +85,14 @@ public class Interpreter {
 				instructionPointer++;
 				break;
 			case POS:
-				int tmp = heap.get(stack[stackPointer-1])[stack[stackPointer]];
+				int tmp1 = heap.get(stack[stackPointer-1])[stack[stackPointer]];
 				stackPointer--;
-				stack[stackPointer] = tmp;
+				stack[stackPointer] = tmp1;
+				instructionPointer++;
+				break;
+			case MOV:
+				heap.get(stack[stackPointer - 2])[stack[stackPointer - 1]] = stack[stackPointer];
+				stackPointer -=3;
 				instructionPointer++;
 				break;
 			}
