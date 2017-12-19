@@ -2,6 +2,7 @@ package kiv.fjp.antlr_gen.visitors;
 
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.GrammarParser.StatementContext;
+import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
@@ -20,10 +21,8 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 				symbolTable.addSymbolList();
 				//level++;
 
-
 				visit(ctx.getChild(i));
 
-				//intInstructionSize.setValue(symbolTable.getActualSize());
 				//level--;
 				symbolTable.removeSymbolList();
 			}else { // its declar or define of variables
@@ -118,6 +117,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         String id = ctx.ID().getText();
         String varType = ctx.var_type().getText();
 
+        instructionList.add(new Instruction(IntType.INT, 0, 1));
         if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.VAR))) {
             throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
         }
@@ -129,12 +129,19 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         String id = ctx.def().ID().getText();
         String varType = ctx.var_type().getText();
 
+        instructionList.add(new Instruction(IntType.INT, 0, 1));
         if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.VAR))) {
             throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
         }
 
         visitDef(ctx.def());
 
+	    return null;
+    }
+
+    @Override
+    public Integer visitDeclarArray(GrammarParser.DeclarArrayContext ctx) {
+        instructionList.add(new Instruction(IntType.INT, 0, 1));
 	    return null;
     }
 
@@ -204,6 +211,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
             visitFunc(ctx.func());
         }
 
+        System.out.println("S: " + id + "  adr: " + symbol.getAdr());
         instructionList.add(new Instruction(IntType.STO, symbol.getLevel(), symbol.getAdr()));
 
         return null;
@@ -263,7 +271,9 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
         expressionVisitor.visit(ctx);
 
-        instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
+        //if (symbol.getType() != DataType.Type.VOID) {
+            instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
+       // }
         instructionList.add(new Instruction(IntType.CAL, 0, symbol.getAdr()));
 
 	    return null;

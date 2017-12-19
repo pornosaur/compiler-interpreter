@@ -12,11 +12,14 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
 
     private static final int DEF_SIZE_STACK = 3;        //D+S+RET_ADR+RET_VAL
     private static final int DEF_LEVEL = 0;
-    
+
+    private boolean isRet = false;
+
     @Override public Integer visitFunc_def(GrammarParser.Func_defContext ctx)  {
         DataType returnType = new DataType(ctx.return_type().getText());
 
         int countParam = ctx.param()!= null ? ctx.param().ID().size() : 0;
+        isRet = returnType.getType() != DataType.Type.VOID;
         int stackSize = DEF_SIZE_STACK;
         level = DEF_LEVEL;
 
@@ -36,7 +39,7 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
         visitBlock(ctx.block());
 
         //TODO Is it necessary to recalculate value of INT for stack?
-        //intInstructionFunc.setValue(stackSize + symbolTable.getActualSize() - ctx.param().ID().size());
+       // intInstructionFunc.setValue(stackSize + symbolTable.getActualSize() - ctx.param().ID().size());
         intInstructionFunc.setValue(3);
 
         if (returnType.getType() != DataType.Type.VOID) {
@@ -55,17 +58,21 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
         instructionList.add(new Instruction(IntType.RET, 0, 0));
         symbolTable.removeSymbolList();
 
+        isRet = false;
+
         return null;
     }
 
     @Override
     public Integer visitParam(GrammarParser.ParamContext ctx) {
+        int ret = isRet ? 1 : 0;
+
         for (int i = 0; i < ctx.var_type().size(); i++) {
             String idType = ctx.var_type(i).getText();
             String id = ctx.ID(i).getText();
 
             symbolTable.addSymbol(new Symbol(id, idType, level,0, SymbolType.VAR));
-            instructionList.add(new Instruction(IntType.LOD, 0, -(i + 2)));
+            instructionList.add(new Instruction(IntType.LOD, 0, -(i + 1 + ret)));
         }
 
         return null;

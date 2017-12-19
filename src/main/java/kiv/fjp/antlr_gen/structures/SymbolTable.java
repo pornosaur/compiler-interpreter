@@ -12,10 +12,6 @@ public class SymbolTable {
 	 */
 	private Stack<ArrayList<Symbol>> symbolsStack;
 
-    /**
-     * The last possible used address for symbol.
-     */
-    private int lastAdr;
 
 	/**
 	 * Constructor for symbol table. Init symbols and backup of symbols.
@@ -23,11 +19,9 @@ public class SymbolTable {
 	public SymbolTable() {
 		this.symbolsStack = new Stack<>();
 		symbolsStack.add(new ArrayList<>());
-		lastAdr = 1;
 	}
 
 	public void addSymbolList(int incAdr) {
-	    lastAdr = incAdr;
 		symbolsStack.push( new ArrayList<>());
 	}
 
@@ -39,7 +33,6 @@ public class SymbolTable {
 	 * Set symbols from the top of the stack as actual symbols
 	 */
 	public void removeSymbolList() {
-	    lastAdr -= symbolsStack.peek().size();
 		symbolsStack.pop();
 	}
 
@@ -57,9 +50,9 @@ public class SymbolTable {
             }
         }
 
-        symbol.setAdr(lastAdr);
-        lastAdr++;
+        symbol.setAdr(symbolsStack.peek().size() + 3);
         symbolsStack.peek().add(symbol);
+        System.out.println("Symbol: - " + symbol.getIndentificator() + " = " + (symbolsStack.peek().size() + 3));
 
         return true;
 	}

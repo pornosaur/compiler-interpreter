@@ -100,6 +100,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitDeclarID(GrammarParser.DeclarIDContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code declarArray}
+	 * labeled alternative in {@link GrammarParser#declar}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclarArray(GrammarParser.DeclarArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declarArray}
+	 * labeled alternative in {@link GrammarParser#declar}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclarArray(GrammarParser.DeclarArrayContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code declarDef}
 	 * labeled alternative in {@link GrammarParser#declar}.
 	 * @param ctx the parse tree
@@ -171,6 +183,16 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParallel_def(GrammarParser.Parallel_defContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#array_def}.
+	 * @param ctx the parse tree
+	 */
+	void enterArray_def(GrammarParser.Array_defContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#array_def}.
+	 * @param ctx the parse tree
+	 */
+	void exitArray_def(GrammarParser.Array_defContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code multiDiv}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
@@ -255,16 +277,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIntegers(GrammarParser.IntegersContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link GrammarParser#array_def}.
-	 * @param ctx the parse tree
-	 */
-	void enterArray_def(GrammarParser.Array_defContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link GrammarParser#array_def}.
-	 * @param ctx the parse tree
-	 */
-	void exitArray_def(GrammarParser.Array_defContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GrammarParser#integer}.
 	 * @param ctx the parse tree

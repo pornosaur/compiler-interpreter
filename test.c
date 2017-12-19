@@ -8,5 +8,6 @@ integer a(integer f, integer g, integer c) {
 }
 
 void test() {
-   a(1, 2, 3);
+  integer f = a(1, 2, 3);
+  integer vysledek = f + 13;
 }

@@ -66,6 +66,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclarID(GrammarParser.DeclarIDContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code declarArray}
+	 * labeled alternative in {@link GrammarParser#declar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclarArray(GrammarParser.DeclarArrayContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code declarDef}
 	 * labeled alternative in {@link GrammarParser#declar}.
 	 * @param ctx the parse tree
@@ -108,6 +115,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitParallel_def(GrammarParser.Parallel_defContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link GrammarParser#array_def}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArray_def(GrammarParser.Array_defContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code multiDiv}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
@@ -157,12 +170,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIntegers(GrammarParser.IntegersContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#array_def}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArray_def(GrammarParser.Array_defContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#integer}.
 	 * @param ctx the parse tree
