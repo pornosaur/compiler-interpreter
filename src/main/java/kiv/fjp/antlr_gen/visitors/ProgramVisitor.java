@@ -66,8 +66,8 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
     public Integer visitParam(GrammarParser.ParamContext ctx) {
         //int ret = isRet ? 1 : 0;
 
-        for (int i = 0; i < ctx.var_type().size(); i++) {
-            String idType = ctx.var_type(i).getText();
+        for (int i = 0; i < ctx.data_type().size(); i++) {
+            String idType = ctx.data_type(i).getText();
             String id = ctx.ID(i).getText();
 
             symbolTable.addSymbol(new Symbol(id, idType, level,0, SymbolType.VAR));

@@ -57,7 +57,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         jmpEndElse.setValue(jmpEndElsePos);
 		jmcInt.setValue(elseJmpPos);
 
-        return null; 
+        return null;
     }
 	
 	@Override public Integer visitLoop_while(GrammarParser.Loop_whileContext ctx) {
@@ -102,7 +102,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     @Override
     public Integer visitConst_declar(GrammarParser.Const_declarContext ctx) {
         String id = ctx.def().ID().getText();
-        String varType = ctx.var_type().getText();
+        String varType = ctx.data_type().getText();
 
         Symbol symbol = new Symbol(id, varType, level, 0, SymbolType.VAR);
         if (! symbolTable.addSymbol(symbol)) {
@@ -117,7 +117,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 	
 	@Override public Integer visitDeclarID(GrammarParser.DeclarIDContext ctx) {
         String id = ctx.ID().getText();
-        String varType = ctx.var_type().getText();
+        String varType = ctx.data_type().getText();
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));
         if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.VAR))) {
@@ -129,7 +129,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 
     @Override public Integer visitDeclarDef(GrammarParser.DeclarDefContext ctx) {
         String id = ctx.def().ID().getText();
-        String varType = ctx.var_type().getText();
+        String varType = ctx.data_type().getText();
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));
         if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.VAR))) {
