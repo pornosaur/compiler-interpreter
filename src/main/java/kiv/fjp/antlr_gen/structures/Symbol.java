@@ -4,6 +4,7 @@ public class Symbol {
 
     public enum SymbolType {
         VAR,
+        ARRAY,
         CONST_VAR,
         FUNCTION;
     }

@@ -143,8 +143,56 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 
     @Override
     public Integer visitDeclarArray(GrammarParser.DeclarArrayContext ctx) {
+        String id = ctx.ID(0).getText();
+        String varType = ctx.data_type().getText();
+
         instructionList.add(new Instruction(IntType.INT, 0, 1));
+        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.ARRAY))) {
+            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+        }
+        
+        if(ctx.ID().size() == 2) {
+        	Symbol symbol = symbolTable.findSymbol(ctx.ID(1).getText());
+        	if(symbol != null) {
+        		instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), symbol.getAdr()));
+        		instructionList.add(new Instruction(IntType.ALC, 0,0));
+        	}
+        }else {
+        	int size = Integer.valueOf(ctx.integer().getText());
+        	instructionList.add(new Instruction(IntType.LIT, level, size));
+        	instructionList.add(new Instruction(IntType.ALC, 0, 0));
+        }
+        
 	    return null;
+    }
+    
+    @Override public Integer visitArray_def(GrammarParser.Array_defContext ctx) {
+    	String id = ctx.ID().getText();
+
+		Symbol symbol;
+		if ((symbol = symbolTable.findSymbol(id)) == null) {
+			throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+		}
+
+		/*if (symbol.getSymbolType() == SymbolType.CONST_VAR) {
+            throw new ParseCancellationException("ParseError - identificator " + id + " is const.");
+        }*/
+
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
+        instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), symbol.getAdr()));
+        expressionVisitor.visitValue(ctx.value(0));
+        
+        if (ctx.value().size() == 2) {
+            expressionVisitor.visitValue(ctx.value(1));
+        } else if (ctx.ternar_oper() != null) {
+            expressionVisitor.visitTernar_oper(ctx.ternar_oper());
+        } else {
+            visitFunc(ctx.func());
+        }
+
+        instructionList.add(new Instruction(IntType.MOV, 0, 0));
+
+        return null;
     }
 
     @Override public Integer visitParallel_def(GrammarParser.Parallel_defContext ctx) {

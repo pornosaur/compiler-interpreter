@@ -189,6 +189,14 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         visitID(ctx.getText());
         return ctx.getText();
     }
+    
+    @Override
+    public String visitNumArray(GrammarParser.NumArrayContext ctx) {
+        visitID(ctx.getText());
+        visit(ctx.num_exp());
+        instructionList.add(new Instruction(IntType.POS, 0, 0));
+        return null;
+    }
 
     @Override
     public String visitBoolID(GrammarParser.BoolIDContext ctx) {
