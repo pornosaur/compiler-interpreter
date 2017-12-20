@@ -18,6 +18,7 @@ block
         |   def
         |   multiple_def
         |   parallel_def
+        |   array_def
         |   loop
         |   statement
         |   s_switch
@@ -70,6 +71,7 @@ parallel_def
 array_def
     : 	ID '['value']' '=' (func | ternar_oper | value) ';'
     ;
+
 num_exp
     :   num_exp op=('*' | '/') num_exp     # multiDiv
     |   num_exp op=('+' | '-') num_exp     # plusMinus
