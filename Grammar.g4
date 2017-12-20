@@ -76,6 +76,7 @@ num_exp
     |   integer                            # integers
     |   integer ('.' integer)?             # real
     |   func                               # numFunc
+    |   ID'['num_exp']'                    # numArray
     |   ID                                 # numID
     |   '(' num_exp ')'                    # numBrackets
     |   sign=('+' | '-') num_exp           # signed

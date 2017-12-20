@@ -200,6 +200,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitNumID(GrammarParser.NumIDContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code numArray}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void enterNumArray(GrammarParser.NumArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code numArray}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 */
+	void exitNumArray(GrammarParser.NumArrayContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code numBrackets}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree

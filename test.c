@@ -1,14 +1,12 @@
-integer f(integer f) {
-    return f + 2;
-}
-
-integer a(integer f) {
-    integer a = 5;
-    if (f == 1) {
-        a = a + f(2);
+void a(integer f) {
+    if (f < 3) {
+        integer k = 3;
+    } else {
+        integer i = 10;
+        return i;
     }
 
-    return a;
+    a(f+1);
 }
 
 integer test() {

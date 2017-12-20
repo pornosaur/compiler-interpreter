@@ -125,6 +125,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNumID(GrammarParser.NumIDContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code numArray}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumArray(GrammarParser.NumArrayContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code numBrackets}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
