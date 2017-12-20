@@ -2,7 +2,6 @@ package kiv.fjp.antlr_gen.visitors;
 
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.GrammarParser.StatementContext;
-import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
@@ -10,9 +9,12 @@ import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class BlockVisitor extends GrammarVisitor<Integer>{
+
+    private int param;
 	
-	public BlockVisitor(int level){
+	public BlockVisitor(int level, int param){
 	    this.level = level;
+	    this.param = param;
 	}
 
 	@Override public Integer visitBlock(GrammarParser.BlockContext ctx) {
@@ -33,7 +35,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 	
 	@Override public Integer visitStatement(GrammarParser.StatementContext ctx) {
-	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
 		expressionVisitor.visit(ctx.bool_exp());
 
         Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
@@ -59,7 +61,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 	
 	@Override public Integer visitLoop_while(GrammarParser.Loop_whileContext ctx) {
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
 
         int jmpBoolAdr = instructionList.size() + 1;
         expressionVisitor.visit(ctx.bool_exp());
@@ -77,7 +79,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 
     @Override public Integer visitDo_while(GrammarParser.Do_whileContext ctx) {
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level,this);
         int jmpToDo = instructionList.size() + 1;
 
         visitBlock(ctx.block());
@@ -146,7 +148,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 
     @Override public Integer visitParallel_def(GrammarParser.Parallel_defContext ctx) {
-	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
         int idSize = ctx.ID().size();
         int valSize = ctx.value() == null ? ctx.func().size() : ctx.value().size();
 
@@ -179,14 +181,17 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 
     @Override public Integer visitR_return(GrammarParser.R_returnContext ctx) {
-	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
 
 	    if (ctx.value() != null ||ctx.ternar_oper() != null) {
 	        expressionVisitor.visit(ctx);
+
         } else {
 	        visitFunc(ctx.func());
         }
 
+        instructionList.add(new Instruction(IntType.STO, 0, -param-1));
+        instructionList.add(new Instruction(IntType.RET, 0, 0));
 	    return null;
     }
 
@@ -204,7 +209,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
             throw new ParseCancellationException("ParseError - identificator " + id + " is const.");
         }
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
         if (ctx.value() != null) {
             expressionVisitor.visitValue(ctx.value());
         } else if (ctx.ternar_oper() != null) {
@@ -232,7 +237,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
             throw new ParseCancellationException("ParseError - identificator " + lastIDName + " is const.");
         }
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
         if (ctx.value() != null) {
             expressionVisitor.visitValue(ctx.value());
         } else if (ctx.ternar_oper() != null) {
@@ -270,9 +275,10 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
             throw new ParseCancellationException("ParseError - function " + id + " is not declared before.");
         }
 
+        System.out.println("SET RET VAL");
         instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
         expressionVisitor.visit(ctx);
 
         instructionList.add(new Instruction(IntType.CAL, 0, symbol.getAdr()));

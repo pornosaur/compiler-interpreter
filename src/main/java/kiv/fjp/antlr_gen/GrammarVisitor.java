@@ -41,18 +41,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitData_type(GrammarParser.Data_typeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link GrammarParser#array}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArray(GrammarParser.ArrayContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#var_type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVar_type(GrammarParser.Var_typeContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link GrammarParser#param}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -91,12 +79,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitValue(GrammarParser.ValueContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#value_array}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitValue_array(GrammarParser.Value_arrayContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#def}.
 	 * @param ctx the parse tree

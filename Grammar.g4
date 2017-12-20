@@ -9,7 +9,7 @@ func_def
     ;
 
 return_type
-    :   var_type | 'void'
+    :   data_type | 'void'
     ;
 
 block
@@ -32,27 +32,18 @@ data_type
     |   'bool'
     ;
 
-array
-    :   data_type '[' ']'
-    ;
-
-var_type
-    :   data_type
-    |   array
-    ;
-
 param
-    :   (var_type ID (',' var_type ID)*)?
+    :   (data_type ID (',' data_type ID)*)?
     ;
 
 declar
-    :   var_type ID ';'        	             	# declarID
-    |	data_type '[' (integer | ID) ']' ';' 	# declarArray
-    |   var_type def            	            # declarDef
+    :   data_type ID ';'        	            # declarID
+    |	data_type ID '[' (integer | ID) ']' ';' # declarArray
+    |   data_type def            	            # declarDef
     ;
 
 const_declar
-    :   'const' var_type def
+    :   'const' data_type def
     ;
 
 value
@@ -61,14 +52,6 @@ value
         |   str_def
         |   bool_exp
         |   array_def
-        )
-    ;
-
-value_array
-    :   (   ID
-        |   num_exp
-        |   str_def
-        |   bool_exp
         )
     ;
 
@@ -148,7 +131,7 @@ loop_for
     ;
 
 foreach
-    :   'foreach' '(' var_type ID ':' ID ')' '{' block '}'
+    :   'foreach' '(' data_type ID ':' ID ')' '{' block '}'
     ;
 
 s_switch

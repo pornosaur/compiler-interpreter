@@ -11,9 +11,11 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 public class ExpressionVisitor extends GrammarVisitor<String>{
 
 	private int level;
+	private BlockVisitor block;
 
-	public ExpressionVisitor(int level) {
+	public ExpressionVisitor(int level, BlockVisitor block) {
 		this.level = level;
+		this.block = block;
 	}
 
 
@@ -125,7 +127,8 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitNumFunc(GrammarParser.NumFuncContext ctx){
-        BlockVisitor block = new BlockVisitor(level);
+
+        //BlockVisitor block = new BlockVisitor(level, param);
         block.visitFunc(ctx.func());
 
         return null;

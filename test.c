@@ -1,11 +1,16 @@
-integer ff(integer s, integer k, integer f) {
-    return s+k+f;
+integer f(integer f) {
+    return f + 2;
 }
 
-integer a() {
-    return 1+ff(2,8,5);
+integer a(integer f) {
+    integer a = 5;
+    if (f == 1) {
+        a = a + f(2);
+    }
+
+    return a;
 }
 
-void test() {
-  integer f = a();
+integer test() {
+  integer f = a(1);
 }

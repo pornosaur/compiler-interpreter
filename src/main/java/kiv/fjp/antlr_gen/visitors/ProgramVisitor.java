@@ -14,6 +14,7 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
     private static final int DEF_LEVEL = 0;
 
     private boolean isRet = false;
+    private int param;
 
     @Override public Integer visitFunc_def(GrammarParser.Func_defContext ctx)  {
         DataType returnType = new DataType(ctx.return_type().getText());
@@ -22,6 +23,7 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
         isRet = returnType.getType() != DataType.Type.VOID;
         int stackSize = DEF_SIZE_STACK;
         level = DEF_LEVEL;
+        param = countParam;
 
         Instruction intInstructionFunc = new Instruction(IntType.INT, 0, 0);
         instructionList.add(intInstructionFunc);
@@ -38,8 +40,6 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
 
         visitBlock(ctx.block());
 
-        //TODO Is it necessary to recalculate value of INT for stack?
-       // intInstructionFunc.setValue(stackSize + symbolTable.getActualSize() - ctx.param().ID().size());
         intInstructionFunc.setValue(3);
 
         if (returnType.getType() != DataType.Type.VOID) {
@@ -58,8 +58,6 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
         instructionList.add(new Instruction(IntType.RET, 0, 0));
 
         symbolTable.removeSymbolList();
-
-        isRet = false;
 
         return null;
     }
@@ -81,7 +79,7 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
     }
     
     @Override public Integer visitBlock(GrammarParser.BlockContext ctx) {
-    	BlockVisitor blockVisitor = new BlockVisitor(level);
+    	BlockVisitor blockVisitor = new BlockVisitor(level, param);
         return blockVisitor.visitBlock(ctx);
     }
     
