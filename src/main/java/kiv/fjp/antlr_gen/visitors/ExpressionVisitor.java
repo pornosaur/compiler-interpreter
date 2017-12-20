@@ -61,6 +61,8 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 		return null;
 	}
 
+
+
     @Override
     public String visitReal(GrammarParser.RealContext ctx){
         String decadic = visit(ctx.integer(0));
@@ -117,6 +119,14 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         OPRType oprType = op.compareTo("!=") == 0 ? OPRType.TEST_NONEQ : OPRType.TEST_EQ;
 
         instructionList.add(new Instruction(IntType.OPR, 0, oprType.ordinal()));
+
+        return null;
+    }
+
+    @Override
+    public String visitNumFunc(GrammarParser.NumFuncContext ctx){
+        BlockVisitor block = new BlockVisitor(level);
+        block.visitFunc(ctx.func());
 
         return null;
     }

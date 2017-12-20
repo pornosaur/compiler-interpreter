@@ -164,6 +164,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReal(GrammarParser.RealContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code numFunc}
+	 * labeled alternative in {@link GrammarParser#num_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumFunc(GrammarParser.NumFuncContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code integers}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree

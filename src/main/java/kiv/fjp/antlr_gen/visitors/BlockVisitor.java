@@ -189,6 +189,8 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 
 	    return null;
     }
+
+
 	
 	@Override public Integer visitDef(GrammarParser.DefContext ctx) {
         String id = ctx.ID().getText();
@@ -268,13 +270,13 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
             throw new ParseCancellationException("ParseError - function " + id + " is not declared before.");
         }
 
+        instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
+
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level);
         expressionVisitor.visit(ctx);
 
-        //if (symbol.getType() != DataType.Type.VOID) {
-            instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
-       // }
         instructionList.add(new Instruction(IntType.CAL, 0, symbol.getAdr()));
+        instructionList.add(new Instruction(IntType.INT, 0, -ctx.value().size()));
 
 	    return null;
     }

@@ -1,13 +1,11 @@
-integer ff(integer s, integer k) {
-    return s+k;
+integer ff(integer s, integer k, integer f) {
+    return s+k+f;
 }
 
-integer a(integer f, integer g, integer c) {
-    integer ch = ff(2, 8);
-    return 1 + f + g + c + ch;
+integer a() {
+    return 1+ff(2,8,5);
 }
 
 void test() {
-  integer f = a(1, 2, 3);
-  integer vysledek = f + 13;
+  integer f = a();
 }

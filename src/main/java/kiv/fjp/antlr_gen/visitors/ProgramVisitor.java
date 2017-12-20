@@ -48,7 +48,7 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
             }*/
 
 
-            instructionList.add(new Instruction(IntType.STO, 0, -1)); //store ret. value at adr = 3;
+            instructionList.add(new Instruction(IntType.STO, 0, -countParam-1)); //store ret. value at adr = 3;
         }
 
        /* if (returnType.getType() == DataType.Type.VOID && isReturn) {
@@ -56,6 +56,7 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
         }*/
 
         instructionList.add(new Instruction(IntType.RET, 0, 0));
+
         symbolTable.removeSymbolList();
 
         isRet = false;
@@ -65,15 +66,16 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
 
     @Override
     public Integer visitParam(GrammarParser.ParamContext ctx) {
-        int ret = isRet ? 1 : 0;
+        //int ret = isRet ? 1 : 0;
 
         for (int i = 0; i < ctx.var_type().size(); i++) {
             String idType = ctx.var_type(i).getText();
             String id = ctx.ID(i).getText();
 
             symbolTable.addSymbol(new Symbol(id, idType, level,0, SymbolType.VAR));
-            instructionList.add(new Instruction(IntType.LOD, 0, -(i + 1 + ret)));
+            instructionList.add(new Instruction(IntType.LOD, 0, -(i + 1)));
         }
+
 
         return null;
     }
