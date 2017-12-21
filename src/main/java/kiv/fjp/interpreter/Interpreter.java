@@ -23,11 +23,12 @@ public class Interpreter {
 		stackPointer = -1;
 	}
 
-	public void runInterpret() {
+	public ArrayList<String> runInterpret() {
+		ArrayList<String> steps = new ArrayList<>();
 		while (instructionPointer != -1) {
 
 			Instruction instruction = instructions.get(instructionPointer);
-			System.out.println(instructionPointer + " " + instruction.toString());
+			String step = instructionPointer + " " + instruction.toString() + "\n";
 			switch (instruction.getIntstruction()) {
 			case JMP:
 				instructionPointer = instruction.getValue();
@@ -48,11 +49,17 @@ public class Interpreter {
 				instructionPointer++;
 				break;
 			case LOD:
-				stack[stackPointer] = stack[findNewBaseByLevel(instruction.getLevel()) + instruction.getValue()];
 				stackPointer++;
+				stack[stackPointer] = stack[findNewBaseByLevel(instruction.getLevel()) + instruction.getValue()-1];
 				instructionPointer++;
+				
 				break;
 			case STO:
+				if(findNewBaseByLevel(instruction.getLevel()) + instruction.getValue() - 1==-1) {
+					instructionPointer++;
+					continue;
+					
+				}
 				stack[findNewBaseByLevel(instruction.getLevel()) + instruction.getValue() - 1] = stack[stackPointer];
 				stackPointer--;
 				instructionPointer++;
@@ -81,6 +88,7 @@ public class Interpreter {
 				break;
 			case ALC:
 				heap.add(new int[stack[stackPointer]]);
+				stackPointer--;
 				stack[stackPointer] = heap.size()-1;
 				instructionPointer++;
 				break;
@@ -96,14 +104,17 @@ public class Interpreter {
 				instructionPointer++;
 				break;
 			}
-			System.out.println("Instruction: " + instructionPointer);
-			System.out.println("Base: " + base);
-			System.out.println("Stack pointer: " + (stackPointer + 1));
+			step += "Next instruction: " + instructionPointer + "\n";
+			step += "Base: " + base + "\n";
+			step += "Stack pointer: " + (stackPointer + 1) + "\n";
 			for (int i = 0; i <= stackPointer; i++) {
-				System.out.println(i + 1 + " " + stack[i]);
+				step += i + 1 + " " + stack[i] + "\n";
 			}
-			System.out.println("---------------------------------------------");
+			step += "---------------------------------------------\n";
+			steps.add(step);
+			//System.out.println(step);
 		}
+		return steps;
 	}
 
 	private int findNewBaseByLevel(int level) {

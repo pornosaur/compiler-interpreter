@@ -24,7 +24,7 @@ public class InstructionLoader {
 		    String line;
 		    while ((line = br.readLine()) != null) {
 		    	strInstr = line.split("\t");
-		    	instructions.add(new Instruction(Instruction.IntType.valueOf(strInstr[0]), Integer.valueOf(strInstr[1]), Integer.valueOf(strInstr[2])));
+		    	instructions.add(new Instruction(Instruction.IntType.valueOf(strInstr[1]), Integer.valueOf(strInstr[2]), Integer.valueOf(strInstr[3])));
 		    }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
