@@ -13,16 +13,16 @@ return_type
     ;
 
 block
-    :   (   declar
-        |   const_declar
-        |   def
-        |   multiple_def
-        |   parallel_def
-        |   array_def
+    :   (   declar ';'
+        |   const_declar ';'
+        |   def ';'
+        |   multiple_def ';'
+        |   parallel_def ';'
+        |   array_def ';'
         |   loop
         |   statement
         |   s_switch
-        |   call_fnc
+        |   call_fnc ';'
         )*
          r_return?
     ;
@@ -38,9 +38,9 @@ param
     ;
 
 declar
-    :   data_type ID ';'        	            # declarID
-    |	data_type ID '[' (integer | ID) ']' ';' # declarArray
-    |   data_type def            	            # declarDef
+    :   data_type ID         	            # declarID
+    |	data_type ID '[' (integer | ID) ']' # declarArray
+    |   data_type def            	        # declarDef
     ;
 
 const_declar
@@ -52,24 +52,24 @@ value
         |   num_exp
         |   str_def
         |   bool_exp
-        |   array_def
+        |   array_def ';'
         )
     ;
 
 def
-    :   ID '=' (func | ternar_oper | value) ';'
+    :   ID '=' (func | ternar_oper | value)
     ;
 
 multiple_def
-    :   ID ('=' ID)+ '=' (func |value | ternar_oper) ';'
+    :   ID ('=' ID)+ '=' (func |value | ternar_oper)
     ;
 
 parallel_def
-    : '{'ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}' ';'
+    : '{'ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}'
     ;
     
 array_def
-    : 	ID '['value']' '=' (func | ternar_oper | value) ';'
+    : 	ID '['value']' '=' (func | ternar_oper | value)
     ;
 
 num_exp
@@ -146,7 +146,7 @@ s_switch
     ;
 
 call_fnc
-    :   func ';'
+    :   func
     ;
 
 func

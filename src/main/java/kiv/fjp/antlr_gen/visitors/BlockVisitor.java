@@ -2,6 +2,7 @@ package kiv.fjp.antlr_gen.visitors;
 
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.GrammarParser.StatementContext;
+import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
@@ -94,9 +95,30 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 	
 	@Override public Integer visitLoop_for(GrammarParser.Loop_forContext ctx) {
-		//TODO
-        return visitChildren(ctx);
-        
+        ExpressionVisitor ev = new ExpressionVisitor(level, this);
+        String id = ctx.def(0).ID().getText();
+
+        Symbol symbol = new Symbol(id, ctx.data_type().getText(), level, 0, SymbolType.VAR);
+        if (! symbolTable.addSymbol(symbol)) {
+            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+        }
+
+        instructionList.add(new Instruction(IntType.INT, 0, 1));
+        visit(ctx.def(0));
+
+        int jmpBoolAdr = instructionList.size() + 1;
+        ev.visit(ctx.bool_exp());
+
+        Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
+        instructionList.add(jmcInt);
+
+        visit(ctx.def(1));
+        visit(ctx.block());
+
+        instructionList.add(new Instruction(IntType.JMP, 0, jmpBoolAdr));
+        jmcInt.setValue(instructionList.size() + 1); //+1 => jump out of while
+
+        return null;
     }
 
     @Override
@@ -323,7 +345,6 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
             throw new ParseCancellationException("ParseError - function " + id + " is not declared before.");
         }
 
-        System.out.println("SET RET VAL");
         instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
 
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
