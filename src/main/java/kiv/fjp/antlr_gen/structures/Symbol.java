@@ -6,7 +6,7 @@ public class Symbol {
         VAR,
         ARRAY,
         CONST_VAR,
-        FUNCTION;
+        FUNCTION
     }
 
 	private String indentificator;
@@ -15,7 +15,6 @@ public class Symbol {
 	private int adr;
 	private int size;
 	private SymbolType symbolType;
-	private boolean isDefined;
 
 	public Symbol(String indentificator, String type, int level, int size, SymbolType symbolType) {
 		this.indentificator = indentificator;
@@ -23,7 +22,6 @@ public class Symbol {
 		this.level = level;
 		this.size = size;
 		this.symbolType = symbolType;
-		this.isDefined = false;
 	}
 
 	public String getIndentificator() {
@@ -45,14 +43,6 @@ public class Symbol {
     public void setSymbolType(SymbolType symbolType) {
         this.symbolType = symbolType;
     }
-
-    public boolean isDefined() {
-		return isDefined;
-	}
-
-	public void setDefined(boolean isDefined) {
-		this.isDefined = isDefined;
-	}
 
 	public int getLevel() { return level; }
 	

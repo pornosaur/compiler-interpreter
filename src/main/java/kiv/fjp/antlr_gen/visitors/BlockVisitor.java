@@ -2,6 +2,7 @@ package kiv.fjp.antlr_gen.visitors;
 
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.GrammarParser.StatementContext;
+import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
@@ -141,8 +142,14 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String varType = ctx.data_type().getText();
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));
-        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.VAR))) {
+        Symbol symbol = new Symbol(id, varType, level, 0, SymbolType.VAR);
+        if(! symbolTable.addSymbol(symbol)) {
             throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+        }
+
+        if (symbol.getType()== DataType.Type.INTEGER || symbol.getType() == DataType.Type.BOOL) {
+            instructionList.add(new Instruction(IntType.LIT, 0, 0));
+            instructionList.add(new Instruction(IntType.STO, 0, symbol.getAdr()));
         }
 
         return null;
