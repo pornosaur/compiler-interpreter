@@ -37,8 +37,9 @@ public class Interpreter {
 				if (stack[stackPointer] == 0) {
 					instructionPointer = instruction.getValue();
 				}
+				instructionPointer = instruction.getValue();
 				stackPointer--;
-				instructionPointer++;
+
 				break;
 			case OPR:
 				processOPR(instruction.getValue());
@@ -112,7 +113,7 @@ public class Interpreter {
 			}
 			step += "---------------------------------------------\n";
 			steps.add(step);
-			//System.out.println(step);
+			System.out.println(step);
 		}
 		return steps;
 	}
