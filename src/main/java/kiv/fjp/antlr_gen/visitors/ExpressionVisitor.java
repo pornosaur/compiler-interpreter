@@ -127,9 +127,10 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitNumFunc(GrammarParser.NumFuncContext ctx){
-
-        //BlockVisitor block = new BlockVisitor(level, param);
-        block.visitFunc(ctx.func());
+       String s = block.visitFunc(ctx.func());
+       if (s.compareTo("integer") != 0) {
+           throw new ParseCancellationException("ParseError - you could not call '"+ s +"' function in expression.");
+       }
 
         return null;
     }

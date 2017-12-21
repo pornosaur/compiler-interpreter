@@ -2,14 +2,13 @@ package kiv.fjp.antlr_gen.visitors;
 
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.GrammarParser.StatementContext;
-import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
-public class BlockVisitor extends GrammarVisitor<Integer>{
+public class BlockVisitor extends GrammarVisitor<String>{
 
     private int param;
 	
@@ -18,7 +17,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 	    this.param = param;
 	}
 
-	@Override public Integer visitBlock(GrammarParser.BlockContext ctx) {
+	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
 		for(int i = 0; i < ctx.getChildCount();i++) {
 			if(ctx.getChild(i) instanceof StatementContext) { //TODO for another statements
 				symbolTable.addSymbolList();
@@ -35,7 +34,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         return null;
     }
 	
-	@Override public Integer visitStatement(GrammarParser.StatementContext ctx) {
+	@Override public String visitStatement(GrammarParser.StatementContext ctx) {
 	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
 		expressionVisitor.visit(ctx.bool_exp());
 
@@ -61,7 +60,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         return null;
     }
 	
-	@Override public Integer visitLoop_while(GrammarParser.Loop_whileContext ctx) {
+	@Override public String visitLoop_while(GrammarParser.Loop_whileContext ctx) {
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
 
         int jmpBoolAdr = instructionList.size() + 1;
@@ -79,7 +78,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         return null;
     }
 
-    @Override public Integer visitDo_while(GrammarParser.Do_whileContext ctx) {
+    @Override public String visitDo_while(GrammarParser.Do_whileContext ctx) {
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level,this);
         int jmpToDo = instructionList.size() + 1;
 
@@ -94,7 +93,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 
     }
 	
-	@Override public Integer visitLoop_for(GrammarParser.Loop_forContext ctx) {
+	@Override public String visitLoop_for(GrammarParser.Loop_forContext ctx) {
         ExpressionVisitor ev = new ExpressionVisitor(level, this);
         String id = ctx.def(0).ID().getText();
 
@@ -122,7 +121,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 
     @Override
-    public Integer visitConst_declar(GrammarParser.Const_declarContext ctx) {
+    public String visitConst_declar(GrammarParser.Const_declarContext ctx) {
         String id = ctx.def().ID().getText();
         String varType = ctx.data_type().getText();
 
@@ -137,7 +136,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         return null;
     }
 	
-	@Override public Integer visitDeclarID(GrammarParser.DeclarIDContext ctx) {
+	@Override public String visitDeclarID(GrammarParser.DeclarIDContext ctx) {
         String id = ctx.ID().getText();
         String varType = ctx.data_type().getText();
 
@@ -149,7 +148,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         return null;
     }
 
-    @Override public Integer visitDeclarDef(GrammarParser.DeclarDefContext ctx) {
+    @Override public String visitDeclarDef(GrammarParser.DeclarDefContext ctx) {
         String id = ctx.def().ID().getText();
         String varType = ctx.data_type().getText();
 
@@ -164,7 +163,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 
     @Override
-    public Integer visitDeclarArray(GrammarParser.DeclarArrayContext ctx) {
+    public String visitDeclarArray(GrammarParser.DeclarArrayContext ctx) {
         String id = ctx.ID(0).getText();
         String varType = ctx.data_type().getText();
 
@@ -188,7 +187,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 	    return null;
     }
     
-    @Override public Integer visitArray_def(GrammarParser.Array_defContext ctx) {
+    @Override public String visitArray_def(GrammarParser.Array_defContext ctx) {
     	String id = ctx.ID().getText();
 
 		Symbol symbol;
@@ -209,7 +208,10 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         } else if (ctx.ternar_oper() != null) {
             expressionVisitor.visitTernar_oper(ctx.ternar_oper());
         } else {
-            visitFunc(ctx.func());
+            String s = visitFunc(ctx.func());
+            if (s.compareTo("void") == 0) {
+                throw new ParseCancellationException("ParseError - you could not assigned void function.");
+            }
         }
 
         instructionList.add(new Instruction(IntType.MOV, 0, 0));
@@ -217,7 +219,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         return null;
     }
 
-    @Override public Integer visitParallel_def(GrammarParser.Parallel_defContext ctx) {
+    @Override public String visitParallel_def(GrammarParser.Parallel_defContext ctx) {
 	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
         int idSize = ctx.ID().size();
         int valSize = ctx.value() == null ? ctx.func().size() : ctx.value().size();
@@ -241,7 +243,11 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
             if (ctx.value() != null) {
                 expressionVisitor.visitValue(ctx.value(i));
             } else {
-                visitFunc(ctx.func(i));
+                String s = visitFunc(ctx.func(i));
+                if (s.compareTo("void") == 0) {
+                    throw new ParseCancellationException("ParseError - you could not assigned void function.");
+                }
+
             }
 
             instructionList.add(new Instruction(IntType.STO, symbol.getLevel(), symbol.getAdr()));
@@ -250,14 +256,16 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 	    return null;
     }
 
-    @Override public Integer visitR_return(GrammarParser.R_returnContext ctx) {
+    @Override public String visitR_return(GrammarParser.R_returnContext ctx) {
 	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
 
 	    if (ctx.value() != null ||ctx.ternar_oper() != null) {
 	        expressionVisitor.visit(ctx);
-
         } else {
-	        visitFunc(ctx.func());
+	       String s = visitFunc(ctx.func());
+	       if (s.compareTo("void") == 0) {
+               throw new ParseCancellationException("ParseError - you could not call void function in return.");
+           }
         }
 
         instructionList.add(new Instruction(IntType.STO, 0, -param-1));
@@ -267,7 +275,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
 
 
 	
-	@Override public Integer visitDef(GrammarParser.DefContext ctx) {
+	@Override public String visitDef(GrammarParser.DefContext ctx) {
         String id = ctx.ID().getText();
 
 		Symbol symbol;
@@ -285,7 +293,10 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         } else if (ctx.ternar_oper() != null) {
             expressionVisitor.visitTernar_oper(ctx.ternar_oper());
         } else {
-            visitFunc(ctx.func());
+            String s = visitFunc(ctx.func());
+            if (s.compareTo("void") == 0) {
+                throw new ParseCancellationException("ParseError - you could not assigned void function.");
+            }
         }
 
         System.out.println("S: " + id + "  adr: " + symbol.getAdr());
@@ -294,7 +305,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         return null;
     }
 
-    @Override public Integer visitMultiple_def(GrammarParser.Multiple_defContext ctx) {
+    @Override public String visitMultiple_def(GrammarParser.Multiple_defContext ctx) {
         int sizeListID = ctx.ID().size() - 1;
         String lastIDName = ctx.ID().get(sizeListID).getText();
         Symbol lastID = symbolTable.findSymbol(lastIDName);
@@ -313,7 +324,10 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         } else if (ctx.ternar_oper() != null) {
             expressionVisitor.visitTernar_oper(ctx.ternar_oper());
         } else {
-            visitFunc(ctx.func());
+            String s = visitFunc(ctx.func());
+            if (s.compareTo("void") == 0) {
+                throw new ParseCancellationException("ParseError - you could not assigned void function.");
+            }
         }
 
         instructionList.add(new Instruction(IntType.STO, lastID.getLevel(), lastID.getAdr()));
@@ -337,7 +351,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
     }
 
     @Override
-    public Integer visitFunc(GrammarParser.FuncContext ctx) {
+    public String visitFunc(GrammarParser.FuncContext ctx) {
         String id = ctx.ID().getText();
 
         Symbol symbol = symbolTable.findSymbol(id, SymbolType.FUNCTION);
@@ -353,7 +367,7 @@ public class BlockVisitor extends GrammarVisitor<Integer>{
         instructionList.add(new Instruction(IntType.CAL, 0, symbol.getAdr()));
         instructionList.add(new Instruction(IntType.INT, 0, -ctx.value().size()));
 
-	    return null;
+	    return symbol.getType().toString();
     }
 	
 	

@@ -282,12 +282,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitS_switch(GrammarParser.S_switchContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link GrammarParser#call_fnc}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCall_fnc(GrammarParser.Call_fncContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link GrammarParser#func}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

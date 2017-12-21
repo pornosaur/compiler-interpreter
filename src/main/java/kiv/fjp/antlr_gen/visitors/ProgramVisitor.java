@@ -8,7 +8,7 @@ import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 
 
-public class ProgramVisitor extends GrammarVisitor<Integer> {
+public class ProgramVisitor extends GrammarVisitor<String> {
 
     private static final int DEF_SIZE_STACK = 3;        //D+S+RET_ADR+RET_VAL
     private static final int DEF_LEVEL = 0;
@@ -16,7 +16,7 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
     private boolean isRet = false;
     private int param;
 
-    @Override public Integer visitFunc_def(GrammarParser.Func_defContext ctx)  {
+    @Override public String visitFunc_def(GrammarParser.Func_defContext ctx)  {
         DataType returnType = new DataType(ctx.return_type().getText());
 
         int countParam = ctx.param()!= null ? ctx.param().ID().size() : 0;
@@ -63,7 +63,7 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
     }
 
     @Override
-    public Integer visitParam(GrammarParser.ParamContext ctx) {
+    public String visitParam(GrammarParser.ParamContext ctx) {
         //int ret = isRet ? 1 : 0;
 
         for (int i = 0; i < ctx.data_type().size(); i++) {
@@ -78,7 +78,7 @@ public class ProgramVisitor extends GrammarVisitor<Integer> {
         return null;
     }
     
-    @Override public Integer visitBlock(GrammarParser.BlockContext ctx) {
+    @Override public String visitBlock(GrammarParser.BlockContext ctx) {
     	BlockVisitor blockVisitor = new BlockVisitor(level, param);
         return blockVisitor.visitBlock(ctx);
     }

@@ -22,7 +22,7 @@ block
         |   loop
         |   statement
         |   s_switch
-        |   call_fnc ';'
+        |   func ';'
         )*
          r_return?
     ;
@@ -143,10 +143,6 @@ s_switch
           |
         ( ('default:')+ block 'break'?)?
         '}'
-    ;
-
-call_fnc
-    :   func
     ;
 
 func
