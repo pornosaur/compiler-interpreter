@@ -2,6 +2,7 @@ package kiv.fjp;
 
 import java.io.IOException;
 
+import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import org.antlr.v4.runtime.CharStreams;
@@ -34,9 +35,17 @@ public class Main
 			
 			ProgramVisitor programVisitor = new ProgramVisitor();
 		    programVisitor.visitProgram(programContext);
+		    Symbol main = programVisitor.getMain();
+		    if (main == null) {
+                throw new ParseCancellationException("ParseError - you have to defined `void main() {...}` function!");
+            }
 
-			int pos = 1;
-            System.out.println("0 JMP\t0\t13");
+            if (main.getType() != DataType.Type.VOID) {
+                throw new ParseCancellationException("ParseError - main function must be void type!");
+            }
+
+			int pos = 0;
+		    programVisitor.getInstructions().add(0, new Instruction(Instruction.IntType.JMP, 0, main.getAdr()));
 			for (Object in : programVisitor.getInstructions()) {
 				System.out.println(pos +" " +in.toString());
 				pos++;

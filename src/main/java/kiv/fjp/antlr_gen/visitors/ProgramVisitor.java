@@ -6,6 +6,7 @@ import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
+import kiv.fjp.antlr_gen.structures.SymbolTable;
 
 
 public class ProgramVisitor extends GrammarVisitor<String> {
@@ -84,4 +85,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     }
     
 
+    public Symbol getMain() {
+        return symbolTable.findSymbol("main", SymbolType.FUNCTION);
+    }
 }
