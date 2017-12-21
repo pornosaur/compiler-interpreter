@@ -193,7 +193,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
     
     @Override
     public String visitNumArray(GrammarParser.NumArrayContext ctx) {
-        visitID(ctx.getText());
+        visitID(ctx.ID().getText());
         visit(ctx.num_exp());
         instructionList.add(new Instruction(IntType.POS, 0, 0));
         return null;
