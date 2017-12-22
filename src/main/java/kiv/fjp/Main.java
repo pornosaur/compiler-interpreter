@@ -19,6 +19,7 @@ import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.visitors.ProgramVisitor;
 import kiv.fjp.interpreter.InstructionLoader;
 import kiv.fjp.interpreter.Interpreter;
+import kiv.fjp.interpreter.InterpreterException;
 
 /**
  * Hello world!
@@ -35,6 +36,8 @@ public class Main {
 			}
 
 		} catch (ParseCancellationException e) {
+			System.err.println(e.getMessage());
+		} catch (InterpreterException e) {
 			System.err.println(e.getMessage());
 		}
 
@@ -93,7 +96,7 @@ public class Main {
 		return true;
 	}
 
-	public static void interpret(String compPath, String outputPath) {
+	public static void interpret(String compPath, String outputPath) throws InterpreterException{
 		FileWriter fw;
 		BufferedWriter bw = null;
 
@@ -105,8 +108,8 @@ public class Main {
 			fw = new FileWriter(outputPath);
 			bw = new BufferedWriter(fw);
 			for (String step : steps) {
-				bw.write(step);
-			}
+				bw.write(step); 
+			} 
 		} catch (NoSuchFileException e) {
 			System.err.println("File: " + e.getMessage() + " not found");
 		} catch (IOException e) {

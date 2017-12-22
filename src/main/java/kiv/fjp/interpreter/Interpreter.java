@@ -30,8 +30,9 @@ public class Interpreter {
 		stackPointer = FIRST_ACT_REC;
 	}
 
-	public ArrayList<String> runInterpret() {
+	public ArrayList<String> runInterpret() throws InterpreterException{
 		ArrayList<String> steps = new ArrayList<>();
+		try {
 		while (instructionPointer != FIRST_ACT_REC) {
 
 			instruction = instructions.get(instructionPointer);
@@ -85,6 +86,9 @@ public class Interpreter {
 			step += "---------------------------------------------\n";
 			steps.add(step);
 			System.out.println(step);
+		}
+		} catch(IndexOutOfBoundsException e){
+			throw new InterpreterException("Stack overflow");
 		}
 		return steps;
 	}
@@ -160,17 +164,28 @@ public class Interpreter {
 		instructionPointer++;
 	}
 
-	private void processPOS() {
-		int tmp1 = heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT])[stack[stackPointer]];
-		stackPointer--;
-		stack[stackPointer] = tmp1;
-		instructionPointer++;
+	private void processPOS() throws InterpreterException {
+		try {
+			int tmp1 = heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT])[stack[stackPointer]];
+			stackPointer--;
+			stack[stackPointer] = tmp1;
+			instructionPointer++;
+		}catch (IndexOutOfBoundsException e) { 
+			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer]+ "size: " + 
+						+heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]).length);
+		}
+		
 	}
 
-	private void processMOV() {
-		heap.get(stack[stackPointer - THIRD_STACK_POS_SHIFT])[stack[stackPointer - SECOND_STACK_POS_SHIFT]] = stack[stackPointer];
-		stackPointer -= FOURTH_STACK_POS_SHIFT;
-		instructionPointer++;
+	private void processMOV() throws InterpreterException {
+		try {
+			heap.get(stack[stackPointer - THIRD_STACK_POS_SHIFT])[stack[stackPointer - SECOND_STACK_POS_SHIFT]] = stack[stackPointer];
+			stackPointer -= FOURTH_STACK_POS_SHIFT;
+			instructionPointer++;
+		}catch (IndexOutOfBoundsException e) { 
+			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer]+ "size: " + 
+						+heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]).length);
+		}
 	}
 
 	private void processOPR(int value) {
