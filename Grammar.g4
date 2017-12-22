@@ -76,7 +76,6 @@ num_exp
     :   num_exp op=('*' | '/') num_exp     # multiDiv
     |   num_exp op=('+' | '-') num_exp     # plusMinus
     |   integer                            # integers
-    |   integer ('.' integer)?             # real
     |   func                               # numFunc
     |   ID'['num_exp']'                    # numArray
     |   ID                                 # numID
@@ -139,10 +138,19 @@ foreach
 
 s_switch
     :   'switch' '(' ID ')' '{'
-        ( ('case' (num_exp | str_def) ':')+ block 'break'?)+
+        (s_case+
           |
-        ( ('default:')+ block 'break'?)?
+         s_default?
+         )
         '}'
+    ;
+
+s_case
+    :   ('case' (num_exp | str_def) ':' block (BREAK)?)
+    ;
+
+s_default
+    :   'default:' block (BREAK)?
     ;
 
 func
@@ -160,6 +168,10 @@ r_return
         |   func
         )
         ';'
+    ;
+
+BREAK
+    : 'break;'
     ;
 
 ID

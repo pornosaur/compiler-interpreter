@@ -9,6 +9,10 @@ import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
+import java.beans.IntrospectionException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class BlockVisitor extends GrammarVisitor<String>{
 
     private int param;
@@ -59,6 +63,59 @@ public class BlockVisitor extends GrammarVisitor<String>{
 		jmcInt.setValue(elseJmpPos);
 
         return null;
+    }
+
+    @Override public String visitS_switch(GrammarParser.S_switchContext ctx) {
+        Symbol symbol = symbolTable.findSymbol(ctx.ID().getText());
+        if(symbol == null) {
+            throw new ParseCancellationException("ParseError - id " + ctx.ID().getText() + " must be defined before.");
+        }
+
+        instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
+
+        List<Instruction> breakList = new ArrayList<>();
+        if (!ctx.s_case().isEmpty()) {
+            for (GrammarParser.S_caseContext c : ctx.s_case()) {
+                String s = visitS_case(c);
+                if (s != null) {
+                    Instruction intJMP = new Instruction(IntType.JMP, 0, Instruction.OPRType.TEST_EQ.ordinal());
+                    instructionList.add(intJMP);
+                    breakList.add(intJMP);
+                }
+            }
+        } else {
+            visitS_default(ctx.s_default());
+        }
+
+        for (Instruction i : breakList) {
+            i.setValue(instructionList.size() + 1);
+        }
+
+        return null;
+    }
+
+    @Override public String visitS_case(GrammarParser.S_caseContext ctx) {
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, true);
+        expressionVisitor.visit(ctx.num_exp());
+
+        instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.TEST_EQ.ordinal()));
+
+        Instruction intJMC = new Instruction(IntType.JMC, 0, 0);
+        instructionList.add(intJMC);
+
+        visitBlock(ctx.block());
+
+        int extra = ctx.BREAK() != null ? 1 : 0;
+
+        intJMC.setValue(instructionList.size() + 1 + extra); //extra because of JMP instruction after break;
+
+        return ctx.BREAK() != null ? "break" : null;
+    }
+
+    @Override public String visitS_default(GrammarParser.S_defaultContext ctx) {
+        visitBlock(ctx.block());
+
+        return ctx.BREAK() != null ? "break" : null;
     }
 	
 	@Override public String visitLoop_while(GrammarParser.Loop_whileContext ctx) {

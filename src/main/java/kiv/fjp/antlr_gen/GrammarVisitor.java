@@ -146,13 +146,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSigned(GrammarParser.SignedContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code real}
-	 * labeled alternative in {@link GrammarParser#num_exp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitReal(GrammarParser.RealContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code numFunc}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
@@ -281,6 +274,18 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitS_switch(GrammarParser.S_switchContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link GrammarParser#s_case}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitS_case(GrammarParser.S_caseContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link GrammarParser#s_default}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitS_default(GrammarParser.S_defaultContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#func}.
 	 * @param ctx the parse tree

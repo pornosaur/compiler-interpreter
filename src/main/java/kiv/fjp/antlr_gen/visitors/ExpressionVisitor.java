@@ -12,12 +12,17 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
 	private int level;
 	private BlockVisitor block;
+	private boolean sw = false;
+
+    public ExpressionVisitor(int level, BlockVisitor block, boolean sw) {
+        this.level = level;
+        this.block = block;
+        this.sw = sw;
+    }
 
 	public ExpressionVisitor(int level, BlockVisitor block) {
-		this.level = level;
-		this.block = block;
+		this(level, block, false);
 	}
-
 
     @Override
     public String visitIntegers(GrammarParser.IntegersContext ctx) {
@@ -64,14 +69,14 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 	}
 
 
-
+    /*
     @Override
     public String visitReal(GrammarParser.RealContext ctx){
         String decadic = visit(ctx.integer(0));
         String mantis = visit(ctx.integer(1));
         //TODO how to save real?
         return null;
-    }
+    }*/
 
     @Override
     public String visitSigned(GrammarParser.SignedContext ctx){
@@ -127,6 +132,9 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitNumFunc(GrammarParser.NumFuncContext ctx){
+        if (sw) {
+            throw new ParseCancellationException("ParseError - you could not put function to switch");
+       }
        String s = block.visitFunc(ctx.func());
        if (s.compareTo("integer") != 0) {
            throw new ParseCancellationException("ParseError - you could not call '"+ s +"' function in expression.");
@@ -187,13 +195,19 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitNumID(GrammarParser.NumIDContext ctx) {
+        if (sw) {
+            throw new ParseCancellationException("ParseError - you could not put id to switch");
+        }
         visitID(ctx.getText());
         return ctx.getText();
     }
     
     @Override
     public String visitNumArray(GrammarParser.NumArrayContext ctx) {
-        visitID(ctx.ID().getText());
+        if (sw) {
+            throw new ParseCancellationException("ParseError - you could not put array to switch");
+        }
+        visitID(ctx.getText());
         visit(ctx.num_exp());
         instructionList.add(new Instruction(IntType.POS, 0, 0));
         return null;
@@ -207,15 +221,15 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
 	@Override
 	public String visitStr_def(GrammarParser.Str_defContext ctx){
-		visitChildren(ctx);
-		return null;
+		return visitChildren(ctx);
 	}
 	
 	@Override
 	public String visitStr(GrammarParser.StrContext ctx) {
 		ctx.getText();
-		return visitChildren(ctx);
-	}
+        return visitChildren(ctx);
+    }
+
 
 	private void visitID(String id) {
         Symbol symbol;

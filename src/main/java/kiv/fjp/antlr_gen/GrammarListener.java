@@ -236,18 +236,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitSigned(GrammarParser.SignedContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code real}
-	 * labeled alternative in {@link GrammarParser#num_exp}.
-	 * @param ctx the parse tree
-	 */
-	void enterReal(GrammarParser.RealContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code real}
-	 * labeled alternative in {@link GrammarParser#num_exp}.
-	 * @param ctx the parse tree
-	 */
-	void exitReal(GrammarParser.RealContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code numFunc}
 	 * labeled alternative in {@link GrammarParser#num_exp}.
 	 * @param ctx the parse tree
@@ -465,6 +453,26 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitS_switch(GrammarParser.S_switchContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#s_case}.
+	 * @param ctx the parse tree
+	 */
+	void enterS_case(GrammarParser.S_caseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#s_case}.
+	 * @param ctx the parse tree
+	 */
+	void exitS_case(GrammarParser.S_caseContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#s_default}.
+	 * @param ctx the parse tree
+	 */
+	void enterS_default(GrammarParser.S_defaultContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#s_default}.
+	 * @param ctx the parse tree
+	 */
+	void exitS_default(GrammarParser.S_defaultContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GrammarParser#func}.
 	 * @param ctx the parse tree
