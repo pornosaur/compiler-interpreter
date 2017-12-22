@@ -71,20 +71,19 @@ public class BlockVisitor extends GrammarVisitor<String>{
             throw new ParseCancellationException("ParseError - id " + ctx.ID().getText() + " must be defined before.");
         }
 
-        instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
-
         List<Instruction> breakList = new ArrayList<>();
         if (!ctx.s_case().isEmpty()) {
             for (GrammarParser.S_caseContext c : ctx.s_case()) {
+                instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
                 String s = visitS_case(c);
                 if (s != null) {
-                    Instruction intJMP = new Instruction(IntType.JMP, 0, Instruction.OPRType.TEST_EQ.ordinal());
+                    Instruction intJMP = new Instruction(IntType.JMP, 0, 0);
                     instructionList.add(intJMP);
                     breakList.add(intJMP);
                 }
             }
         } else {
-            visitS_default(ctx.s_default());
+            //visitS_default(ctx.s_default());
         }
 
         for (Instruction i : breakList) {
