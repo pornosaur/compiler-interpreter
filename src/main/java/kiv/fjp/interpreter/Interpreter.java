@@ -7,6 +7,12 @@ import kiv.fjp.antlr_gen.structures.Instruction;
 
 public class Interpreter {
 	private static final int STACK_SIZE = 32;
+
+	private static final int SECOND_STACK_POS_SHIFT = 1;
+	private static final int THIRD_STACK_POS_SHIFT = 2;
+	private static final int FOURTH_STACK_POS_SHIFT = 3;
+	private static final int INSTR_STACK_MAP_SHIFT = 1;
+	private static final int FIRST_ACT_REC = -1;
 	private ArrayList<Instruction> instructions;
 
 	private int base;
@@ -14,95 +20,60 @@ public class Interpreter {
 	private ArrayList<int[]> heap;
 	private int stackPointer;
 	private int instructionPointer;
+	private Instruction instruction;
 
 	public Interpreter(ArrayList<Instruction> instructions) {
 		this.instructions = instructions;
 		stack = new int[STACK_SIZE];
 		heap = new ArrayList<>();
 		base = 1;
-		stackPointer = -1;
+		stackPointer = FIRST_ACT_REC;
 	}
 
 	public ArrayList<String> runInterpret() {
 		ArrayList<String> steps = new ArrayList<>();
-		while (instructionPointer != -1) {
+		while (instructionPointer != FIRST_ACT_REC) {
 
-			Instruction instruction = instructions.get(instructionPointer);
+			instruction = instructions.get(instructionPointer);
+
 			String step = instructionPointer + " " + instruction.toString() + "\n";
+
 			switch (instruction.getIntstruction()) {
 			case JMP:
-				instructionPointer = instruction.getValue();
+				processJMP();
 				break;
 			case JMC:
-				if (stack[stackPointer] == 0) {
-					instructionPointer = instruction.getValue();
-				}
-				instructionPointer = instruction.getValue();
-				stackPointer--;
-
+				processJMC();
 				break;
 			case OPR:
 				processOPR(instruction.getValue());
 				break;
 			case LIT:
-				stackPointer++;
-				stack[stackPointer] = instruction.getValue();
-				instructionPointer++;
+				processLIT();
 				break;
 			case LOD:
-				stackPointer++;
-				stack[stackPointer] = stack[findNewBaseByLevel(instruction.getLevel()) + instruction.getValue()-1];
-				instructionPointer++;
-				
+				processLOD();
 				break;
 			case STO:
-				if(findNewBaseByLevel(instruction.getLevel()) + instruction.getValue() - 1==-1) {
-					instructionPointer++;
-					continue;
-					
-				}
-				stack[findNewBaseByLevel(instruction.getLevel()) + instruction.getValue() - 1] = stack[stackPointer];
-				stackPointer--;
-				instructionPointer++;
+				processSTO();
 				break;
 			case CAL:
-				stack[stackPointer + 1] = findNewBaseByLevel(instruction.getLevel());
-				stack[stackPointer + 2] = base;
-				stack[stackPointer + 3] = instructionPointer + 1;
-				base = stackPointer + 1 + 1; // TODO
-				instructionPointer = instruction.getValue();
-
+				processCAL();
 				break;
 			case INT:
-				if (stackPointer == -1) {
-					stack[stackPointer + 1] = 0;
-					stack[stackPointer + 2] = 0;
-					stack[stackPointer + 3] = -1;
-				}
-				stackPointer += instruction.getValue();
-				instructionPointer++;
+				processINT();
 				break;
 			case RET:
-				instructionPointer = stack[base + 1];
-				stackPointer = base - 2;
-				base = stack[base];
+				processRET();
 				break;
 			case ALC:
-				heap.add(new int[stack[stackPointer]]);
-				stackPointer--;
-				stack[stackPointer] = heap.size()-1;
-				instructionPointer++;
+				processALC();
 				break;
 			case POS:
-				int tmp1 = heap.get(stack[stackPointer-1])[stack[stackPointer]];
-				stackPointer--;
-				stack[stackPointer] = tmp1;
-				instructionPointer++;
+				processPOS();
 				break;
 			case MOV:
-				heap.get(stack[stackPointer - 2])[stack[stackPointer - 1]] = stack[stackPointer];
-				stackPointer -=3;
-				instructionPointer++;
+				processMOV();
 				break;
 			}
 			step += "Next instruction: " + instructionPointer + "\n";
@@ -126,6 +97,82 @@ public class Interpreter {
 		return newBase;
 	}
 
+	private void processJMP() {
+		instructionPointer = instruction.getValue();
+	}
+
+	private void processJMC() {
+		if (stack[stackPointer] == 0) {
+			instructionPointer = instruction.getValue();
+		} else {
+			instructionPointer++;
+		}
+
+		stackPointer--;
+	}
+
+	private void processLIT() {
+		stackPointer++;
+		stack[stackPointer] = instruction.getValue();
+		instructionPointer++;
+	}
+
+	private void processLOD() {
+		stackPointer++;
+		stack[stackPointer] = stack[findNewBaseByLevel(instruction.getLevel()) + instruction.getValue() - INSTR_STACK_MAP_SHIFT];
+		instructionPointer++;
+	}
+
+	private void processSTO() {
+		stack[findNewBaseByLevel(instruction.getLevel()) + instruction.getValue() - INSTR_STACK_MAP_SHIFT] = stack[stackPointer];
+		stackPointer--;
+		instructionPointer++;
+	}
+
+	private void processCAL() {
+		stack[stackPointer + SECOND_STACK_POS_SHIFT] = findNewBaseByLevel(instruction.getLevel());
+		stack[stackPointer + THIRD_STACK_POS_SHIFT] = base;
+		stack[stackPointer + FOURTH_STACK_POS_SHIFT] = instructionPointer + 1;
+		base = stackPointer + THIRD_STACK_POS_SHIFT;
+		instructionPointer = instruction.getValue();
+	}
+
+	private void processINT() {
+		if (stackPointer == FIRST_ACT_REC) {
+			stack[stackPointer + SECOND_STACK_POS_SHIFT] = 0;
+			stack[stackPointer + THIRD_STACK_POS_SHIFT] = 0;
+			stack[stackPointer + FOURTH_STACK_POS_SHIFT] = FIRST_ACT_REC;
+		}
+		stackPointer += instruction.getValue();
+		instructionPointer++;
+	}
+
+	private void processRET() {
+		instructionPointer = stack[base + 1];
+		stackPointer = base - 2;
+		base = stack[base];
+	}
+
+	private void processALC() {
+		heap.add(new int[stack[stackPointer]]);
+		stackPointer--;
+		stack[stackPointer] = heap.size() - 1;
+		instructionPointer++;
+	}
+
+	private void processPOS() {
+		int tmp1 = heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT])[stack[stackPointer]];
+		stackPointer--;
+		stack[stackPointer] = tmp1;
+		instructionPointer++;
+	}
+
+	private void processMOV() {
+		heap.get(stack[stackPointer - THIRD_STACK_POS_SHIFT])[stack[stackPointer - SECOND_STACK_POS_SHIFT]] = stack[stackPointer];
+		stackPointer -= FOURTH_STACK_POS_SHIFT;
+		instructionPointer++;
+	}
+
 	private void processOPR(int value) {
 
 		switch (Instruction.OPRType.values()[value]) {
@@ -133,47 +180,53 @@ public class Interpreter {
 			stack[stackPointer] = -stack[stackPointer];
 			break;
 		case PLUS:
-			stack[stackPointer - 1] += stack[stackPointer];
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] += stack[stackPointer];
 			stackPointer--;
 			break;
 		case MINUS:
-			stack[stackPointer - 1] -= stack[stackPointer];
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] -= stack[stackPointer];
 			stackPointer--;
 			break;
 		case MULTI:
-			stack[stackPointer - 1] *= stack[stackPointer];
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] *= stack[stackPointer];
 			stackPointer--;
 			break;
 		case DIV:
-			stack[stackPointer - 1] /= stack[stackPointer];
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] /= stack[stackPointer];
 			stackPointer--;
 			break;
 		case MOD:
-			stack[stackPointer - 1] %= stack[stackPointer];
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] %= stack[stackPointer];
 			stackPointer--;
 			break;
 		case TEST_EQ:
-			stack[stackPointer - 1] = (stack[stackPointer - 1] == stack[stackPointer]) ? 1 : 0;
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] =
+								(stack[stackPointer - SECOND_STACK_POS_SHIFT] == stack[stackPointer]) ? 1 : 0;
 			stackPointer--;
 			break;
 		case TEST_NONEQ:
-			stack[stackPointer - 1] = (stack[stackPointer - 1] != stack[stackPointer]) ? 1 : 0;
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] =
+								(stack[stackPointer - SECOND_STACK_POS_SHIFT] != stack[stackPointer]) ? 1 : 0;
 			stackPointer--;
 			break;
 		case LESS:
-			stack[stackPointer - 1] = (stack[stackPointer - 1] < stack[stackPointer]) ? 1 : 0;
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] = 
+								(stack[stackPointer - SECOND_STACK_POS_SHIFT] < stack[stackPointer]) ? 1 : 0;
 			stackPointer--;
 			break;
 		case GREATER_EQ:
-			stack[stackPointer - 1] = (stack[stackPointer - 1] >= stack[stackPointer]) ? 1 : 0;
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] = 
+								(stack[stackPointer - SECOND_STACK_POS_SHIFT] >= stack[stackPointer]) ? 1 : 0;
 			stackPointer--;
 			break;
 		case GREATER:
-			stack[stackPointer - 1] = (stack[stackPointer - 1] > stack[stackPointer]) ? 1 : 0;
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] = 
+								(stack[stackPointer - SECOND_STACK_POS_SHIFT] > stack[stackPointer]) ? 1 : 0;
 			stackPointer--;
 			break;
 		case LESS_EQ:
-			stack[stackPointer - 1] = (stack[stackPointer - 1] <= stack[stackPointer]) ? 1 : 0;
+			stack[stackPointer - SECOND_STACK_POS_SHIFT] = 
+								(stack[stackPointer - SECOND_STACK_POS_SHIFT] <= stack[stackPointer]) ? 1 : 0;
 			stackPointer--;
 			break;
 		default:
