@@ -1,0 +1,3 @@
+void fnc(){
+	integer a;
+}
