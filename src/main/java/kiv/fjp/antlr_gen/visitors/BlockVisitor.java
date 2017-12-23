@@ -9,7 +9,6 @@ import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
-import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +25,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
 		for(int i = 0; i < ctx.getChildCount();i++) {
 			if(ctx.getChild(i) instanceof StatementContext) { //TODO for another statements
 				symbolTable.addSymbolList();
-				//level++;
 
 				visit(ctx.getChild(i));
 
-				//level--;
 				symbolTable.removeSymbolList();
 			}else { // its declar or define of variables
 				visit(ctx.getChild(i));

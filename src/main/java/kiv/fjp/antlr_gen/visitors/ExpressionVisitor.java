@@ -80,6 +80,12 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitSigned(GrammarParser.SignedContext ctx){
+        if (ctx.parent != null) {
+            if (ctx.parent instanceof GrammarParser.SignedContext) {
+                throw new ParseCancellationException("ParseError - too much operators!");
+            }
+        }
+
         visit(ctx.num_exp());
 
         if (ctx.sign.getText().compareTo("-") == 0) {

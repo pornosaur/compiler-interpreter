@@ -84,7 +84,7 @@ num_exp
     ;
 
 integer
-    :   NUMERIC+
+    :  NUMVAL
     ;
 
 str_def
@@ -182,8 +182,8 @@ CHARS
     :   '_'
     ;
 
-NUMERIC
-    :   ('0'..'9')
+NUMVAL
+    : NUMERIC+
     ;
 
 ALPHABET_NUMERIC
@@ -191,7 +191,7 @@ ALPHABET_NUMERIC
     ;
 
 ALPHABET
-    :   ('A'..'Z' | 'a'..'z')
+    :  ('A'..'Z' | 'a'..'z')
     ;
 
 SPECIAL_CHARS
@@ -208,6 +208,9 @@ MULTIDIV
     ;
 
 WS
-    :   [ \t\n\r]+ -> skip
+    :   [ \t\n\f\r]+ -> skip
     ;
 
+fragment NUMERIC
+    :   [0-9]
+    ;

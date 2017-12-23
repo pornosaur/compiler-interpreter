@@ -8,6 +8,8 @@ import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
+import kiv.fjp.antlr_gen.structures.SymbolTable;
+
 public class ProgramVisitor extends GrammarVisitor<String> {
 
     private static final int DEF_SIZE_STACK = 3;        //D+S+RET_ADR+RET_VAL
@@ -20,6 +22,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
 		instructionList = new ArrayList<>();
 		symbolTable = new SymbolTable();
 	}
+
     @Override public String visitFunc_def(GrammarParser.Func_defContext ctx)  {
         DataType returnType = new DataType(ctx.return_type().getText());
 
