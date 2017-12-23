@@ -77,7 +77,7 @@ public class Interpreter {
 					processMOV();
 					break;
 				}
-				steps.add(new InterpreterStep(actualInstruction, instructionPointer, base, stackPointer, stack));
+				steps.add(new InterpreterStep(actualInstruction, instructionPointer, base, stackPointer, stack.clone()));
 				System.out.print(steps.get(steps.size()-1));
 			}
 		} catch(IndexOutOfBoundsException e){
@@ -152,7 +152,6 @@ public class Interpreter {
 
 	private void processALC() {
 		heap.add(new int[stack[stackPointer]]);
-		stackPointer--;
 		stack[stackPointer] = heap.size() - 1;
 		instructionPointer++;
 	}
@@ -160,7 +159,6 @@ public class Interpreter {
 	private void processPOS() throws InterpreterException {
 		try {
 			int tmp1 = heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT])[stack[stackPointer]];
-			stackPointer--;
 			stack[stackPointer] = tmp1;
 			instructionPointer++;
 		}catch (IndexOutOfBoundsException e) { 
@@ -173,7 +171,7 @@ public class Interpreter {
 	private void processMOV() throws InterpreterException {
 		try {
 			heap.get(stack[stackPointer - THIRD_STACK_POS_SHIFT])[stack[stackPointer - SECOND_STACK_POS_SHIFT]] = stack[stackPointer];
-			stackPointer -= FOURTH_STACK_POS_SHIFT;
+			stackPointer -= THIRD_STACK_POS_SHIFT;
 			instructionPointer++;
 		}catch (IndexOutOfBoundsException e) { 
 			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer]+ "size: " + 
