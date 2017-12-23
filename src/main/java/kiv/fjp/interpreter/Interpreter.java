@@ -30,63 +30,56 @@ public class Interpreter {
 		stackPointer = FIRST_ACT_REC;
 	}
 
-	public ArrayList<String> runInterpret() throws InterpreterException{
-		ArrayList<String> steps = new ArrayList<>();
+	public ArrayList<InterpreterStep> runInterpret() throws InterpreterException{
+		ArrayList<InterpreterStep> steps = new ArrayList<>();
 		try {
-		while (instructionPointer != FIRST_ACT_REC) {
-
-			instruction = instructions.get(instructionPointer);
-
-			String step = instructionPointer + " " + instruction.toString() + "\n";
-
-			switch (instruction.getIntstruction()) {
-			case JMP:
-				processJMP();
-				break;
-			case JMC:
-				processJMC();
-				break;
-			case OPR:
-				processOPR(instruction.getValue());
-				break;
-			case LIT:
-				processLIT();
-				break;
-			case LOD:
-				processLOD();
-				break;
-			case STO:
-				processSTO();
-				break;
-			case CAL:
-				processCAL();
-				break;
-			case INT:
-				processINT();
-				break;
-			case RET:
-				processRET();
-				break;
-			case ALC:
-				processALC();
-				break;
-			case POS:
-				processPOS();
-				break;
-			case MOV:
-				processMOV();
-				break;
+			while (instructionPointer != FIRST_ACT_REC) {
+	
+				instruction = instructions.get(instructionPointer);
+	
+				Instruction actualInstruction = instruction;
+	
+				switch (instruction.getIntstruction()) {
+				case JMP:
+					processJMP();
+					break;
+				case JMC:
+					processJMC();
+					break;
+				case OPR:
+					processOPR(instruction.getValue());
+					break;
+				case LIT:
+					processLIT();
+					break;
+				case LOD:
+					processLOD();
+					break;
+				case STO:
+					processSTO();
+					break;
+				case CAL:
+					processCAL();
+					break;
+				case INT:
+					processINT();
+					break;
+				case RET:
+					processRET();
+					break;
+				case ALC:
+					processALC();
+					break;
+				case POS:
+					processPOS();
+					break;
+				case MOV:
+					processMOV();
+					break;
+				}
+				steps.add(new InterpreterStep(actualInstruction, instructionPointer, base, stackPointer, stack));
+				System.out.print(steps.get(steps.size()-1));
 			}
-			step += "Next instruction: " + instructionPointer + "\n";
-			step += "Base: " + base + "\n";
-			step += "Stack pointer: " + (stackPointer + 1) + "\n";
-			for (int i = 0; i <= stackPointer; i++) {
-				step += i + 1 + " " + stack[i] + "\n";
-			}
-			step += "---------------------------------------------\n";
-			steps.add(step);
-			System.out.println(step);
-		}
 		} catch(IndexOutOfBoundsException e){
 			throw new InterpreterException("Stack overflow");
 		}
@@ -171,7 +164,7 @@ public class Interpreter {
 			stack[stackPointer] = tmp1;
 			instructionPointer++;
 		}catch (IndexOutOfBoundsException e) { 
-			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer]+ "size: " + 
+			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer]+ ", size: " + 
 						+heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]).length);
 		}
 		

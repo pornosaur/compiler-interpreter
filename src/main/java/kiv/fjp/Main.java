@@ -20,6 +20,7 @@ import kiv.fjp.antlr_gen.visitors.ProgramVisitor;
 import kiv.fjp.interpreter.InstructionLoader;
 import kiv.fjp.interpreter.Interpreter;
 import kiv.fjp.interpreter.InterpreterException;
+import kiv.fjp.interpreter.InterpreterStep;
 
 /**
  * Hello world!
@@ -102,13 +103,13 @@ public class Main {
 
 		InstructionLoader instLoader = new InstructionLoader(compPath);
 		Interpreter interpreter = new Interpreter(instLoader.loadInstructions());
-		ArrayList<String> steps = interpreter.runInterpret();
+		ArrayList<InterpreterStep> steps = interpreter.runInterpret();
 
 		try {
 			fw = new FileWriter(outputPath);
 			bw = new BufferedWriter(fw);
-			for (String step : steps) {
-				bw.write(step); 
+			for (InterpreterStep step : steps) {
+				bw.write(step.toString()); 
 			} 
 		} catch (NoSuchFileException e) {
 			System.err.println("File: " + e.getMessage() + " not found");
