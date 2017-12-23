@@ -1,5 +1,7 @@
 package kiv.fjp.antlr_gen.visitors;
 
+import java.util.ArrayList;
+
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
@@ -16,12 +18,17 @@ public class ProgramVisitor extends GrammarVisitor<String> {
 
     private boolean isRet = false;
     private int param;
-
+    
+    public ProgramVisitor() {
+		super();
+		instructionList = new ArrayList<>();
+		symbolTable = new SymbolTable();
+	}
     @Override public String visitFunc_def(GrammarParser.Func_defContext ctx)  {
         DataType returnType = new DataType(ctx.return_type().getText());
 
         int countParam = ctx.param()!= null ? ctx.param().ID().size() : 0;
-        isRet = returnType.getType() != DataType.Type.VOID;
+        isRet = returnType.getType() != DataType.Type.VOID; 
         int stackSize = DEF_SIZE_STACK;
         level = DEF_LEVEL;
         param = countParam;
