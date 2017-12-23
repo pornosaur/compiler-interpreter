@@ -138,6 +138,15 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
     }
 
     @Override
+    public String visitNumID(GrammarParser.NumIDContext ctx) {
+        if (sw != null && sw instanceof GrammarParser.S_caseContext) {
+            throw new ParseCancellationException("ParseError - you could not put id to switch");
+        }
+        visitID(ctx);
+        return ctx.getText();
+    }
+
+    @Override
     public String visitNumFunc(GrammarParser.NumFuncContext ctx){
         if (sw != null && sw instanceof GrammarParser.S_caseContext) {
             throw new ParseCancellationException("ParseError - you could not put function to switch");
