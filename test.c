@@ -1,3 +1,6 @@
 void main() {
-	integer a = 5 + 1-2;
+    integer a;
+	for(integer i = 1; a > 1; i = i + 1){
+
+	}
 }

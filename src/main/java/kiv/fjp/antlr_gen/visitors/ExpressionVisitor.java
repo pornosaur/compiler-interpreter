@@ -1,27 +1,29 @@
 package kiv.fjp.antlr_gen.visitors;
 
 import kiv.fjp.antlr_gen.GrammarParser;
+import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import kiv.fjp.antlr_gen.structures.Instruction.OPRType;
 import kiv.fjp.antlr_gen.structures.Symbol;
 
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class ExpressionVisitor extends GrammarVisitor<String>{
 
 	private int level;
 	private BlockVisitor block;
-	private boolean sw = false;
+	private RuleContext sw;
 
-    public ExpressionVisitor(int level, BlockVisitor block, boolean sw) {
+    public ExpressionVisitor(int level, BlockVisitor block, RuleContext sw) {
         this.level = level;
         this.block = block;
         this.sw = sw;
     }
 
 	public ExpressionVisitor(int level, BlockVisitor block) {
-		this(level, block, false);
+		this(level, block, null);
 	}
 
     @Override
@@ -37,8 +39,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         if(ctx.bool_exp() != null) {
             visitChildren(ctx);
         }else if(ctx.ID() != null) {
-            String id = ctx.ID().getText();
-            visitID(id);
+            visitID(ctx);
         } else if(ctx.num_exp() != null) {
 			 visitChildren(ctx);
 		}
@@ -138,9 +139,10 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitNumFunc(GrammarParser.NumFuncContext ctx){
-        if (sw) {
+        if (sw != null && sw instanceof GrammarParser.S_caseContext) {
             throw new ParseCancellationException("ParseError - you could not put function to switch");
-       }
+        }
+
        String s = block.visitFunc(ctx.func());
        if (s.compareTo("integer") != 0) {
            throw new ParseCancellationException("ParseError - you could not call '"+ s +"' function in expression.");
@@ -201,19 +203,19 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitNumID(GrammarParser.NumIDContext ctx) {
-        if (sw) {
+        if (sw != null && sw instanceof GrammarParser.S_caseContext) {
             throw new ParseCancellationException("ParseError - you could not put id to switch");
         }
-        visitID(ctx.getText());
+        visitID(ctx);
         return ctx.getText();
     }
     
     @Override
-    public String visitNumArray(GrammarParser.NumArrayContext ctx) { 
-        if (sw) {
+    public String visitNumArray(GrammarParser.NumArrayContext ctx) {
+        if (sw != null && sw instanceof GrammarParser.S_caseContext) {
             throw new ParseCancellationException("ParseError - you could not put array to switch");
         }
-        visitID(ctx.ID().getText());
+        visitID(ctx);
         visit(ctx.num_exp());
         instructionList.add(new Instruction(IntType.POS, 0, 0));
         return null;
@@ -221,7 +223,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitBoolID(GrammarParser.BoolIDContext ctx) {
-        visitID(ctx.getText());
+        visitID(ctx);
         return ctx.getText();
     }
 
@@ -237,10 +239,17 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
     }
 
 
-	private void visitID(String id) {
+	private void visitID(RuleContext c) {
+	    String id = c.getText();
+
         Symbol symbol;
         if ((symbol = symbolTable.findSymbol(id)) == null) {
             throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+        }
+        if (sw != null && sw instanceof GrammarParser.Loop_forContext) {
+            if (symbol.getType() != DataType.Type.BOOL && c.parent instanceof GrammarParser.Loop_forContext) {
+                throw new ParseCancellationException("ParseError - id in condition must be boolean!");
+            }
         }
 
         /*

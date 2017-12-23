@@ -94,7 +94,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitS_case(GrammarParser.S_caseContext ctx) {
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, true);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
         expressionVisitor.visit(ctx.num_exp());
 
         instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.TEST_EQ.ordinal()));
@@ -151,7 +151,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 	
 	@Override public String visitLoop_for(GrammarParser.Loop_forContext ctx) {
-        ExpressionVisitor ev = new ExpressionVisitor(level, this);
+        ExpressionVisitor ev = new ExpressionVisitor(level, this, ctx);
         String id = ctx.def(0).ID().getText();
 
         Symbol symbol = new Symbol(id, ctx.data_type().getText(), level, 0, SymbolType.VAR);
