@@ -1,11 +1,19 @@
 package kiv.fjp;
+import java.io.File;
 import java.io.IOException;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 public class IfStatementTests extends CompilerTest{
 	private static final String compFolder = "compilerTestFiles/ifStatement/";
+	
+	@BeforeClass
+    public static void setUp() {
+		File file = new File(GEN_FILE + compFolder);
+		file.getParentFile().mkdirs();
+    }
 	
 	@Test
 	public void testSimpleIf() throws IOException {
