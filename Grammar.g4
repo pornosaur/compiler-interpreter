@@ -137,7 +137,7 @@ foreach
     ;
 
 s_switch
-    :   'switch' '(' ID ')' '{'
+    :   'switch' '(' ID? ')' '{'
         (s_case+
           |
          s_default?

@@ -73,7 +73,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
         if (symbol.getType()== DataType.Type.BOOL) {
             throw new ParseCancellationException("ParseError - could not be bool type in switch.");
         }
-
+        
         List<Instruction> breakList = new ArrayList<>();
         if (!ctx.s_case().isEmpty()) {
             for (GrammarParser.S_caseContext c : ctx.s_case()) {
