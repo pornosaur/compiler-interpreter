@@ -152,8 +152,10 @@ public class Interpreter {
 
 	private void processALC() {
 		heap.add(new int[stack[stackPointer]]);
+		stackPointer--;
 		stack[stackPointer] = heap.size() - 1;
 		instructionPointer++;
+		
 	}
 
 	private void processPOS() throws InterpreterException {
@@ -174,7 +176,7 @@ public class Interpreter {
 			stackPointer -= THIRD_STACK_POS_SHIFT;
 			instructionPointer++;
 		}catch (IndexOutOfBoundsException e) { 
-			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer]+ "size: " + 
+			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer - SECOND_STACK_POS_SHIFT]+ " size: " + 
 						+heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]).length);
 		}
 	}
