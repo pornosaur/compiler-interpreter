@@ -1,6 +1,8 @@
 package kiv.fjp;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.BeforeClass;
@@ -10,9 +12,8 @@ public class SwitchTests extends CompilerTest{
 	private static final String compFolder = "compilerTestFiles/switch/";
 	
 	@BeforeClass
-    public static void setUp() {
-		File file = new File(GEN_FILE + compFolder);
-		file.getParentFile().mkdirs();
+    public static void setUp() throws IOException {
+		Files.createDirectories(Paths.get(GEN_FILE + compFolder));
     }
 	
 	@Test
