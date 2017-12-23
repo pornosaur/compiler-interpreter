@@ -166,6 +166,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitBoolNeg(GrammarParser.BoolNegContext ctx) {
+        visit(ctx.bool_exp());
         instructionList.add(new Instruction(IntType.LIT, 0, 1));
         instructionList.add(new Instruction(IntType.OPR, 0, OPRType.TEST_NONEQ.ordinal()));
 
@@ -201,14 +202,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         return null;
     }
 
-    @Override
-    public String visitNumID(GrammarParser.NumIDContext ctx) {
-        if (sw != null && sw instanceof GrammarParser.S_caseContext) {
-            throw new ParseCancellationException("ParseError - you could not put id to switch");
-        }
-        visitID(ctx);
-        return ctx.getText();
-    }
+
     
     @Override
     public String visitNumArray(GrammarParser.NumArrayContext ctx) {
@@ -237,7 +231,6 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 		ctx.getText();
         return visitChildren(ctx);
     }
-
 
 	private void visitID(RuleContext c) {
 	    String id = c.getText();
