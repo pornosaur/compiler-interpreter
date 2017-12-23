@@ -1,11 +1,16 @@
+integer fnc2(integer a){
+	return a * a;
+}
+
+integer fnc1(integer a, integer b){
+	integer c = a + fnc2(b);
+	return c;
+}
+
+
+
 void main() {
-  integer a = 1;
-  switch(a) {
-    case 5: a = 5;
-     break;
-    case 1: a = 22222;
-         break;
-    case 8: a = 8;
-         break;
-  }
+	integer a = 4;
+	integer b = 5;
+	a = fnc1(a, b);
 }

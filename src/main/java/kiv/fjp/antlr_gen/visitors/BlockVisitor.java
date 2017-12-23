@@ -70,6 +70,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
         if(symbol == null) {
             throw new ParseCancellationException("ParseError - id " + ctx.ID().getText() + " must be defined before.");
         }
+        if (symbol.getType()== DataType.Type.BOOL) {
+            throw new ParseCancellationException("ParseError - could not be bool type in switch.");
+        }
 
         List<Instruction> breakList = new ArrayList<>();
         if (!ctx.s_case().isEmpty()) {
@@ -425,7 +428,16 @@ public class BlockVisitor extends GrammarVisitor<String>{
         instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
 
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
-        expressionVisitor.visit(ctx);
+
+        int paramCount = ctx.value().size();
+        if (paramCount != symbol.getSize()) {
+            throw new ParseCancellationException("ParseError - function expects "+symbol.getSize()+
+                    " parameter(s), but you passed " + paramCount + "!");
+        }
+
+        for (int i = paramCount - 1; i >= 0; i--) {
+            expressionVisitor.visitValue(ctx.value(i));
+        }
 
         instructionList.add(new Instruction(IntType.CAL, 0, symbol.getAdr()));
         instructionList.add(new Instruction(IntType.INT, 0, -ctx.value().size()));
