@@ -23,7 +23,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
 	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
 		for(int i = 0; i < ctx.getChildCount();i++) {
-			if(ctx.getChild(i) instanceof StatementContext) { //TODO for another statements
+			if(ctx.getChild(i) instanceof StatementContext) {
+
+			    //TODO for another statements
 				symbolTable.addSymbolList();
 
 				visit(ctx.getChild(i));
@@ -147,7 +149,18 @@ public class BlockVisitor extends GrammarVisitor<String>{
         instructionList.add(new Instruction(IntType.JMC, 0, jmpToDo));
 
         return null;
+    }
 
+    @Override public String visitRepeat_until(GrammarParser.Repeat_untilContext ctx) {
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level,this);
+        int jmpToDo = instructionList.size() + 1;
+
+        visitBlock(ctx.block());
+        expressionVisitor.visit(ctx.bool_exp());
+
+        instructionList.add(new Instruction(IntType.JMC, 0, jmpToDo));
+
+        return null;
     }
 	
 	@Override public String visitLoop_for(GrammarParser.Loop_forContext ctx) {
