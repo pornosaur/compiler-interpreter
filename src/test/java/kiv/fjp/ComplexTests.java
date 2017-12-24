@@ -29,6 +29,16 @@ public class ComplexTests{
 		assertEquals(29, getValueFirstInitVariable(COMP_FOLDER+"callFnc.c", GEN_FOLDER+"callFnc"));
 	}
 	
+	@Test
+	public void testArray() throws IOException, InterpreterException {
+		assertEquals(29, getValueFirstInitVariable(COMP_FOLDER+"array.c", GEN_FOLDER+"array"));
+	}
+	
+	@Test
+	public void testConditions() throws IOException, InterpreterException {
+		assertEquals(6, getValueFirstInitVariable(COMP_FOLDER+"conditions.c", GEN_FOLDER+"conditions"));
+	}
+	
 	private int getValueFirstInitVariable(String codePath, String genPath) throws InterpreterException {
 		Main.compile(codePath, genPath);
 		int prevStepShift = 2;
