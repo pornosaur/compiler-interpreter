@@ -28,16 +28,16 @@ public class SwitchTests extends CompilerTest{
 	
 	@Test(expected = ParseCancellationException.class)
 	public void negative01Test(){
-		Main.compile(compFolder+"negative1.c", compFolder+"negative01_output");
+		Main.compile(compFolder+"negative1.c", compFolder+"negative1_output");
 	}
 	
 	@Test(expected = ParseCancellationException.class)
 	public void negative02Test(){
-		Main.compile(compFolder+"negative02.c", compFolder+"negative01_output");
+		Main.compile(compFolder+"negative2.c", compFolder+"negative3_output");
 	}
 	
 	@Test(expected = ParseCancellationException.class)
 	public void negative03Test(){
-		Main.compile(compFolder+"negative03.c", compFolder+"negative01_output");
+		Main.compile(compFolder+"negative3.c", compFolder+"negative3_output");
 	}
 }

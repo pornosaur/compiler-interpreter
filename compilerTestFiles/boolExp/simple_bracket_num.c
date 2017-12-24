@@ -1,3 +1,3 @@
 void main() {
-	bool a = 4 == (5 < 1);
+	bool a = 4 == 4 + 5;
 }
