@@ -86,4 +86,8 @@ public class DefDeclarTests extends CompilerTest{
 	public void negative11Test(){
 		Main.compile(compFolder+"negative11.c", GEN_FILE + compFolder + "negative11_output");
 	}
+	@Test(expected = ParseCancellationException.class)
+	public void negative12Test(){
+		Main.compile(compFolder+"negative12.c", GEN_FILE + compFolder + "negative12_output");
+	}
 }
