@@ -2,6 +2,7 @@
 package kiv.fjp;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -28,18 +29,30 @@ import kiv.fjp.interpreter.InterpreterStep;
  */
 public class Main {
 	public static void main(String[] args) {
-		String codePath = "test.c";
-		String outputCompPath = "output_comp";
-		String interOutput = "output_inter";
-		try {
-			if (compile(codePath, outputCompPath)) {
-				interpret(outputCompPath, interOutput);
+		if(args.length == 3) {
+			String codePath = args[0];
+			String outputCompPath = args[1];
+			String interOutput = args[2];
+			if(!new File(codePath).exists()) {
+				System.out.println("File: " +codePath+"not exists");
+				return;
 			}
+			try {
+				System.out.println("Start compiling...");
+				if (compile(codePath, outputCompPath)) {
+					System.out.println("Compiling success. Output file with instructions "+outputCompPath + " was created.");
+					System.out.println("Interpreter running...");
+					interpret(outputCompPath, interOutput);
+					System.out.println("Interpretation success. Output file with interpreter steps "+interOutput + " was created");
+				}
 
-		} catch (ParseCancellationException e) {
-			System.err.println(e.getMessage());
-		} catch (InterpreterException e) {
-			System.err.println(e.getMessage());
+			} catch (ParseCancellationException e) {
+				System.err.println(e.getMessage());
+			} catch (InterpreterException e) {
+				System.err.println(e.getMessage());
+			}			
+		}else {
+			System.out.println("Wrong arguments. Valid arguments: [Path to file for compile] [Instruction output file] [Interpreter output file]");
 		}
 
 	}
