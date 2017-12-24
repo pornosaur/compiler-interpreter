@@ -1,3 +1,4 @@
 void main() {
-    a[5];
+	integer a[5];
+	a = 5;
 }

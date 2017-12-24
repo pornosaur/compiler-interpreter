@@ -11,22 +11,52 @@ Stack pointer: 3
 2 0
 3 -1
 ---------------------------------------------
-LIT	0	1
+INT	0	1
 Next instruction: 3
 Base: 1
 Stack pointer: 4
 1 0
 2 0
 3 -1
-4 1
+4 0
 ---------------------------------------------
-STO	0	3
+LIT	0	5
 Next instruction: 4
 Base: 1
-Stack pointer: 3
+Stack pointer: 5
 1 0
 2 0
 3 -1
+4 0
+5 5
+---------------------------------------------
+ALC	0	0
+Next instruction: 5
+Base: 1
+Stack pointer: 4
+1 0
+2 0
+3 -1
+4 0
+---------------------------------------------
+LIT	0	5
+Next instruction: 6
+Base: 1
+Stack pointer: 5
+1 0
+2 0
+3 -1
+4 0
+5 5
+---------------------------------------------
+STO	0	3
+Next instruction: 7
+Base: 1
+Stack pointer: 4
+1 0
+2 0
+3 -1
+4 5
 ---------------------------------------------
 RET	0	0
 Next instruction: -1

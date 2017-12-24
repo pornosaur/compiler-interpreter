@@ -39,7 +39,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         if(ctx.bool_exp() != null) {
             visitChildren(ctx);
         }else if(ctx.ID() != null) {
-            visitID(ctx);
+            visitID(ctx.ID().getText(), ctx);
         } else if(ctx.num_exp() != null) {
 			 visitChildren(ctx);
 		}
@@ -142,7 +142,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         if (sw != null && sw instanceof GrammarParser.S_caseContext) {
             throw new ParseCancellationException("ParseError - you could not put id to switch");
         }
-        visitID(ctx);
+        visitID(ctx.getText(), ctx);
         return ctx.getText();
     }
 
@@ -218,7 +218,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         if (sw != null && sw instanceof GrammarParser.S_caseContext) {
             throw new ParseCancellationException("ParseError - you could not put array to switch");
         }
-        visitID(ctx);
+        visitID(ctx.ID().getText(), ctx);
         visit(ctx.num_exp());
         instructionList.add(new Instruction(IntType.POS, 0, 0));
         return null;
@@ -226,7 +226,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitBoolID(GrammarParser.BoolIDContext ctx) {
-        visitID(ctx);
+        visitID(ctx.getText(), ctx);
         return ctx.getText();
     }
 
@@ -241,9 +241,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         return visitChildren(ctx);
     }
 
-	private void visitID(RuleContext c) {
-	    String id = c.getText();
-
+	private void visitID(String id, RuleContext c) {
         Symbol symbol;
         if ((symbol = symbolTable.findSymbol(id)) == null) {
             throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
