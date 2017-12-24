@@ -69,16 +69,6 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 		return null;
 	}
 
-
-    /*
-    @Override
-    public String visitReal(GrammarParser.RealContext ctx){
-        String decadic = visit(ctx.integer(0));
-        String mantis = visit(ctx.integer(1));
-        //TODO how to save real?
-        return null;
-    }*/
-
     @Override
     public String visitSigned(GrammarParser.SignedContext ctx){
         if (ctx.parent != null) {
@@ -195,6 +185,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
     @Override
     public String visitTernar_oper(GrammarParser.Ternar_operContext ctx) {
         visit(ctx.bool_exp());
+
         Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
         instructionList.add(jmcInt);
 
@@ -202,11 +193,11 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         Instruction jmpEndElse = new Instruction(IntType.JMP, 0, 0);
         instructionList.add(jmpEndElse);
 
-        int elseJmp = instructionList.size();
+        int elseJmp = instructionList.size() + 1;
         visit(ctx.value(1));
 
         jmcInt.setValue(elseJmp);
-        jmpEndElse.setValue(instructionList.size());
+        jmpEndElse.setValue(instructionList.size() + 1);
 
         return null;
     }
@@ -230,17 +221,6 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         return ctx.getText();
     }
 
-	@Override
-	public String visitStr_def(GrammarParser.Str_defContext ctx){
-		return visitChildren(ctx);
-	}
-	
-	@Override
-	public String visitStr(GrammarParser.StrContext ctx) {
-		ctx.getText();
-        return visitChildren(ctx);
-    }
-
 	private void visitID(String id, RuleContext c) {
         Symbol symbol;
         if ((symbol = symbolTable.findSymbol(id)) == null) {
@@ -251,14 +231,6 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
                 throw new ParseCancellationException("ParseError - id in condition must be boolean!");
             }
         }
-
-        /*
-        //TODO make conversion but on different place, not here!
-        if (symbol.getType() != dataType) {
-            throw new ParseCancellationException("ParseError - bad conversion " + symbol.getType().toString()
-                    + " to " + dataType.toString());
-        }
-        */
 
         instructionList.add(new Instruction(IntType.LOD, level, symbol.getAdr()));
     }

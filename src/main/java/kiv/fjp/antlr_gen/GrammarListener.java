@@ -38,6 +38,16 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitReturn_type(GrammarParser.Return_typeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#array_type}.
+	 * @param ctx the parse tree
+	 */
+	void enterArray_type(GrammarParser.Array_typeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#array_type}.
+	 * @param ctx the parse tree
+	 */
+	void exitArray_type(GrammarParser.Array_typeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#block}.
 	 * @param ctx the parse tree
 	 */
@@ -269,26 +279,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInteger(GrammarParser.IntegerContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link GrammarParser#str_def}.
-	 * @param ctx the parse tree
-	 */
-	void enterStr_def(GrammarParser.Str_defContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link GrammarParser#str_def}.
-	 * @param ctx the parse tree
-	 */
-	void exitStr_def(GrammarParser.Str_defContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link GrammarParser#str}.
-	 * @param ctx the parse tree
-	 */
-	void enterStr(GrammarParser.StrContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link GrammarParser#str}.
-	 * @param ctx the parse tree
-	 */
-	void exitStr(GrammarParser.StrContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code boolean}
 	 * labeled alternative in {@link GrammarParser#bool_exp}.

@@ -322,7 +322,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
     @Override public String visitR_return(GrammarParser.R_returnContext ctx) {
 	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
 
-	    if (ctx.value() != null ||ctx.ternar_oper() != null) {
+	    if (ctx.value() != null ||ctx.ternar_oper() != null || ctx.def() != null) {
 	        expressionVisitor.visit(ctx);
         } else {
 	       String s = visitFunc(ctx.func());

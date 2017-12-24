@@ -29,6 +29,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReturn_type(GrammarParser.Return_typeContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#array_type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArray_type(GrammarParser.Array_typeContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GrammarParser#block}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -165,18 +171,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitInteger(GrammarParser.IntegerContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#str_def}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStr_def(GrammarParser.Str_defContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#str}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStr(GrammarParser.StrContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code boolean}
 	 * labeled alternative in {@link GrammarParser#bool_exp}.

@@ -9,7 +9,11 @@ func_def
     ;
 
 return_type
-    :   data_type | 'void'
+    :   data_type | array_type | 'void'
+    ;
+
+array_type
+    :   data_type '['']'
     ;
 
 block
@@ -28,13 +32,12 @@ block
     ;
 
 data_type
-    :   'string'
-    |   'integer'
+    :   'integer'
     |   'bool'
     ;
 
 param
-    :   (data_type ID (',' data_type ID)*)?
+    :   ((data_type | array_type) ID (',' (data_type | array_type) ID)*)?
     ;
 
 declar
@@ -50,7 +53,6 @@ const_declar
 value
     :   (   ID
         |   num_exp
-        |   str_def
         |   bool_exp
         |   array_def
         )
@@ -85,14 +87,6 @@ num_exp
 
 integer
     :  NUMVAL
-    ;
-
-str_def
-    :   str ('+' str)*
-    ;
-
-str
-    :   '"' (~SPECIAL_CHARS | ESCAPE)* '"'
     ;
 
 bool_exp
@@ -146,11 +140,11 @@ s_switch
     ;
 
 s_case
-    :   ('case' (num_exp | str_def) ':' block (BREAK)?)
+    :   'case' num_exp ':' block BREAK?
     ;
 
 s_default
-    :   'default:' block (BREAK)?
+    :   'default:' block BREAK?
     ;
 
 func
@@ -166,12 +160,13 @@ r_return
         (   ternar_oper
         |   value
         |   func
+        |   def
         )
         ';'
     ;
 
 BREAK
-    : 'break;'
+    :   'break;'
     ;
 
 ID
@@ -193,15 +188,6 @@ ALPHABET_NUMERIC
 ALPHABET
     :  ('A'..'Z' | 'a'..'z')
     ;
-
-SPECIAL_CHARS
-    :   '"'
-    ;
-
-ESCAPE
-    :   '/' SPECIAL_CHARS
-    ;
-
 
 MULTIDIV
     :   '/' | '*'
