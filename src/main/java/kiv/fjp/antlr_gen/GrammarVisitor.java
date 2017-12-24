@@ -251,6 +251,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDo_while(GrammarParser.Do_whileContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#repeat_until}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRepeat_until(GrammarParser.Repeat_untilContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GrammarParser#loop_for}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

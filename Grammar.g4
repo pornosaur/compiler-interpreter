@@ -67,7 +67,7 @@ multiple_def
     ;
 
 parallel_def
-    : '{'ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}'
+    : '{' ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}'
     ;
     
 array_def
@@ -112,6 +112,7 @@ loop
     :   loop_while
     |   loop_for
     |   do_while
+    |   repeat_until
     |   foreach
     ;
 
@@ -122,6 +123,11 @@ loop_while
 do_while
     :   'do' '{' block '}' 'while' '(' bool_exp ')' ';'
     ;
+
+repeat_until
+    :   'repeat' '{' block '}' 'until' '(' bool_exp ')' ';'
+    ;
+
 loop_for
     :   'for' '(' data_type def ';' bool_exp ';' def ')' '{' block '}'
     ;

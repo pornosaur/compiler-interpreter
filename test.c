@@ -6,5 +6,4 @@ integer a() {
 void main() {
 	integer a;
 	a = a();
-
 }
