@@ -52,7 +52,7 @@ value
         |   num_exp
         |   str_def
         |   bool_exp
-        |   array_def ';'
+        |   array_def
         )
     ;
 
@@ -137,7 +137,7 @@ foreach
     ;
 
 s_switch
-    :   'switch' '(' ID? ')' '{'
+    :   'switch' '(' ID ')' '{'
         (s_case+
           |
          s_default?
