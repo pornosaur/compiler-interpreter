@@ -23,7 +23,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
 	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
 		for(int i = 0; i < ctx.getChildCount();i++) {
-			if(ctx.getChild(i) instanceof StatementContext) {
+			if(ctx.getChild(i) instanceof StatementContext || ctx.getChild(i) instanceof GrammarParser.LoopContext) {
 
 			    //TODO for another statements
 				symbolTable.addSymbolList();
