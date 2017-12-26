@@ -115,8 +115,6 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitForeach(GrammarParser.ForeachContext ctx) {
-	    int startInt = instructionList.size();
-
 	    Symbol symbol = new Symbol("", "integer", 0, 0, SymbolType.VAR);
         if (! symbolTable.addSymbol(symbol)) {
             throw new ParseCancellationException("ParseError - problem with variable for position in FOREACH.");
@@ -246,7 +244,40 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
         return null;
     }
-	
+
+    @Override public String visitArray_asigne(GrammarParser.Array_asigneContext ctx) {
+        String id = ctx.ID(0).getText(), idRight;
+        String varType = ctx.data_type().getText();
+
+        Symbol symbolRight;
+        if (ctx.ID(1) != null) {
+            idRight = ctx.ID(1).getText();
+            symbolRight = symbolTable.findSymbol(idRight);
+        } else {
+            idRight = ctx.func().ID().getText();
+            symbolRight = symbolTable.findSymbol(ctx.func().ID().getText(), SymbolType.FUNCTION);
+        }
+        if (symbolRight == null) {
+            throw new ParseCancellationException("ParseError - id " + idRight + " is not declared before.");
+        }
+
+
+        Symbol symbolArr = new Symbol(id, varType, level, 0, SymbolType.VAR);
+        if (! symbolRight.isArray()) {
+            throw new ParseCancellationException("ParseError - you cannot assign non-array type to array.");
+        }
+        if(! symbolTable.addSymbol(symbolArr)) {
+            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+        }
+        symbolArr.setArray(true);
+
+        instructionList.add(new Instruction(IntType.INT, 0, 1));
+        instructionList.add(new Instruction(IntType.LOD, 0, symbolRight.getAdr()));
+        instructionList.add(new Instruction(IntType.STO, 0, symbolArr.getAdr()));
+
+        return null;
+    }
+
 	@Override public String visitDeclarID(GrammarParser.DeclarIDContext ctx) {
         String id = ctx.ID().getText();
         String varType = ctx.data_type().getText();
@@ -285,14 +316,16 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String varType = ctx.data_type().getText();
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));
-        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.ARRAY))) {
+        Symbol symbol = new Symbol(id, varType, level, 0, SymbolType.VAR);
+        symbol.setArray(true);
+        if(! symbolTable.addSymbol(symbol)) {
             throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
         }
         
         if(ctx.ID().size() == 2) {
-        	Symbol symbol = symbolTable.findSymbol(ctx.ID(1).getText());
-        	if(symbol != null) {
-        		instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), symbol.getAdr()));
+           Symbol symbol2 = symbolTable.findSymbol(ctx.ID(1).getText());
+        	if(symbol2 != null) {
+        		instructionList.add(new Instruction(IntType.LOD, symbol2.getLevel(), symbol2.getAdr()));
         		instructionList.add(new Instruction(IntType.ALC, 0,0));
         	}
         }else {
@@ -312,7 +345,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
 			throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
 		}
 
-		if (symbol.getSymbolType() != SymbolType.ARRAY) {
+		if (! symbol.isArray()) {
             throw new ParseCancellationException("ParseError - identificator " + id + " is not array type.");
         }
 
@@ -411,9 +444,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
             if (s.compareTo("void") == 0) {
                 throw new ParseCancellationException("ParseError - you could not assigned void function.");
             }
+            System.out.println("FUNC: " + s);
         }
 
-        System.out.println("S: " + id + "  adr: " + symbol.getAdr());
         instructionList.add(new Instruction(IntType.STO, symbol.getLevel(), symbol.getAdr()));
 
         return null;

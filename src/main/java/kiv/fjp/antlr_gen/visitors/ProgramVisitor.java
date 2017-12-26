@@ -25,7 +25,8 @@ public class ProgramVisitor extends GrammarVisitor<String> {
 		symbolTable = new SymbolTable();
 	}
 
-    @Override public String visitFunc_def(GrammarParser.Func_defContext ctx)  {
+    @Override
+    public String visitFunc_def(GrammarParser.Func_defContext ctx)  {
         isReturn = false;
         DataType returnType = new DataType(ctx.return_type().getText());
 
@@ -39,6 +40,9 @@ public class ProgramVisitor extends GrammarVisitor<String> {
 
         Symbol sFunc = new Symbol(ctx.ID().getText(),ctx.return_type().getText(), 0,
                 countParam, SymbolType.FUNCTION);
+        if (ctx.return_type().array_type() != null) {
+            sFunc.setArray(true);
+        }
         symbolTable.addSymbol(sFunc);
         sFunc.setAdr(instructionList.size());
 
@@ -78,6 +82,10 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     	BlockVisitor blockVisitor = new BlockVisitor(level, param);
         blockVisitor.visitBlock(ctx);
         isReturn = ctx.r_return()!= null;
+
+        if (ctx.r_return() != null) {
+          //  ctx.r_return().
+        }
 
         return null;
     }

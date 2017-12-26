@@ -65,7 +65,7 @@ public class SymbolTable {
 	 * @return search symbol or null if list doesnt contain it.
 	 */
 	public Symbol findSymbol(String symbolId) {
-	    for(int i = symbolsStack.size() - 1; i>0; i--){
+	    for(int i = symbolsStack.size() - 1; i > 0; i--){
             for (Symbol symbol : symbolsStack.get(i)) {
                 if (symbol.getIndentificator().compareTo(symbolId) == 0) {
                     return symbol;

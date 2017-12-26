@@ -230,7 +230,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
             }
         }
         if (c instanceof GrammarParser.NumArrayContext) {
-            if (symbol.getSymbolType() != Symbol.SymbolType.ARRAY) {
+            if (! symbol.isArray()) {
                 throw new ParseCancellationException("ParseError - id `" + symbol.getIndentificator() + "` is not array.");
             }
         }

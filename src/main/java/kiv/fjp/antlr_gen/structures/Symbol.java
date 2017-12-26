@@ -4,9 +4,8 @@ public class Symbol {
 
     public enum SymbolType {
         VAR,
-        ARRAY,
         CONST_VAR,
-        FUNCTION
+        FUNCTION,
     }
 
 	private String indentificator;
@@ -15,6 +14,7 @@ public class Symbol {
 	private int adr;
 	private int size;
 	private SymbolType symbolType;
+	private boolean isArray;
 
 	public Symbol(String indentificator, String type, int level, int size, SymbolType symbolType) {
 		this.indentificator = indentificator;
@@ -22,9 +22,18 @@ public class Symbol {
 		this.level = level;
 		this.size = size;
 		this.symbolType = symbolType;
+		this.isArray = false;
 	}
 
-	public String getIndentificator() {
+    public void setArray(boolean array) {
+        isArray = array;
+    }
+
+    public boolean isArray() {
+        return isArray;
+    }
+
+    public String getIndentificator() {
 		return indentificator;
 	}
 
