@@ -83,7 +83,10 @@ public class Interpreter {
 				steps.add(new InterpreterStep(actualInstruction, instructionPointer, base, stackPointer, stack.clone()));
 				System.out.print(steps.get(steps.size()-1));
 			}
-		} catch(IndexOutOfBoundsException e){
+		} catch(InterpreterException e){
+			throw e;
+		}
+		catch(IndexOutOfBoundsException e){
 			throw new InterpreterException("Stack overflow");
 		}
 		return steps;
@@ -162,29 +165,31 @@ public class Interpreter {
 	}
 
 	private void processPOS() throws InterpreterException {
-		try {
-			int tmp1 = heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT])[stack[stackPointer]];
-			stack[stackPointer] = tmp1;
+		int [] arr = heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]);
+		if(stack[stackPointer] < arr.length) {
+			int tmp = arr[stack[stackPointer]];
+			stack[stackPointer] = tmp;
 			instructionPointer++;
-		}catch (IndexOutOfBoundsException e) { 
-			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer]+ ", size: " + 
-						+heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]).length);
-		}
-		
+		}else {
+			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer - SECOND_STACK_POS_SHIFT]+ " size: " + 
+					+heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]).length);
+		}		
 	}
 
 	private void processMOV() throws InterpreterException {
-		try {
-			heap.get(stack[stackPointer - THIRD_STACK_POS_SHIFT])[stack[stackPointer - SECOND_STACK_POS_SHIFT]] = stack[stackPointer];
+		int [] arr = heap.get(stack[stackPointer - THIRD_STACK_POS_SHIFT]);
+		if(stack[stackPointer - SECOND_STACK_POS_SHIFT] < arr.length) {
+			arr[stack[stackPointer - SECOND_STACK_POS_SHIFT]] = stack[stackPointer];
 			stackPointer -= FOURTH_STACK_POS_SHIFT;
 			instructionPointer++;
-		}catch (IndexOutOfBoundsException e) { 
+		}else {
 			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer - SECOND_STACK_POS_SHIFT]+ " size: " + 
-						+heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]).length);
+					+heap.get(stack[stackPointer - THIRD_STACK_POS_SHIFT]).length);
 		}
+
 	}
 	
-	private void processLEN() throws InterpreterException {
+	private void processLEN() {
 		int length = heap.get(stack[stackPointer]).length;
 		stack[stackPointer] = length;
 		instructionPointer++;
