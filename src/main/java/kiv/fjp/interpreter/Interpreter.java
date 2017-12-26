@@ -76,7 +76,6 @@ public class Interpreter {
 				case MOV:
 					processMOV();
 					break;
-				}
 				case LEN:
 					processLEN();
 					break;
