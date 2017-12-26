@@ -106,6 +106,8 @@ bool_exp
     |   bool_exp op=('!=' | '==') bool_exp                         # boolCompare
     |   bool_exp op=('&&' | '||') bool_exp                         # boolExp
     |   bool                                                       # boolean
+    |   func                                                       # boolFunc
+    |   ID'['num_exp']'                                            # boolArray
     |   ID                                                         # boolID
     |   '(' bool_exp ')'                                           # boolBrackets
     |   '!' bool_exp                                               # boolNeg

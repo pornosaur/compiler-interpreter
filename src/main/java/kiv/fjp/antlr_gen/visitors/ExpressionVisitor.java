@@ -140,10 +140,24 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
             throw new ParseCancellationException("ParseError - you could not put function to switch");
         }
 
-       String s = block.visitFunc(ctx.func());
-       if (s.compareTo("integer") != 0) {
-           throw new ParseCancellationException("ParseError - you could not call '"+ s +"' function in expression.");
-       }
+        String s = block.visitFunc(ctx.func());
+        if (s.compareTo("integer") != 0) {
+            throw new ParseCancellationException("ParseError - you could not call '"+ s +"' function in num expression.");
+        }
+
+        return null;
+    }
+
+    @Override
+    public String visitBoolFunc(GrammarParser.BoolFuncContext ctx){
+        if (sw != null && sw instanceof GrammarParser.S_switchContext) {
+            throw new ParseCancellationException("ParseError - you could not put function to switch");
+        }
+
+        String s = block.visitFunc(ctx.func());
+        if (s.compareTo("bool") != 0) {
+            throw new ParseCancellationException("ParseError - you could not call '"+ s +"' function in bool expression.");
+        }
 
         return null;
     }
@@ -202,6 +216,17 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitNumArray(GrammarParser.NumArrayContext ctx) {
+        if (sw != null && sw instanceof GrammarParser.S_switchContext) {
+            throw new ParseCancellationException("ParseError - you could not put array to switch");
+        }
+        visitID(ctx.ID().getText(), ctx);
+        visit(ctx.num_exp());
+        instructionList.add(new Instruction(IntType.POS, 0, 0));
+        return null;
+    }
+
+    @Override
+    public String visitBoolArray(GrammarParser.BoolArrayContext ctx) {
         if (sw != null && sw instanceof GrammarParser.S_switchContext) {
             throw new ParseCancellationException("ParseError - you could not put array to switch");
         }

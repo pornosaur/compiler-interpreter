@@ -310,6 +310,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitInteger(GrammarParser.IntegerContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code boolArray}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 */
+	void enterBoolArray(GrammarParser.BoolArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code boolArray}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 */
+	void exitBoolArray(GrammarParser.BoolArrayContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code boolean}
 	 * labeled alternative in {@link GrammarParser#bool_exp}.
 	 * @param ctx the parse tree
@@ -357,6 +369,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBoolExp(GrammarParser.BoolExpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code boolFunc}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 */
+	void enterBoolFunc(GrammarParser.BoolFuncContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code boolFunc}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 */
+	void exitBoolFunc(GrammarParser.BoolFuncContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code boolNumExp}
 	 * labeled alternative in {@link GrammarParser#bool_exp}.

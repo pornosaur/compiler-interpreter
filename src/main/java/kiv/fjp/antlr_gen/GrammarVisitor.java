@@ -190,6 +190,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInteger(GrammarParser.IntegerContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code boolArray}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolArray(GrammarParser.BoolArrayContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code boolean}
 	 * labeled alternative in {@link GrammarParser#bool_exp}.
 	 * @param ctx the parse tree
@@ -217,6 +224,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBoolExp(GrammarParser.BoolExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolFunc}
+	 * labeled alternative in {@link GrammarParser#bool_exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolFunc(GrammarParser.BoolFuncContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code boolNumExp}
 	 * labeled alternative in {@link GrammarParser#bool_exp}.
