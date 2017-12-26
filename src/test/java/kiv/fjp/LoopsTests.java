@@ -31,6 +31,11 @@ public class LoopsTests extends CompilerTest{
 		assertEquals(SAME_FILES,testFiles(compFolder+"for.c", compFolder+"exp_for"));
 	}
 	
+	@Test
+	public void testForeach() throws IOException {
+		assertEquals(SAME_FILES,testFiles(compFolder+"foreach.c", compFolder+"exp_foreach"));
+	}
+	
 	@Test(expected = ParseCancellationException.class)
 	public void negative1Test(){
 		Main.compile(compFolder+"negative1.c", GEN_FILE + compFolder + "negative1_output");
