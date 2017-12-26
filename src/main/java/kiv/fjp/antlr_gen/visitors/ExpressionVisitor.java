@@ -33,7 +33,6 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         return null;
     }
 
-
 	@Override
 	public String visitValue(GrammarParser.ValueContext ctx) {
         if(ctx.ID() != null) {
@@ -144,6 +143,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         if (s.compareTo("integer") != 0) {
             throw new ParseCancellationException("ParseError - you could not call '"+ s +"' function in num expression.");
         }
+
 
         return null;
     }
@@ -256,6 +256,12 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
             if (! symbol.isArray()) {
                 throw new ParseCancellationException("ParseError - id `" + symbol.getIndentificator() + "` is not array.");
             }
+        }
+        if (symbol.getType() == DataType.Type.INTEGER && c instanceof GrammarParser.Bool_expContext) {
+            throw new ParseCancellationException("ParseError - integer can not be in bool expression.");
+        }
+        if (symbol.getType() == DataType.Type.BOOL && c instanceof GrammarParser.Num_expContext) {
+            throw new ParseCancellationException("ParseError - bool can not be in number expression.");
         }
 
         instructionList.add(new Instruction(IntType.LOD, level, symbol.getAdr()));

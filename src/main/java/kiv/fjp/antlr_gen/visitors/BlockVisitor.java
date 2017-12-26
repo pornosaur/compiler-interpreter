@@ -505,6 +505,11 @@ public class BlockVisitor extends GrammarVisitor<String>{
         if (symbol == null) {
             throw new ParseCancellationException("ParseError - function " + id + " is not declared before.");
         }
+        if (symbol.isArray()) {
+            if (ctx.parent instanceof GrammarParser.NumFuncContext || ctx.parent instanceof GrammarParser.BoolFuncContext) {
+                throw new ParseCancellationException("ParseError - you have to assign array into the variable at the first.");
+            }
+        }
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
 
@@ -512,7 +517,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
         int paramCount = ctx.value().size();
         if (paramCount != symbol.getSize()) {
-            throw new ParseCancellationException("ParseError - function expects "+symbol.getSize()+
+            throw new ParseCancellationException("ParseError - function expects " + symbol.getSize() +
                     " parameter(s), but you passed " + paramCount + "!");
         }
 
