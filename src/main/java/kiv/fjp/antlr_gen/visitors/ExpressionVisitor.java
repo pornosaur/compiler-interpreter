@@ -43,6 +43,27 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
 		return null;
 	}
+
+    @Override
+    public String visitArray_pos(GrammarParser.Array_posContext ctx) {
+        String id = ctx.ID(0).getText();
+
+        Symbol symbol = symbolTable.findSymbol(id);
+        if(symbol == null) {
+            throw new ParseCancellationException("ParseError - id " + id + " is not declared before.");
+        }
+
+        instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
+        if(ctx.ID().size() == 2) {
+            visitID(ctx.ID(1).getText(), ctx);
+        }else {
+            visitInteger(ctx.integer());
+        }
+
+        instructionList.add(new Instruction(IntType.POS, 0, 0));
+
+        return null;
+    }
 	
 	@Override
 	public String visitMultiDiv(GrammarParser.MultiDivContext ctx){
@@ -261,7 +282,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
             throw new ParseCancellationException("ParseError - integer can not be in bool expression.");
         }
         if (symbol.getType() == DataType.Type.BOOL && c instanceof GrammarParser.Num_expContext) {
-            throw new ParseCancellationException("ParseError - bool can not be in number expression.");
+            throw new ParseCancellationException("ParseError - bool can not be in number expression. ");
         }
 
         instructionList.add(new Instruction(IntType.LOD, level, symbol.getAdr()));

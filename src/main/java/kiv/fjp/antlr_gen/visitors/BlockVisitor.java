@@ -1,5 +1,6 @@
 package kiv.fjp.antlr_gen.visitors;
 
+import com.sun.org.apache.bcel.internal.generic.InstructionList;
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.GrammarParser.StatementContext;
 import kiv.fjp.antlr_gen.structures.DataType;
@@ -364,6 +365,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
             }
         }
 
+        testBool(symbol);
         instructionList.add(new Instruction(IntType.MOV, 0, 0));
 
         return null;
@@ -399,6 +401,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
                 }
             }
 
+            testBool(symbol);
             instructionList.add(new Instruction(IntType.STO, symbol.getLevel(), symbol.getAdr()));
         }
 
@@ -444,8 +447,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
             if (s.compareTo("void") == 0) {
                 throw new ParseCancellationException("ParseError - you could not assigned void function.");
             }
-            System.out.println("FUNC: " + s);
         }
+
+       testBool(symbol);
 
         instructionList.add(new Instruction(IntType.STO, symbol.getLevel(), symbol.getAdr()));
 
@@ -491,6 +495,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
             }
 
             instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), lastID.getAdr()));
+            testBool(symbol);
             instructionList.add(new Instruction(IntType.STO, symbol.getLevel(), symbol.getAdr()));
         }
 
@@ -529,5 +534,16 @@ public class BlockVisitor extends GrammarVisitor<String>{
         instructionList.add(new Instruction(IntType.INT, 0, -ctx.value().size()));
 
 	    return symbol.getType().toString();
+    }
+
+    private void testBool(Symbol symbol) {
+        if (symbol.getType() == DataType.Type.BOOL) {
+            instructionList.add(new Instruction(IntType.LIT, symbol.getLevel(), 1));
+            instructionList.add(new Instruction(IntType.OPR, symbol.getLevel(), Instruction.OPRType.GREATER_EQ.ordinal()));
+            instructionList.add(new Instruction(IntType.JMC, symbol.getLevel(), instructionList.size() + 4));
+            instructionList.add(new Instruction(IntType.LIT, symbol.getLevel(), 1));
+            instructionList.add(new Instruction(IntType.JMP, symbol.getLevel(), instructionList.size() + 3));
+            instructionList.add(new Instruction(IntType.LIT, symbol.getLevel(), 0));
+        }
     }
 }

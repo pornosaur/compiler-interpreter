@@ -98,6 +98,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValue(GrammarParser.ValueContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#array_pos}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArray_pos(GrammarParser.Array_posContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GrammarParser#array_asigne}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

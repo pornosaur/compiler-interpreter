@@ -61,9 +61,14 @@ const_declar
 
 value
     :   (   ID
+        |   array_pos
         |   num_exp
         |   bool_exp
         )
+    ;
+
+array_pos
+    :   ID '[' (integer | ID) ']'
     ;
 
 array_asigne
@@ -71,11 +76,11 @@ array_asigne
     ;
 
 def
-    :   ID '=' (func | ternar_oper | value)
+    :   ID '=' (value | func | ternar_oper)
     ;
 
 multiple_def
-    :   ID ('=' ID)+ '=' (func |value | ternar_oper)
+    :   ID ('=' ID)+ '=' (func | value | ternar_oper)
     ;
 
 parallel_def
