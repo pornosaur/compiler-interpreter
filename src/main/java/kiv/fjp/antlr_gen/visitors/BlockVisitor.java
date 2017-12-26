@@ -115,6 +115,8 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitForeach(GrammarParser.ForeachContext ctx) {
+	    int startInt = instructionList.size();
+
 	    Symbol symbol = new Symbol("", "integer", 0, 0, SymbolType.VAR);
         if (! symbolTable.addSymbol(symbol)) {
             throw new ParseCancellationException("ParseError - problem with variable for position in FOREACH.");
@@ -134,7 +136,8 @@ public class BlockVisitor extends GrammarVisitor<String>{
         instructionList.add(new Instruction(IntType.STO, 0 , symbol.getAdr()));
         int jmpSize = instructionList.size() + 1;
 
-        //instructionList.add(new Instruction()); TODO Instruction for length array
+        instructionList.add(new Instruction(IntType.LOD, 0, sArr.getAdr()));
+        instructionList.add(new Instruction(IntType.LEN, 0, 0));
         instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
         instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.TEST_NONEQ.ordinal()));
         Instruction intJMP = new Instruction(IntType.JMC, 0, 0);
@@ -147,8 +150,10 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
         visitBlock(ctx.block());
 
+        instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
         instructionList.add(new Instruction(IntType.LIT, 0, 1));
         instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.PLUS.ordinal()));
+        instructionList.add(new Instruction(IntType.STO, 0, symbol.getAdr()));
         instructionList.add(new Instruction(IntType.JMP, 0, jmpSize));
         intJMP.setValue(instructionList.size() + 1);
 
@@ -359,7 +364,6 @@ public class BlockVisitor extends GrammarVisitor<String>{
                 if (s.compareTo("void") == 0) {
                     throw new ParseCancellationException("ParseError - you could not assigned void function.");
                 }
-
             }
 
             instructionList.add(new Instruction(IntType.STO, symbol.getLevel(), symbol.getAdr()));
@@ -369,7 +373,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitR_return(GrammarParser.R_returnContext ctx) {
-	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
+	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
 
 	    if (ctx.value() != null ||ctx.ternar_oper() != null || ctx.def() != null) {
 	        expressionVisitor.visit(ctx);
@@ -384,8 +388,6 @@ public class BlockVisitor extends GrammarVisitor<String>{
         instructionList.add(new Instruction(IntType.RET, 0, 0));
 	    return null;
     }
-
-
 	
 	@Override public String visitDef(GrammarParser.DefContext ctx) {
         String id = ctx.ID().getText();
