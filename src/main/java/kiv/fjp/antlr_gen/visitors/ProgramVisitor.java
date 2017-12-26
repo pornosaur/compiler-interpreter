@@ -30,7 +30,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
         isReturn = false;
         DataType returnType = new DataType(ctx.return_type().getText());
 
-        int countParam = ctx.param()!= null ? ctx.param().ID().size() : 0;
+        int countParam = ctx.param()!= null ? ctx.param().param_item().size() : 0;
 
         level = DEF_LEVEL;
         param = countParam;
@@ -70,8 +70,18 @@ public class ProgramVisitor extends GrammarVisitor<String> {
 
     @Override
     public String visitParam(GrammarParser.ParamContext ctx) {
-        for (int i = 0; i < ctx.data_type().size(); i++) {
-            symbolTable.addSymbol(new Symbol(ctx.ID(i).getText(), ctx.data_type(i).getText(), level,0, SymbolType.VAR));
+        for (int i = 0; i < ctx.param_item().size(); i++) {
+            Symbol symbol;
+            if (ctx.param_item(i).array_param() != null) {
+                symbol = new Symbol(ctx.param_item(i).array_param().ID().getText(),
+                        ctx.param_item(i).array_param().data_type().getText(),  level,0, SymbolType.VAR);
+                symbol.setArray(true);
+            } else {
+                symbol = new Symbol(ctx.param_item(i).ID().getText(), ctx.param_item(i).data_type().getText(),
+                        level,0, SymbolType.VAR);
+            }
+
+            symbolTable.addSymbol(symbol);
             instructionList.add(new Instruction(IntType.LOD, 0, -(i + 1)));
         }
 

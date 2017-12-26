@@ -38,7 +38,15 @@ data_type
     ;
 
 param
-    :   ((data_type | array_type) ID (',' (data_type | array_type) ID)*)?
+    :   (param_item (',' param_item)*)?
+    ;
+
+param_item
+    :   ((data_type ID)| array_param)
+    ;
+
+array_param
+    :   data_type ID '['']'
     ;
 
 declar

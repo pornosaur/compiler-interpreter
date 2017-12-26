@@ -200,8 +200,6 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         return null;
     }
 
-
-    
     @Override
     public String visitNumArray(GrammarParser.NumArrayContext ctx) {
         if (sw != null && sw instanceof GrammarParser.S_switchContext) {

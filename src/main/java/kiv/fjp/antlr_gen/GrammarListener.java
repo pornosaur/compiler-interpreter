@@ -78,6 +78,26 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitParam(GrammarParser.ParamContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#param_item}.
+	 * @param ctx the parse tree
+	 */
+	void enterParam_item(GrammarParser.Param_itemContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#param_item}.
+	 * @param ctx the parse tree
+	 */
+	void exitParam_item(GrammarParser.Param_itemContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#array_param}.
+	 * @param ctx the parse tree
+	 */
+	void enterArray_param(GrammarParser.Array_paramContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#array_param}.
+	 * @param ctx the parse tree
+	 */
+	void exitArray_param(GrammarParser.Array_paramContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code declarID}
 	 * labeled alternative in {@link GrammarParser#declar}.
 	 * @param ctx the parse tree
