@@ -77,6 +77,10 @@ public class Interpreter {
 					processMOV();
 					break;
 				}
+				case LEN:
+					processLEN();
+					break;
+				}
 				steps.add(new InterpreterStep(actualInstruction, instructionPointer, base, stackPointer, stack.clone()));
 				System.out.print(steps.get(steps.size()-1));
 			}
@@ -179,6 +183,12 @@ public class Interpreter {
 			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer - SECOND_STACK_POS_SHIFT]+ " size: " + 
 						+heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]).length);
 		}
+	}
+	
+	private void processLEN() throws InterpreterException {
+		int length = heap.get(stack[stackPointer]).length;
+		stack[stackPointer] = length;
+		instructionPointer++;
 	}
 
 	private void processOPR(int value) {

@@ -12,11 +12,12 @@ public class Instruction {
 	    JMP,		//proveď skok na adresu A
 	    JMC,		//proveď skok na adresu A, je-li hodnota na vrcholu zásobníku 0
 	    RET,  		//návrat z procedury (return)
-		ALC,  		//alokuj místo pro pole/string podle hodnoty na vrcholu zásobníku
+		ALC,  		//alokuj místo pro pole/string podle hodnoty na vrcholu zásobníku a prida na nej odkaz do hlady na vytvorene pole
 		POS,		//pozice v poli, ze ktere se precte hodnota. Bere posledni dve hodnoty na zasobniku.
 					//Prvni urcuje pozici pole v halde a druha udava posun(index). Ulozi na zasobnik hodnotu na daný pozici.
-		MOV; 		//Prida na danou pozici v poli hodnotu. Prvni tri hodnoty ze zasobnkiku. Prvni dve stejne jako u pos
+		MOV, 		//Prida na danou pozici v poli hodnotu. Prvni tri hodnoty ze zasobnkiku. Prvni dve stejne jako u pos
 					//a treti hodnota bude ta, ktera se prida na dane misto v poli
+		LEN; 		//Zjisti velikost pole podle indexu na vrcholu zasobiku a tuto velikost da na zasobnik
 	}
 
 	public enum OPRType {
