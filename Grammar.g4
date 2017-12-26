@@ -23,6 +23,7 @@ block
         |   multiple_def ';'
         |   parallel_def ';'
         |   array_def ';'
+        |   array_asigne ';'
         |   loop
         |   statement
         |   s_switch
@@ -55,6 +56,10 @@ value
         |   num_exp
         |   bool_exp
         )
+    ;
+
+array_asigne
+    :   data_type ID '[' ']' '=' (ID | func)
     ;
 
 def
