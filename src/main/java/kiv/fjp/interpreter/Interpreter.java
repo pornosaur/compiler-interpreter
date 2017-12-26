@@ -176,7 +176,7 @@ public class Interpreter {
 	private void processMOV() throws InterpreterException {
 		try {
 			heap.get(stack[stackPointer - THIRD_STACK_POS_SHIFT])[stack[stackPointer - SECOND_STACK_POS_SHIFT]] = stack[stackPointer];
-			stackPointer -= THIRD_STACK_POS_SHIFT;
+			stackPointer -= FOURTH_STACK_POS_SHIFT;
 			instructionPointer++;
 		}catch (IndexOutOfBoundsException e) { 
 			throw new InterpreterException("Index out of bounds. Index: " + stack[stackPointer - SECOND_STACK_POS_SHIFT]+ " size: " + 
