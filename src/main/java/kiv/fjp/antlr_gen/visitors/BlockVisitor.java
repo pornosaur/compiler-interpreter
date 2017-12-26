@@ -307,9 +307,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
 			throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
 		}
 
-		/*if (symbol.getSymbolType() == SymbolType.CONST_VAR) {
-            throw new ParseCancellationException("ParseError - identificator " + id + " is const.");
-        }*/
+		if (symbol.getSymbolType() != SymbolType.ARRAY) {
+            throw new ParseCancellationException("ParseError - identificator " + id + " is not array type.");
+        }
 
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
         instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), symbol.getAdr()));
@@ -490,6 +490,4 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
 	    return symbol.getType().toString();
     }
-	
-	
 }

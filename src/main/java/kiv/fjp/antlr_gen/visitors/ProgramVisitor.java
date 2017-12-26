@@ -9,6 +9,7 @@ import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 import kiv.fjp.antlr_gen.structures.SymbolTable;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class ProgramVisitor extends GrammarVisitor<String> {
 
@@ -16,6 +17,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     private static final int DEF_LEVEL = 0;
 
     private int param;
+    private boolean isReturn = false;
     
     public ProgramVisitor() {
 		super();
@@ -24,6 +26,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
 	}
 
     @Override public String visitFunc_def(GrammarParser.Func_defContext ctx)  {
+        isReturn = false;
         DataType returnType = new DataType(ctx.return_type().getText());
 
         int countParam = ctx.param()!= null ? ctx.param().ID().size() : 0;
@@ -47,16 +50,12 @@ public class ProgramVisitor extends GrammarVisitor<String> {
         visitBlock(ctx.block());
 
         if (returnType.getType() != DataType.Type.VOID) {
-           /* if (! isReturn) {
-                throw new ParseCancellationException("ParseError - `return` is expected at the end of the function.");
-            }*/
+            if (! isReturn) {
+                throw new ParseCancellationException("ParseError - you have to put return at the end of this function.");
+            }
 
             instructionList.add(new Instruction(IntType.STO, 0, -countParam-1)); //store ret. value at adr = 3;
         }
-
-       /* if (returnType.getType() == DataType.Type.VOID && isReturn) {
-            throw new ParseCancellationException("ParseError - function is void type.");
-        }*/
 
         instructionList.add(new Instruction(IntType.RET, 0, 0));
 
@@ -77,7 +76,10 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     
     @Override public String visitBlock(GrammarParser.BlockContext ctx) {
     	BlockVisitor blockVisitor = new BlockVisitor(level, param);
-        return blockVisitor.visitBlock(ctx);
+        blockVisitor.visitBlock(ctx);
+        isReturn = ctx.r_return()!= null;
+
+        return null;
     }
     
 

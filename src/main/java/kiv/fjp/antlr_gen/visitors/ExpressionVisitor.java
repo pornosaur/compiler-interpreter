@@ -30,17 +30,15 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
     public String visitIntegers(GrammarParser.IntegersContext ctx) {
         instructionList.add(new Instruction(IntType.LIT, 0, Integer.valueOf(ctx.getText())));
 
-        return ctx.getText();
+        return null;
     }
 
 
 	@Override
 	public String visitValue(GrammarParser.ValueContext ctx) {
-        if(ctx.bool_exp() != null) {
-            visitChildren(ctx);
-        }else if(ctx.ID() != null) {
+        if(ctx.ID() != null) {
             visitID(ctx.ID().getText(), ctx);
-        } else if(ctx.num_exp() != null) {
+        } else {
 			 visitChildren(ctx);
 		}
 
@@ -229,6 +227,11 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         if (sw != null && sw instanceof GrammarParser.Loop_forContext) {
             if (symbol.getType() != DataType.Type.BOOL && c.parent instanceof GrammarParser.Loop_forContext) {
                 throw new ParseCancellationException("ParseError - id in condition must be boolean!");
+            }
+        }
+        if (c instanceof GrammarParser.NumArrayContext) {
+            if (symbol.getSymbolType() != Symbol.SymbolType.ARRAY) {
+                throw new ParseCancellationException("ParseError - id `" + symbol.getIndentificator() + "` is not array.");
             }
         }
 
