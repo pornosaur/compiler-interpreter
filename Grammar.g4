@@ -54,7 +54,6 @@ value
     :   (   ID
         |   num_exp
         |   bool_exp
-        |   array_def
         )
     ;
 
@@ -158,6 +157,7 @@ r_return
         |   value
         |   func
         |   def
+        |   array_def
         )
         ';'
     ;
