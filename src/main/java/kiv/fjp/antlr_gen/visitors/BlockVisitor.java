@@ -73,9 +73,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
             throw new ParseCancellationException("ParseError - could not be bool type in switch.");
         }
 
-        Instruction intJMP = null;
         List<Instruction> breakList = new ArrayList<>();
-
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
         if (!ctx.num_exp().isEmpty()) {
             int caseCount = ctx.num_exp().size();
@@ -114,6 +112,47 @@ public class BlockVisitor extends GrammarVisitor<String>{
         }
 
         return null;
+    }
+
+    @Override public String visitForeach(GrammarParser.ForeachContext ctx) {
+	    Symbol symbol = new Symbol("", "integer", 0, 0, SymbolType.VAR);
+        if (! symbolTable.addSymbol(symbol)) {
+            throw new ParseCancellationException("ParseError - problem with variable for position in FOREACH.");
+        }
+
+        Symbol symbolID = new Symbol(ctx.ID(0).getText(), ctx.data_type().getText(), 0, 0, SymbolType.VAR);
+        if (! symbolTable.addSymbol(symbolID)) {
+            throw new ParseCancellationException("ParseError - id " + ctx.ID(0).getText() + " is already declared.");
+        }
+
+	    Symbol sArr = symbolTable.findSymbol(ctx.ID(1).getText());
+	    if (sArr == null) {
+            throw new ParseCancellationException("ParseError - array " + sArr.getIndentificator() + " is not defined before.");
+        }
+
+        instructionList.add(new Instruction(IntType.LIT, 0 , 0));
+        instructionList.add(new Instruction(IntType.STO, 0 , symbol.getAdr()));
+        int jmpSize = instructionList.size() + 1;
+
+        //instructionList.add(new Instruction()); TODO Instruction for length array
+        instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
+        instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.TEST_NONEQ.ordinal()));
+        Instruction intJMP = new Instruction(IntType.JMC, 0, 0);
+        instructionList.add(intJMP);
+
+        instructionList.add(new Instruction(IntType.LOD, 0, sArr.getAdr()));
+        instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
+        instructionList.add(new Instruction(IntType.POS, 0, 0));
+        instructionList.add(new Instruction(IntType.STO, 0, symbolID.getAdr()));
+
+        visitBlock(ctx.block());
+
+        instructionList.add(new Instruction(IntType.LIT, 0, 1));
+        instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.PLUS.ordinal()));
+        instructionList.add(new Instruction(IntType.JMP, 0, jmpSize));
+        intJMP.setValue(instructionList.size() + 1);
+
+	    return null;
     }
 
 	@Override public String visitLoop_while(GrammarParser.Loop_whileContext ctx) {
