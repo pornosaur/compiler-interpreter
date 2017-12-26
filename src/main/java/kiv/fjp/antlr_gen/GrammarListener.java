@@ -454,25 +454,15 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitS_switch(GrammarParser.S_switchContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GrammarParser#s_case}.
+	 * Enter a parse tree produced by {@link GrammarParser#s_break}.
 	 * @param ctx the parse tree
 	 */
-	void enterS_case(GrammarParser.S_caseContext ctx);
+	void enterS_break(GrammarParser.S_breakContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GrammarParser#s_case}.
+	 * Exit a parse tree produced by {@link GrammarParser#s_break}.
 	 * @param ctx the parse tree
 	 */
-	void exitS_case(GrammarParser.S_caseContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link GrammarParser#s_default}.
-	 * @param ctx the parse tree
-	 */
-	void enterS_default(GrammarParser.S_defaultContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link GrammarParser#s_default}.
-	 * @param ctx the parse tree
-	 */
-	void exitS_default(GrammarParser.S_defaultContext ctx);
+	void exitS_break(GrammarParser.S_breakContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GrammarParser#func}.
 	 * @param ctx the parse tree

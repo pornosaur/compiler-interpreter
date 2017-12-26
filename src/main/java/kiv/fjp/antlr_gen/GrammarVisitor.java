@@ -275,17 +275,11 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitS_switch(GrammarParser.S_switchContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link GrammarParser#s_case}.
+	 * Visit a parse tree produced by {@link GrammarParser#s_break}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitS_case(GrammarParser.S_caseContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link GrammarParser#s_default}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitS_default(GrammarParser.S_defaultContext ctx);
+	T visitS_break(GrammarParser.S_breakContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#func}.
 	 * @param ctx the parse tree

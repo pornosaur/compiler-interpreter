@@ -1,10 +1,14 @@
 void main() {
-    integer a = 0;
-    integer i = 1;
-	repeat {
-        a = a + 1;
-        if (a == 10) {
-            i = 0;
-        }
-	} until (i==0);
+    integer a = 5;
+    integer b = 0;
+    switch(a) {
+        case 1: b = 8;
+          break;
+        case 0+1+2+2: b = 88;
+            break;
+        case 22: b = 999;
+         break;
+        case 8:
+          b = 103;
+    }
 }

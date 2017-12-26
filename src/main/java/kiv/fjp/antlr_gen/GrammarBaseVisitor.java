@@ -304,14 +304,7 @@ public class GrammarBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitS_case(GrammarParser.S_caseContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitS_default(GrammarParser.S_defaultContext ctx) { return visitChildren(ctx); }
+	@Override public T visitS_break(GrammarParser.S_breakContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

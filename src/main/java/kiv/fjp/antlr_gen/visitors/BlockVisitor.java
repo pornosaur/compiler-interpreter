@@ -72,20 +72,41 @@ public class BlockVisitor extends GrammarVisitor<String>{
         if (symbol.getType()== DataType.Type.BOOL) {
             throw new ParseCancellationException("ParseError - could not be bool type in switch.");
         }
-        
+
+        Instruction intJMP = null;
         List<Instruction> breakList = new ArrayList<>();
-        if (!ctx.s_case().isEmpty()) {
-            for (GrammarParser.S_caseContext c : ctx.s_case()) {
+
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
+        if (!ctx.num_exp().isEmpty()) {
+            int caseCount = ctx.num_exp().size();
+
+            Instruction skipBreak = null;
+            for (int i = 0; i < caseCount; i++) {
                 instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
-                String s = visitS_case(c);
-                if (s != null) {
-                    Instruction intJMP = new Instruction(IntType.JMP, 0, 0);
-                    instructionList.add(intJMP);
-                    breakList.add(intJMP);
+
+                expressionVisitor.visit(ctx.num_exp(i));
+                instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.TEST_EQ.ordinal()));
+
+                Instruction intJMC = new Instruction(IntType.JMC, 0, 0);
+                instructionList.add(intJMC);
+
+                if (skipBreak != null) {
+                    skipBreak.setValue(instructionList.size() + 1);
                 }
+
+                visitBlock(ctx.block(i));
+
+                Instruction jmpInt = new Instruction(IntType.JMP, 0,0);
+                instructionList.add(jmpInt);
+                if (ctx.s_break(i).getText().compareTo("break;") == 0) {
+                    breakList.add(jmpInt);
+                    skipBreak = null;
+                } else {
+                    skipBreak = jmpInt;
+                }
+
+                intJMC.setValue(instructionList.size() + 1);
             }
-        } else {
-            //visitS_default(ctx.s_default());
         }
 
         for (Instruction i : breakList) {
@@ -95,30 +116,6 @@ public class BlockVisitor extends GrammarVisitor<String>{
         return null;
     }
 
-    @Override public String visitS_case(GrammarParser.S_caseContext ctx) {
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
-        expressionVisitor.visit(ctx.num_exp());
-
-        instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.TEST_EQ.ordinal()));
-
-        Instruction intJMC = new Instruction(IntType.JMC, 0, 0);
-        instructionList.add(intJMC);
-
-        visitBlock(ctx.block());
-
-        int extra = ctx.BREAK() != null ? 1 : 0;
-
-        intJMC.setValue(instructionList.size() + 1 + extra); //extra because of JMP instruction after break;
-
-        return ctx.BREAK() != null ? "break" : null;
-    }
-
-    @Override public String visitS_default(GrammarParser.S_defaultContext ctx) {
-        visitBlock(ctx.block());
-
-        return ctx.BREAK() != null ? "break" : null;
-    }
-	
 	@Override public String visitLoop_while(GrammarParser.Loop_whileContext ctx) {
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
 

@@ -137,20 +137,11 @@ foreach
     ;
 
 s_switch
-    :   'switch' '(' ID ')' '{'
-        (s_case+
-          |
-         s_default?
-         )
-        '}'
+    :   'switch' '(' ID ')' '{' ('case' num_exp ':' block s_break)* '}'
     ;
 
-s_case
-    :   'case' num_exp ':' block BREAK?
-    ;
-
-s_default
-    :   'default:' block BREAK?
+s_break
+    :   BREAK?
     ;
 
 func
