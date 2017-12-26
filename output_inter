@@ -60,7 +60,7 @@ Stack pointer: 6
 5 0
 6 0
 ---------------------------------------------
-LIT	0	0
+LIT	0	5
 Next instruction: 8
 Base: 1
 Stack pointer: 7
@@ -70,106 +70,16 @@ Stack pointer: 7
 4 0
 5 0
 6 0
-7 0
----------------------------------------------
-LIT	0	1
-Next instruction: 9
-Base: 1
-Stack pointer: 8
-1 0
-2 0
-3 -1
-4 0
-5 0
-6 0
-7 0
-8 1
----------------------------------------------
-OPR	0	11
-Next instruction: 10
-Base: 1
-Stack pointer: 7
-1 0
-2 0
-3 -1
-4 0
-5 0
-6 0
-7 0
----------------------------------------------
-JMC	0	13
-Next instruction: 13
-Base: 1
-Stack pointer: 6
-1 0
-2 0
-3 -1
-4 0
-5 0
-6 0
----------------------------------------------
-LIT	0	0
-Next instruction: 14
-Base: 1
-Stack pointer: 7
-1 0
-2 0
-3 -1
-4 0
-5 0
-6 0
-7 0
+7 5
 ---------------------------------------------
 MOV	0	0
-Next instruction: 15
+Next instruction: 9
 Base: 1
 Stack pointer: 4
 1 0
 2 0
 3 -1
 4 0
----------------------------------------------
-INT	0	1
-Next instruction: 16
-Base: 1
-Stack pointer: 5
-1 0
-2 0
-3 -1
-4 0
-5 0
----------------------------------------------
-LOD	0	3
-Next instruction: 17
-Base: 1
-Stack pointer: 6
-1 0
-2 0
-3 -1
-4 0
-5 0
-6 0
----------------------------------------------
-POS	0	0
-Next instruction: 18
-Base: 1
-Stack pointer: 6
-1 0
-2 0
-3 -1
-4 0
-5 0
-6 0
----------------------------------------------
-STO	0	4
-Next instruction: 19
-Base: 1
-Stack pointer: 5
-1 0
-2 0
-3 -1
-4 0
-5 0
 ---------------------------------------------
 RET	0	0
 Next instruction: -1

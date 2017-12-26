@@ -278,6 +278,8 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
                 throw new ParseCancellationException("ParseError - id `" + symbol.getIndentificator() + "` is not array.");
             }
         }
+
+
         if (symbol.getType() == DataType.Type.INTEGER && c instanceof GrammarParser.Bool_expContext) {
             throw new ParseCancellationException("ParseError - integer can not be in bool expression.");
         }

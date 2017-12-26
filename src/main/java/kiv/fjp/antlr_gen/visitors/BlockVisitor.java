@@ -437,6 +437,10 @@ public class BlockVisitor extends GrammarVisitor<String>{
             throw new ParseCancellationException("ParseError - identificator " + id + " is const.");
         }
 
+        if (symbol.isArray()) {
+            throw new ParseCancellationException("ParseError - id `" + symbol.getIndentificator() + "` is array.");
+        }
+
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
         if (ctx.value() != null) {
             expressionVisitor.visitValue(ctx.value());
