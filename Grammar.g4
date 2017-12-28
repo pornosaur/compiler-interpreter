@@ -177,7 +177,7 @@ r_return
         |   func
         |   value
         |   array_pos
-        )
+        )?
         ';'
     ;
 

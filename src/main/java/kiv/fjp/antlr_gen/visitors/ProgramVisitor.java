@@ -19,6 +19,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     private List<Symbol> params;
     private boolean isReturn;
     private boolean returnArr;
+    private boolean voidRet;
 
     public ProgramVisitor() {
 		super();
@@ -32,6 +33,10 @@ public class ProgramVisitor extends GrammarVisitor<String> {
         level = DEF_LEVEL;
         isReturn = false;
         returnArr = ctx.return_type().array_type() != null;
+
+        if (! returnArr) {
+            voidRet = ctx.return_type().getText().compareTo("void") == 0;
+        }
 
         DataType returnType = new DataType(ctx.return_type().getText());
         int countParam = ctx.param()!= null ? ctx.param().param_item().size() : 0;
@@ -63,7 +68,9 @@ public class ProgramVisitor extends GrammarVisitor<String> {
             instructionList.add(new Instruction(IntType.STO, 0, -countParam-1)); //store ret. value at adr = 3;
         }
 
-        instructionList.add(new Instruction(IntType.RET, 0, 0));
+        if(! isReturn) {
+            instructionList.add(new Instruction(IntType.RET, 0, 0));
+        }
 
         symbolTable.removeSymbolList();
 
@@ -92,7 +99,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     }
     
     @Override public String visitBlock(GrammarParser.BlockContext ctx) {
-    	BlockVisitor blockVisitor = new BlockVisitor(level, params.size(), returnArr);
+    	BlockVisitor blockVisitor = new BlockVisitor(level, params.size(), returnArr, voidRet);
         blockVisitor.visitBlock(ctx);
         isReturn = ctx.r_return()!= null;
 

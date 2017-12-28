@@ -16,11 +16,13 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
     private boolean returnArr;
     private int params;
+    private boolean voidRet;
 	
-	public BlockVisitor(int level, int params, boolean returnArr){
+	public BlockVisitor(int level, int params, boolean returnArr, boolean voidRet){
 	    this.level = level;
 	    this.params = params;
 	    this.returnArr = returnArr;
+	    this.voidRet = voidRet;
 	}
 
 	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
@@ -436,6 +438,10 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
     @Override public String visitR_return(GrammarParser.R_returnContext ctx) {
 	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
+
+	    if (voidRet && (ctx.func() != null || ctx.ternar_oper() != null || ctx.value() != null)) {
+            throw new ParseCancellationException("ParseError - you could return value in void type function.");
+        }
 
 	    if (ctx.func() == null) {
 	        expressionVisitor.visit(ctx);
