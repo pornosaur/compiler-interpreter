@@ -234,13 +234,17 @@ public class BlockVisitor extends GrammarVisitor<String>{
         instructionList.add(new Instruction(IntType.INT, 0, 1));
         visit(ctx.def(0));
 
+        Instruction notCheckFirst = new Instruction(IntType.JMP, 0 , 0);
+        instructionList.add(notCheckFirst);
+
         int jmpBoolAdr = instructionList.size() + 1;
+        visit(ctx.def(1));
+        notCheckFirst.setValue(instructionList.size() + 1);
         ev.visit(ctx.bool_exp());
 
         Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
         instructionList.add(jmcInt);
 
-        visit(ctx.def(1));
         visit(ctx.block());
 
         instructionList.add(new Instruction(IntType.JMP, 0, jmpBoolAdr));
