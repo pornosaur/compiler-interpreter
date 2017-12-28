@@ -259,11 +259,10 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitBoolID(GrammarParser.BoolIDContext ctx) {
-        visitID(ctx.getText(), ctx);
-        return ctx.getText();
+        return visitID(ctx.getText(), ctx);
     }
 
-	private void visitID(String id, RuleContext c) {
+	private String visitID(String id, RuleContext c) {
         Symbol symbol;
         if ((symbol = symbolTable.findSymbol(id)) == null) {
             throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
@@ -279,7 +278,11 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
             }
         }
 
-
+        if (sw != null && sw instanceof GrammarParser.R_returnContext) {
+            if (symbol.isArray() != block.isReturnArr()) {
+                throw new ParseCancellationException("ParseError - bad return type.");
+            }
+        }
         if (symbol.getType() == DataType.Type.INTEGER && c instanceof GrammarParser.Bool_expContext) {
             throw new ParseCancellationException("ParseError - integer can not be in bool expression.");
         }
@@ -288,6 +291,8 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         }
 
         instructionList.add(new Instruction(IntType.LOD, level, symbol.getAdr()));
+
+        return symbol.getIndentificator().toString();
     }
 
 }

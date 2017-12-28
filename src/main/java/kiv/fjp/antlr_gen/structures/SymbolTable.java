@@ -52,7 +52,6 @@ public class SymbolTable {
 
         symbol.setAdr(symbolsStack.peek().size() + 3);
         symbolsStack.peek().add(symbol);
-        System.out.println("Symbol: - " + symbol.getIndentificator() + " = " + (symbolsStack.peek().size() + 3));
 
         return true;
 	}

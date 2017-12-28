@@ -1,10 +1,10 @@
-JMP	0	1
-Next instruction: 1
+JMP	0	20
+Next instruction: 20
 Base: 1
 Stack pointer: 0
 ---------------------------------------------
 INT	0	3
-Next instruction: 2
+Next instruction: 21
 Base: 1
 Stack pointer: 3
 1 0
@@ -12,7 +12,7 @@ Stack pointer: 3
 3 -1
 ---------------------------------------------
 INT	0	1
-Next instruction: 3
+Next instruction: 22
 Base: 1
 Stack pointer: 4
 1 0
@@ -20,27 +20,8 @@ Stack pointer: 4
 3 -1
 4 0
 ---------------------------------------------
-LIT	0	5
-Next instruction: 4
-Base: 1
-Stack pointer: 5
-1 0
-2 0
-3 -1
-4 0
-5 5
----------------------------------------------
-ALC	0	0
-Next instruction: 5
-Base: 1
-Stack pointer: 4
-1 0
-2 0
-3 -1
-4 0
----------------------------------------------
-LOD	0	3
-Next instruction: 6
+INT	0	1
+Next instruction: 23
 Base: 1
 Stack pointer: 5
 1 0
@@ -49,8 +30,289 @@ Stack pointer: 5
 4 0
 5 0
 ---------------------------------------------
+CAL	0	1
+Next instruction: 1
+Base: 6
+Stack pointer: 5
+1 0
+2 0
+3 -1
+4 0
+5 0
+---------------------------------------------
+INT	0	3
+Next instruction: 2
+Base: 6
+Stack pointer: 8
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+---------------------------------------------
+INT	0	1
+Next instruction: 3
+Base: 6
+Stack pointer: 9
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+---------------------------------------------
+LIT	0	5
+Next instruction: 4
+Base: 6
+Stack pointer: 10
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 5
+---------------------------------------------
+ALC	0	0
+Next instruction: 5
+Base: 6
+Stack pointer: 9
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+---------------------------------------------
+LOD	0	3
+Next instruction: 6
+Base: 6
+Stack pointer: 10
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 0
+---------------------------------------------
 LIT	0	0
 Next instruction: 7
+Base: 6
+Stack pointer: 11
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 0
+11 0
+---------------------------------------------
+LIT	0	1
+Next instruction: 8
+Base: 6
+Stack pointer: 12
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 0
+11 0
+12 1
+---------------------------------------------
+LIT	0	1
+Next instruction: 9
+Base: 6
+Stack pointer: 13
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 0
+11 0
+12 1
+13 1
+---------------------------------------------
+OPR	0	11
+Next instruction: 10
+Base: 6
+Stack pointer: 12
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 0
+11 0
+12 1
+---------------------------------------------
+JMC	0	13
+Next instruction: 11
+Base: 6
+Stack pointer: 11
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 0
+11 0
+---------------------------------------------
+LIT	0	1
+Next instruction: 12
+Base: 6
+Stack pointer: 12
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 0
+11 0
+12 1
+---------------------------------------------
+JMP	0	14
+Next instruction: 14
+Base: 6
+Stack pointer: 12
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 0
+11 0
+12 1
+---------------------------------------------
+MOV	0	0
+Next instruction: 15
+Base: 6
+Stack pointer: 9
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+---------------------------------------------
+LOD	0	3
+Next instruction: 16
+Base: 6
+Stack pointer: 10
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+10 0
+---------------------------------------------
+STO	0	-1
+Next instruction: 17
+Base: 6
+Stack pointer: 9
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+7 1
+8 24
+9 0
+---------------------------------------------
+RET	0	0
+Next instruction: 24
+Base: 1
+Stack pointer: 5
+1 0
+2 0
+3 -1
+4 0
+5 0
+---------------------------------------------
+INT	0	0
+Next instruction: 25
+Base: 1
+Stack pointer: 5
+1 0
+2 0
+3 -1
+4 0
+5 0
+---------------------------------------------
+STO	0	3
+Next instruction: 26
+Base: 1
+Stack pointer: 4
+1 0
+2 0
+3 -1
+4 0
+---------------------------------------------
+INT	0	1
+Next instruction: 27
+Base: 1
+Stack pointer: 5
+1 0
+2 0
+3 -1
+4 0
+5 0
+---------------------------------------------
+LOD	0	3
+Next instruction: 28
 Base: 1
 Stack pointer: 6
 1 0
@@ -60,8 +322,19 @@ Stack pointer: 6
 5 0
 6 0
 ---------------------------------------------
-LIT	0	5
-Next instruction: 8
+POS	0	0
+Next instruction: 29
+Base: 1
+Stack pointer: 6
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+---------------------------------------------
+LIT	0	1
+Next instruction: 30
 Base: 1
 Stack pointer: 7
 1 0
@@ -69,17 +342,61 @@ Stack pointer: 7
 3 -1
 4 0
 5 0
-6 0
-7 5
+6 1
+7 1
 ---------------------------------------------
-MOV	0	0
-Next instruction: 9
+OPR	0	11
+Next instruction: 31
 Base: 1
-Stack pointer: 4
+Stack pointer: 6
 1 0
 2 0
 3 -1
 4 0
+5 0
+6 1
+---------------------------------------------
+JMC	0	34
+Next instruction: 32
+Base: 1
+Stack pointer: 5
+1 0
+2 0
+3 -1
+4 0
+5 0
+---------------------------------------------
+LIT	0	1
+Next instruction: 33
+Base: 1
+Stack pointer: 6
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+---------------------------------------------
+JMP	0	35
+Next instruction: 35
+Base: 1
+Stack pointer: 6
+1 0
+2 0
+3 -1
+4 0
+5 0
+6 1
+---------------------------------------------
+STO	0	4
+Next instruction: 36
+Base: 1
+Stack pointer: 5
+1 0
+2 0
+3 -1
+4 0
+5 1
 ---------------------------------------------
 RET	0	0
 Next instruction: -1

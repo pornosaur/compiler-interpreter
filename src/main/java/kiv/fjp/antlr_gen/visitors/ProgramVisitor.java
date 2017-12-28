@@ -17,8 +17,9 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     private static final int DEF_LEVEL = 0;
 
     private int param;
-    private boolean isReturn = false;
-    
+    private boolean isReturn;
+    private boolean returnArr;
+
     public ProgramVisitor() {
 		super();
 		instructionList = new ArrayList<>();
@@ -29,6 +30,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     public String visitFunc_def(GrammarParser.Func_defContext ctx)  {
         isReturn = false;
         DataType returnType = new DataType(ctx.return_type().getText());
+        returnArr = ctx.return_type().array_type() != null;
 
         int countParam = ctx.param()!= null ? ctx.param().param_item().size() : 0;
 
@@ -89,13 +91,9 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     }
     
     @Override public String visitBlock(GrammarParser.BlockContext ctx) {
-    	BlockVisitor blockVisitor = new BlockVisitor(level, param);
+    	BlockVisitor blockVisitor = new BlockVisitor(level, param, returnArr);
         blockVisitor.visitBlock(ctx);
         isReturn = ctx.r_return()!= null;
-
-        if (ctx.r_return() != null) {
-          //  ctx.r_return().
-        }
 
         return null;
     }

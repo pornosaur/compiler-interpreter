@@ -16,17 +16,19 @@ import java.util.List;
 public class BlockVisitor extends GrammarVisitor<String>{
 
     private int param;
+    private boolean returnArr;
 	
-	public BlockVisitor(int level, int param){
+	public BlockVisitor(int level, int param, boolean returnArr){
 	    this.level = level;
 	    this.param = param;
+	    this.returnArr = returnArr;
 	}
 
 	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
 		for(int i = 0; i < ctx.getChildCount();i++) {
 			if(ctx.getChild(i) instanceof StatementContext || ctx.getChild(i) instanceof GrammarParser.LoopContext) {
 
-			    //TODO for another statements
+			    //TODO for ELSE => seperate addSymbolList and remove to IF, ELSE and LOOP
 				symbolTable.addSymbolList();
 
 				visit(ctx.getChild(i));
@@ -251,29 +253,32 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String varType = ctx.data_type().getText();
 
         Symbol symbolRight;
+        instructionList.add(new Instruction(IntType.INT, 0, 1));
         if (ctx.ID(1) != null) {
             idRight = ctx.ID(1).getText();
             symbolRight = symbolTable.findSymbol(idRight);
+            if (symbolRight == null) {
+                throw new ParseCancellationException("ParseError - id " + idRight + " is not declared before.");
+            }
         } else {
-            idRight = ctx.func().ID().getText();
-            symbolRight = symbolTable.findSymbol(ctx.func().ID().getText(), SymbolType.FUNCTION);
+            /*idRight = ctx.func().ID().getText();
+            symbolRight = symbolTable.findSymbol(ctx.func().ID().getText(), SymbolType.FUNCTION);*/
+            visitFunc(ctx.func());
         }
-        if (symbolRight == null) {
-            throw new ParseCancellationException("ParseError - id " + idRight + " is not declared before.");
-        }
+
 
 
         Symbol symbolArr = new Symbol(id, varType, level, 0, SymbolType.VAR);
-        if (! symbolRight.isArray()) {
+        /*if (! symbolRight.isArray()) {
             throw new ParseCancellationException("ParseError - you cannot assign non-array type to array.");
-        }
+        }*/
         if(! symbolTable.addSymbol(symbolArr)) {
             throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
         }
         symbolArr.setArray(true);
 
-        instructionList.add(new Instruction(IntType.INT, 0, 1));
-        instructionList.add(new Instruction(IntType.LOD, 0, symbolRight.getAdr()));
+
+        //instructionList.add(new Instruction(IntType.LOD, 0, symbolRight.getAdr()));
         instructionList.add(new Instruction(IntType.STO, 0, symbolArr.getAdr()));
 
         return null;
@@ -411,7 +416,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
     @Override public String visitR_return(GrammarParser.R_returnContext ctx) {
 	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
 
-	    if (ctx.value() != null ||ctx.ternar_oper() != null || ctx.def() != null) {
+	    if (ctx.func() == null) {
 	        expressionVisitor.visit(ctx);
         } else {
 	       String s = visitFunc(ctx.func());
@@ -420,7 +425,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
            }
         }
 
-        instructionList.add(new Instruction(IntType.STO, 0, -param-1));
+        instructionList.add(new Instruction(IntType.STO, 0, -param - 1));
         instructionList.add(new Instruction(IntType.RET, 0, 0));
 	    return null;
     }
@@ -537,7 +542,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
         instructionList.add(new Instruction(IntType.CAL, 0, symbol.getAdr()));
         instructionList.add(new Instruction(IntType.INT, 0, -ctx.value().size()));
 
-	    return symbol.getType().toString();
+	    return null;
     }
 
     private void testBool(Symbol symbol) {
@@ -549,5 +554,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
             instructionList.add(new Instruction(IntType.JMP, symbol.getLevel(), instructionList.size() + 3));
             instructionList.add(new Instruction(IntType.LIT, symbol.getLevel(), 0));
         }
+    }
+
+    public boolean isReturnArr() {
+        return returnArr;
     }
 }

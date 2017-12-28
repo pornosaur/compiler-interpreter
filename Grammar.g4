@@ -9,7 +9,7 @@ func_def
     ;
 
 return_type
-    :   data_type | array_type | 'void'
+    :    array_type | data_type | 'void'
     ;
 
 array_type
@@ -80,15 +80,15 @@ def
     ;
 
 multiple_def
-    :   ID ('=' ID)+ '=' (func | value | ternar_oper)
+    :   ID ('=' ID)+ '=' (value | func | ternar_oper)
     ;
 
 parallel_def
-    : '{' ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}'
+    : '{' ID (',' ID)*'}' '=' '{' (value | func) (',' (value | func))* '}'
     ;
     
 array_def
-    : 	ID '['value']' '=' (func | ternar_oper | value)
+    : 	ID '['value']' '=' ( func | value | ternar_oper)
     ;
 
 num_exp
@@ -176,8 +176,7 @@ r_return
         (   ternar_oper
         |   value
         |   func
-        |   def
-        |   array_def
+        |   array_pos
         )
         ';'
     ;
