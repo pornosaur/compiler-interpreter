@@ -31,7 +31,7 @@ public class ComplexTests{
 	
 	@Test
 	public void testArray() throws IOException, InterpreterException {
-		assertEquals(29, getValueFirstInitVariable(COMP_FOLDER+"array.c", GEN_FOLDER+"array"));
+		assertEquals(8, getValueFirstInitVariable(COMP_FOLDER+"array.c", GEN_FOLDER+"array"));
 	}
 	
 	@Test
