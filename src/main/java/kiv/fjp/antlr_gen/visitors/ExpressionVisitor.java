@@ -283,6 +283,15 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
                 throw new ParseCancellationException("ParseError - bad return type.");
             }
         }
+       /* if (sw != null && sw instanceof GrammarParser.FuncContext) {
+            if (c.parent instanceof GrammarParser.ValueContext) {
+                GrammarParser.ValueContext gp = (GrammarParser.ValueContext) c.parent;
+                int i = gp.getRuleIndex();
+                Symbol funcS = symbolTable.findSymbol(((GrammarParser.FuncContext) sw).ID().getText(), Symbol.SymbolType.FUNCTION);
+                if (((GrammarParser.FuncContext) sw).value(i)))
+            }
+
+        }*/
         if (symbol.getType() == DataType.Type.INTEGER && c instanceof GrammarParser.Bool_expContext) {
             throw new ParseCancellationException("ParseError - integer can not be in bool expression.");
         }

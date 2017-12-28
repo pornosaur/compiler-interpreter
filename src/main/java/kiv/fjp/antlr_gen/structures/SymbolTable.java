@@ -12,6 +12,8 @@ public class SymbolTable {
 	 */
 	private Stack<ArrayList<Symbol>> symbolsStack;
 
+	private  int incAdr = 0;
+
 
 	/**
 	 * Constructor for symbol table. Init symbols and backup of symbols.
@@ -22,6 +24,7 @@ public class SymbolTable {
 	}
 
 	public void addSymbolList(int incAdr) {
+		this.incAdr = incAdr;
 		symbolsStack.push( new ArrayList<>());
 	}
 
@@ -50,7 +53,7 @@ public class SymbolTable {
             }
         }
 
-        symbol.setAdr(symbolsStack.peek().size() + 3);
+        symbol.setAdr(symbolsStack.peek().size() + 3 + incAdr);
         symbolsStack.peek().add(symbol);
 
         return true;
@@ -64,6 +67,11 @@ public class SymbolTable {
 	 * @return search symbol or null if list doesnt contain it.
 	 */
 	public Symbol findSymbol(String symbolId) {
+        for (Symbol symbol : symbolsStack.peek()) {
+            if (symbol.getIndentificator().compareTo(symbolId) == 0) {
+                return symbol;
+            }
+        }
 	    for(int i = symbolsStack.size() - 1; i > 0; i--){
             for (Symbol symbol : symbolsStack.get(i)) {
                 if (symbol.getIndentificator().compareTo(symbolId) == 0) {

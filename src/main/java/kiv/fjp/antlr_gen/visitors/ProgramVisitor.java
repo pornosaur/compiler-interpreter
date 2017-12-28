@@ -48,7 +48,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
         symbolTable.addSymbol(sFunc);
         sFunc.setAdr(instructionList.size());
 
-        symbolTable.addSymbolList(DEF_SIZE_STACK);
+        symbolTable.addSymbolList();
         if (countParam != 0) {
             visitParam(ctx.param());
         }

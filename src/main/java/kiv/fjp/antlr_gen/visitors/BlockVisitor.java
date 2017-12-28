@@ -29,11 +29,11 @@ public class BlockVisitor extends GrammarVisitor<String>{
 			if(ctx.getChild(i) instanceof StatementContext || ctx.getChild(i) instanceof GrammarParser.LoopContext) {
 
 			    //TODO for ELSE => seperate addSymbolList and remove to IF, ELSE and LOOP
-				symbolTable.addSymbolList();
+
 
 				visit(ctx.getChild(i));
 
-				symbolTable.removeSymbolList();
+
 			}else { // its declar or define of variables
 				visit(ctx.getChild(i));
 			}
@@ -50,14 +50,20 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
         Instruction jmpEndElse = new Instruction(IntType.JMP, 0, 0);
         if (ctx.block().size() > 0) {
+            symbolTable.addSymbolList(symbolTable.getActualSize());
             visit(ctx.block(0));
+            instructionList.add(new Instruction(IntType.INT, 0, -symbolTable.getActualSize()));
+            symbolTable.removeSymbolList();
             instructionList.add(jmpEndElse);
         }
 
         //+1 because of jump end of if or else
         int jmpEndElsePos = instructionList.size() + 1, elseJmpPos = instructionList.size() + 1;
 		if(ctx.block().size() == 2) {
-			visit(ctx.block(1));
+            symbolTable.addSymbolList(symbolTable.getActualSize());
+            visit(ctx.block(1));
+            instructionList.add(new Instruction(IntType.INT, 0, -symbolTable.getActualSize()));
+            symbolTable.removeSymbolList();
             jmpEndElsePos = instructionList.size() + 1;
 		}
 
@@ -76,6 +82,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
             throw new ParseCancellationException("ParseError - could not be bool type in switch.");
         }
 
+        symbolTable.addSymbolList(symbolTable.getActualSize());
         List<Instruction> breakList = new ArrayList<>();
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
         if (!ctx.num_exp().isEmpty()) {
@@ -113,6 +120,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
         for (Instruction i : breakList) {
             i.setValue(instructionList.size() + 1);
         }
+
+        instructionList.add(new Instruction(IntType.INT, 0, -symbolTable.getActualSize()));
+        symbolTable.removeSymbolList();
 
         return null;
     }
@@ -159,6 +169,14 @@ public class BlockVisitor extends GrammarVisitor<String>{
         intJMP.setValue(instructionList.size() + 1);
 
 	    return null;
+    }
+    @Override public String visitLoop(GrammarParser.LoopContext ctx) {
+        symbolTable.addSymbolList(symbolTable.getActualSize());
+        visitChildren(ctx);
+        //instructionList.add(new Instruction(IntType.INT, 0, -symbolTable.getActualSize()));
+        symbolTable.removeSymbolList();
+
+        return null;
     }
 
 	@Override public String visitLoop_while(GrammarParser.Loop_whileContext ctx) {
@@ -527,7 +545,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
 
         int paramCount = ctx.value().size();
         if (paramCount != symbol.getSize()) {
