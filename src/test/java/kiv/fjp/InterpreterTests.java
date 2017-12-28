@@ -220,7 +220,7 @@ public class InterpreterTests {
 		expSteps.add(new InterpreterStep(instructions.get(2), 3, 1, 4, new int[]{0 ,0 ,-1 ,0 ,3}));
 		expSteps.add(new InterpreterStep(instructions.get(3), 4, 1, 3, new int[]{0 ,0 ,-1 ,0}));
 		expSteps.add(new InterpreterStep(instructions.get(4), 5, 1, 4, new int[]{0 ,0 ,-1 ,0 ,2}));
-		expSteps.add(new InterpreterStep(instructions.get(5), 6, 1, 4, new int[]{0 ,0 ,-1 ,0 ,0}));
+		expSteps.add(new InterpreterStep(instructions.get(5), 6, 1, 3, new int[]{0 ,0 ,-1 ,0}));
 		expSteps.add(new InterpreterStep(instructions.get(6), -1, 0, -1, new int[]{0}));
 
 		
@@ -264,7 +264,7 @@ public class InterpreterTests {
 		expSteps.add(new InterpreterStep(instructions.get(3), 4, 1, 3, new int[]{0 ,0 ,-1 ,0}));
 		expSteps.add(new InterpreterStep(instructions.get(4), 5, 1, 4, new int[]{0 ,0 ,-1 ,0 ,2}));
 		expSteps.add(new InterpreterStep(instructions.get(5), 6, 1, 5, new int[]{0 ,0 ,-1 ,0 ,2 ,12}));
-		expSteps.add(new InterpreterStep(instructions.get(6), 7, 1, 3, new int[]{0 ,0 ,-1 ,0}));
+		expSteps.add(new InterpreterStep(instructions.get(6), 7, 1, 2, new int[]{0 ,0 ,-1}));
 		expSteps.add(new InterpreterStep(instructions.get(7), -1, 0, -1, new int[]{0}));
 		
 		Interpreter interpreter = new Interpreter(instructions);
