@@ -76,19 +76,19 @@ array_asigne
     ;
 
 def
-    :   ID '=' (value | func | ternar_oper)
+    :   ID '=' (func | ternar_oper | value)
     ;
 
 multiple_def
-    :   ID ('=' ID)+ '=' (value | func | ternar_oper)
+    :   ID ('=' ID)+ '=' (func | ternar_oper | value)
     ;
 
 parallel_def
-    : '{' ID (',' ID)*'}' '=' '{' (value | func) (',' (value | func))* '}'
+    : '{' ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}'
     ;
     
 array_def
-    : 	ID '['value']' '=' ( func | value | ternar_oper)
+    : 	ID '['value']' '=' (func | ternar_oper | value)
     ;
 
 num_exp
@@ -174,8 +174,8 @@ ternar_oper
 r_return
     :   'return'
         (   ternar_oper
-        |   value
         |   func
+        |   value
         |   array_pos
         )
         ';'

@@ -1,6 +1,7 @@
 package kiv.fjp.antlr_gen.visitors;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.structures.DataType;
@@ -13,10 +14,9 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class ProgramVisitor extends GrammarVisitor<String> {
 
-    private static final int DEF_SIZE_STACK = 3;        //D+S+RET_ADR+RET_VAL
     private static final int DEF_LEVEL = 0;
 
-    private int param;
+    private List<Symbol> params;
     private boolean isReturn;
     private boolean returnArr;
 
@@ -28,14 +28,13 @@ public class ProgramVisitor extends GrammarVisitor<String> {
 
     @Override
     public String visitFunc_def(GrammarParser.Func_defContext ctx)  {
+        params = new ArrayList<>();
+        level = DEF_LEVEL;
         isReturn = false;
-        DataType returnType = new DataType(ctx.return_type().getText());
         returnArr = ctx.return_type().array_type() != null;
 
+        DataType returnType = new DataType(ctx.return_type().getText());
         int countParam = ctx.param()!= null ? ctx.param().param_item().size() : 0;
-
-        level = DEF_LEVEL;
-        param = countParam;
 
         Instruction intInstructionFunc = new Instruction(IntType.INT, 0, 3);
         instructionList.add(intInstructionFunc);
@@ -51,6 +50,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
         symbolTable.addSymbolList();
         if (countParam != 0) {
             visitParam(ctx.param());
+            sFunc.setParams(params);
         }
 
         visitBlock(ctx.block());
@@ -85,13 +85,14 @@ public class ProgramVisitor extends GrammarVisitor<String> {
 
             symbolTable.addSymbol(symbol);
             instructionList.add(new Instruction(IntType.LOD, 0, -(i + 1)));
+            params.add(symbol);
         }
 
         return null;
     }
     
     @Override public String visitBlock(GrammarParser.BlockContext ctx) {
-    	BlockVisitor blockVisitor = new BlockVisitor(level, param, returnArr);
+    	BlockVisitor blockVisitor = new BlockVisitor(level, params.size(), returnArr);
         blockVisitor.visitBlock(ctx);
         isReturn = ctx.r_return()!= null;
 

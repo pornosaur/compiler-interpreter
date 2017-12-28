@@ -1,6 +1,5 @@
 package kiv.fjp.antlr_gen.visitors;
 
-import com.sun.org.apache.bcel.internal.generic.InstructionList;
 import kiv.fjp.antlr_gen.GrammarParser;
 import kiv.fjp.antlr_gen.GrammarParser.StatementContext;
 import kiv.fjp.antlr_gen.structures.DataType;
@@ -15,12 +14,12 @@ import java.util.List;
 
 public class BlockVisitor extends GrammarVisitor<String>{
 
-    private int param;
     private boolean returnArr;
+    private int params;
 	
-	public BlockVisitor(int level, int param, boolean returnArr){
+	public BlockVisitor(int level, int params, boolean returnArr){
 	    this.level = level;
-	    this.param = param;
+	    this.params = params;
 	    this.returnArr = returnArr;
 	}
 
@@ -443,7 +442,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
            }
         }
 
-        instructionList.add(new Instruction(IntType.STO, 0, -param - 1));
+        instructionList.add(new Instruction(IntType.STO, 0, -params - 1));
         instructionList.add(new Instruction(IntType.RET, 0, 0));
 	    return null;
     }

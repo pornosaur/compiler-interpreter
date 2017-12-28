@@ -1228,14 +1228,14 @@ public class GrammarParser extends Parser {
 
 	public static class DefContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(GrammarParser.ID, 0); }
-		public ValueContext value() {
-			return getRuleContext(ValueContext.class,0);
-		}
 		public FuncContext func() {
 			return getRuleContext(FuncContext.class,0);
 		}
 		public Ternar_operContext ternar_oper() {
 			return getRuleContext(Ternar_operContext.class,0);
+		}
+		public ValueContext value() {
+			return getRuleContext(ValueContext.class,0);
 		}
 		public DefContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1272,19 +1272,19 @@ public class GrammarParser extends Parser {
 			case 1:
 				{
 				setState(196);
-				value();
+				func();
 				}
 				break;
 			case 2:
 				{
 				setState(197);
-				func();
+				ternar_oper();
 				}
 				break;
 			case 3:
 				{
 				setState(198);
-				ternar_oper();
+				value();
 				}
 				break;
 			}
@@ -1306,14 +1306,14 @@ public class GrammarParser extends Parser {
 		public TerminalNode ID(int i) {
 			return getToken(GrammarParser.ID, i);
 		}
-		public ValueContext value() {
-			return getRuleContext(ValueContext.class,0);
-		}
 		public FuncContext func() {
 			return getRuleContext(FuncContext.class,0);
 		}
 		public Ternar_operContext ternar_oper() {
 			return getRuleContext(Ternar_operContext.class,0);
+		}
+		public ValueContext value() {
+			return getRuleContext(ValueContext.class,0);
 		}
 		public Multiple_defContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1373,19 +1373,19 @@ public class GrammarParser extends Parser {
 			case 1:
 				{
 				setState(209);
-				value();
+				func();
 				}
 				break;
 			case 2:
 				{
 				setState(210);
-				func();
+				ternar_oper();
 				}
 				break;
 			case 3:
 				{
 				setState(211);
-				ternar_oper();
+				value();
 				}
 				break;
 			}
@@ -1407,17 +1407,17 @@ public class GrammarParser extends Parser {
 		public TerminalNode ID(int i) {
 			return getToken(GrammarParser.ID, i);
 		}
-		public List<ValueContext> value() {
-			return getRuleContexts(ValueContext.class);
-		}
-		public ValueContext value(int i) {
-			return getRuleContext(ValueContext.class,i);
-		}
 		public List<FuncContext> func() {
 			return getRuleContexts(FuncContext.class);
 		}
 		public FuncContext func(int i) {
 			return getRuleContext(FuncContext.class,i);
+		}
+		public List<ValueContext> value() {
+			return getRuleContexts(ValueContext.class);
+		}
+		public ValueContext value(int i) {
+			return getRuleContext(ValueContext.class,i);
 		}
 		public Parallel_defContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1477,13 +1477,13 @@ public class GrammarParser extends Parser {
 			case 1:
 				{
 				setState(226);
-				value();
+				func();
 				}
 				break;
 			case 2:
 				{
 				setState(227);
-				func();
+				value();
 				}
 				break;
 			}
@@ -1501,13 +1501,13 @@ public class GrammarParser extends Parser {
 				case 1:
 					{
 					setState(231);
-					value();
+					func();
 					}
 					break;
 				case 2:
 					{
 					setState(232);
-					func();
+					value();
 					}
 					break;
 				}
@@ -1593,13 +1593,13 @@ public class GrammarParser extends Parser {
 			case 2:
 				{
 				setState(248);
-				value();
+				ternar_oper();
 				}
 				break;
 			case 3:
 				{
 				setState(249);
-				ternar_oper();
+				value();
 				}
 				break;
 			}
@@ -3215,11 +3215,11 @@ public class GrammarParser extends Parser {
 		public Ternar_operContext ternar_oper() {
 			return getRuleContext(Ternar_operContext.class,0);
 		}
-		public ValueContext value() {
-			return getRuleContext(ValueContext.class,0);
-		}
 		public FuncContext func() {
 			return getRuleContext(FuncContext.class,0);
+		}
+		public ValueContext value() {
+			return getRuleContext(ValueContext.class,0);
 		}
 		public Array_posContext array_pos() {
 			return getRuleContext(Array_posContext.class,0);
@@ -3263,13 +3263,13 @@ public class GrammarParser extends Parser {
 			case 2:
 				{
 				setState(432);
-				value();
+				func();
 				}
 				break;
 			case 3:
 				{
 				setState(433);
-				func();
+				value();
 				}
 				break;
 			case 4:
@@ -3399,39 +3399,39 @@ public class GrammarParser extends Parser {
 		"\2\u00bc\u00bd\7-\2\2\u00bd\u00be\7\b\2\2\u00be\u00bf\7\t\2\2\u00bf\u00c2"+
 		"\7\17\2\2\u00c0\u00c3\7-\2\2\u00c1\u00c3\5@!\2\u00c2\u00c0\3\2\2\2\u00c2"+
 		"\u00c1\3\2\2\2\u00c3\35\3\2\2\2\u00c4\u00c5\7-\2\2\u00c5\u00c9\7\17\2"+
-		"\2\u00c6\u00ca\5\30\r\2\u00c7\u00ca\5@!\2\u00c8\u00ca\5B\"\2\u00c9\u00c6"+
+		"\2\u00c6\u00ca\5@!\2\u00c7\u00ca\5B\"\2\u00c8\u00ca\5\30\r\2\u00c9\u00c6"+
 		"\3\2\2\2\u00c9\u00c7\3\2\2\2\u00c9\u00c8\3\2\2\2\u00ca\37\3\2\2\2\u00cb"+
 		"\u00ce\7-\2\2\u00cc\u00cd\7\17\2\2\u00cd\u00cf\7-\2\2\u00ce\u00cc\3\2"+
 		"\2\2\u00cf\u00d0\3\2\2\2\u00d0\u00ce\3\2\2\2\u00d0\u00d1\3\2\2\2\u00d1"+
-		"\u00d2\3\2\2\2\u00d2\u00d6\7\17\2\2\u00d3\u00d7\5\30\r\2\u00d4\u00d7\5"+
-		"@!\2\u00d5\u00d7\5B\"\2\u00d6\u00d3\3\2\2\2\u00d6\u00d4\3\2\2\2\u00d6"+
+		"\u00d2\3\2\2\2\u00d2\u00d6\7\17\2\2\u00d3\u00d7\5@!\2\u00d4\u00d7\5B\""+
+		"\2\u00d5\u00d7\5\30\r\2\u00d6\u00d3\3\2\2\2\u00d6\u00d4\3\2\2\2\u00d6"+
 		"\u00d5\3\2\2\2\u00d7!\3\2\2\2\u00d8\u00d9\7\5\2\2\u00d9\u00de\7-\2\2\u00da"+
 		"\u00db\7\r\2\2\u00db\u00dd\7-\2\2\u00dc\u00da\3\2\2\2\u00dd\u00e0\3\2"+
 		"\2\2\u00de\u00dc\3\2\2\2\u00de\u00df\3\2\2\2\u00df\u00e1\3\2\2\2\u00e0"+
 		"\u00de\3\2\2\2\u00e1\u00e2\7\6\2\2\u00e2\u00e3\7\17\2\2\u00e3\u00e6\7"+
-		"\5\2\2\u00e4\u00e7\5\30\r\2\u00e5\u00e7\5@!\2\u00e6\u00e4\3\2\2\2\u00e6"+
-		"\u00e5\3\2\2\2\u00e7\u00ef\3\2\2\2\u00e8\u00eb\7\r\2\2\u00e9\u00ec\5\30"+
-		"\r\2\u00ea\u00ec\5@!\2\u00eb\u00e9\3\2\2\2\u00eb\u00ea\3\2\2\2\u00ec\u00ee"+
-		"\3\2\2\2\u00ed\u00e8\3\2\2\2\u00ee\u00f1\3\2\2\2\u00ef\u00ed\3\2\2\2\u00ef"+
-		"\u00f0\3\2\2\2\u00f0\u00f2\3\2\2\2\u00f1\u00ef\3\2\2\2\u00f2\u00f3\7\6"+
-		"\2\2\u00f3#\3\2\2\2\u00f4\u00f5\7-\2\2\u00f5\u00f6\7\b\2\2\u00f6\u00f7"+
-		"\5\30\r\2\u00f7\u00f8\7\t\2\2\u00f8\u00fc\7\17\2\2\u00f9\u00fd\5@!\2\u00fa"+
-		"\u00fd\5\30\r\2\u00fb\u00fd\5B\"\2\u00fc\u00f9\3\2\2\2\u00fc\u00fa\3\2"+
-		"\2\2\u00fc\u00fb\3\2\2\2\u00fd%\3\2\2\2\u00fe\u00ff\b\24\1\2\u00ff\u010e"+
-		"\5(\25\2\u0100\u010e\5@!\2\u0101\u0102\7-\2\2\u0102\u0103\7\b\2\2\u0103"+
-		"\u0104\5&\24\2\u0104\u0105\7\t\2\2\u0105\u010e\3\2\2\2\u0106\u010e\7-"+
-		"\2\2\u0107\u0108\7\3\2\2\u0108\u0109\5&\24\2\u0109\u010a\7\4\2\2\u010a"+
-		"\u010e\3\2\2\2\u010b\u010c\t\3\2\2\u010c\u010e\5&\24\3\u010d\u00fe\3\2"+
-		"\2\2\u010d\u0100\3\2\2\2\u010d\u0101\3\2\2\2\u010d\u0106\3\2\2\2\u010d"+
-		"\u0107\3\2\2\2\u010d\u010b\3\2\2\2\u010e\u0117\3\2\2\2\u010f\u0110\f\n"+
-		"\2\2\u0110\u0111\t\4\2\2\u0111\u0116\5&\24\13\u0112\u0113\f\t\2\2\u0113"+
-		"\u0114\t\3\2\2\u0114\u0116\5&\24\n\u0115\u010f\3\2\2\2\u0115\u0112\3\2"+
-		"\2\2\u0116\u0119\3\2\2\2\u0117\u0115\3\2\2\2\u0117\u0118\3\2\2\2\u0118"+
-		"\'\3\2\2\2\u0119\u0117\3\2\2\2\u011a\u011b\7/\2\2\u011b)\3\2\2\2\u011c"+
-		"\u011d\b\26\1\2\u011d\u011e\5&\24\2\u011e\u011f\t\5\2\2\u011f\u0120\5"+
-		"&\24\2\u0120\u0130\3\2\2\2\u0121\u0130\5,\27\2\u0122\u0130\5@!\2\u0123"+
-		"\u0124\7-\2\2\u0124\u0125\7\b\2\2\u0125\u0126\5&\24\2\u0126\u0127\7\t"+
-		"\2\2\u0127\u0130\3\2\2\2\u0128\u0130\7-\2\2\u0129\u012a\7\3\2\2\u012a"+
+		"\5\2\2\u00e4\u00e7\5@!\2\u00e5\u00e7\5\30\r\2\u00e6\u00e4\3\2\2\2\u00e6"+
+		"\u00e5\3\2\2\2\u00e7\u00ef\3\2\2\2\u00e8\u00eb\7\r\2\2\u00e9\u00ec\5@"+
+		"!\2\u00ea\u00ec\5\30\r\2\u00eb\u00e9\3\2\2\2\u00eb\u00ea\3\2\2\2\u00ec"+
+		"\u00ee\3\2\2\2\u00ed\u00e8\3\2\2\2\u00ee\u00f1\3\2\2\2\u00ef\u00ed\3\2"+
+		"\2\2\u00ef\u00f0\3\2\2\2\u00f0\u00f2\3\2\2\2\u00f1\u00ef\3\2\2\2\u00f2"+
+		"\u00f3\7\6\2\2\u00f3#\3\2\2\2\u00f4\u00f5\7-\2\2\u00f5\u00f6\7\b\2\2\u00f6"+
+		"\u00f7\5\30\r\2\u00f7\u00f8\7\t\2\2\u00f8\u00fc\7\17\2\2\u00f9\u00fd\5"+
+		"@!\2\u00fa\u00fd\5B\"\2\u00fb\u00fd\5\30\r\2\u00fc\u00f9\3\2\2\2\u00fc"+
+		"\u00fa\3\2\2\2\u00fc\u00fb\3\2\2\2\u00fd%\3\2\2\2\u00fe\u00ff\b\24\1\2"+
+		"\u00ff\u010e\5(\25\2\u0100\u010e\5@!\2\u0101\u0102\7-\2\2\u0102\u0103"+
+		"\7\b\2\2\u0103\u0104\5&\24\2\u0104\u0105\7\t\2\2\u0105\u010e\3\2\2\2\u0106"+
+		"\u010e\7-\2\2\u0107\u0108\7\3\2\2\u0108\u0109\5&\24\2\u0109\u010a\7\4"+
+		"\2\2\u010a\u010e\3\2\2\2\u010b\u010c\t\3\2\2\u010c\u010e\5&\24\3\u010d"+
+		"\u00fe\3\2\2\2\u010d\u0100\3\2\2\2\u010d\u0101\3\2\2\2\u010d\u0106\3\2"+
+		"\2\2\u010d\u0107\3\2\2\2\u010d\u010b\3\2\2\2\u010e\u0117\3\2\2\2\u010f"+
+		"\u0110\f\n\2\2\u0110\u0111\t\4\2\2\u0111\u0116\5&\24\13\u0112\u0113\f"+
+		"\t\2\2\u0113\u0114\t\3\2\2\u0114\u0116\5&\24\n\u0115\u010f\3\2\2\2\u0115"+
+		"\u0112\3\2\2\2\u0116\u0119\3\2\2\2\u0117\u0115\3\2\2\2\u0117\u0118\3\2"+
+		"\2\2\u0118\'\3\2\2\2\u0119\u0117\3\2\2\2\u011a\u011b\7/\2\2\u011b)\3\2"+
+		"\2\2\u011c\u011d\b\26\1\2\u011d\u011e\5&\24\2\u011e\u011f\t\5\2\2\u011f"+
+		"\u0120\5&\24\2\u0120\u0130\3\2\2\2\u0121\u0130\5,\27\2\u0122\u0130\5@"+
+		"!\2\u0123\u0124\7-\2\2\u0124\u0125\7\b\2\2\u0125\u0126\5&\24\2\u0126\u0127"+
+		"\7\t\2\2\u0127\u0130\3\2\2\2\u0128\u0130\7-\2\2\u0129\u012a\7\3\2\2\u012a"+
 		"\u012b\5*\26\2\u012b\u012c\7\4\2\2\u012c\u0130\3\2\2\2\u012d\u012e\7\34"+
 		"\2\2\u012e\u0130\5*\26\3\u012f\u011c\3\2\2\2\u012f\u0121\3\2\2\2\u012f"+
 		"\u0122\3\2\2\2\u012f\u0123\3\2\2\2\u012f\u0128\3\2\2\2\u012f\u0129\3\2"+
@@ -3474,7 +3474,7 @@ public class GrammarParser extends Parser {
 		"\2\2\u01a6\u01a7\3\2\2\2\u01a7\u01a8\3\2\2\2\u01a8\u01a9\7\4\2\2\u01a9"+
 		"A\3\2\2\2\u01aa\u01ab\5*\26\2\u01ab\u01ac\7*\2\2\u01ac\u01ad\5\30\r\2"+
 		"\u01ad\u01ae\7\'\2\2\u01ae\u01af\5\30\r\2\u01afC\3\2\2\2\u01b0\u01b5\7"+
-		"+\2\2\u01b1\u01b6\5B\"\2\u01b2\u01b6\5\30\r\2\u01b3\u01b6\5@!\2\u01b4"+
+		"+\2\2\u01b1\u01b6\5B\"\2\u01b2\u01b6\5@!\2\u01b3\u01b6\5\30\r\2\u01b4"+
 		"\u01b6\5\32\16\2\u01b5\u01b1\3\2\2\2\u01b5\u01b2\3\2\2\2\u01b5\u01b3\3"+
 		"\2\2\2\u01b5\u01b4\3\2\2\2\u01b6\u01b7\3\2\2\2\u01b7\u01b8\7\n\2\2\u01b8"+
 		"E\3\2\2\2$IXy{\177\u0088\u008b\u0091\u00a0\u00a7\u00b1\u00b7\u00c2\u00c9"+

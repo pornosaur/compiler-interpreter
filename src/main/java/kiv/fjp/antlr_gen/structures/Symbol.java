@@ -1,5 +1,7 @@
 package kiv.fjp.antlr_gen.structures;
 
+import java.util.List;
+
 public class Symbol {
 
     public enum SymbolType {
@@ -15,6 +17,7 @@ public class Symbol {
 	private int size;
 	private SymbolType symbolType;
 	private boolean isArray;
+	private List<Symbol> params;
 
 	public Symbol(String indentificator, String type, int level, int size, SymbolType symbolType) {
 		this.indentificator = indentificator;
@@ -62,7 +65,12 @@ public class Symbol {
 	public void setAdr(int adr) {
 		this.adr = adr;
 	}
-	
-	
-	
+
+    public void setParams(List<Symbol> params) {
+        this.params = params;
+    }
+
+    public List<Symbol> getParams() {
+        return params;
+    }
 }
