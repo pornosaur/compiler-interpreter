@@ -560,7 +560,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
         instructionList.add(new Instruction(IntType.CAL, 0, symbol.getAdr()));
         instructionList.add(new Instruction(IntType.INT, 0, -ctx.value().size()));
 
-	    return null;
+	    return String.valueOf(symbol.getType());
     }
 
     private void testBool(Symbol symbol) {
