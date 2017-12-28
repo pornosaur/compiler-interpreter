@@ -127,11 +127,13 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitForeach(GrammarParser.ForeachContext ctx) {
+        instructionList.add(new Instruction(IntType.INT, 0 , 1));
 	    Symbol symbol = new Symbol("", "integer", 0, 0, SymbolType.VAR);
         if (! symbolTable.addSymbol(symbol)) {
             throw new ParseCancellationException("ParseError - problem with variable for position in FOREACH.");
         }
 
+        instructionList.add(new Instruction(IntType.INT, 0 , 1));
         Symbol symbolID = new Symbol(ctx.ID(0).getText(), ctx.data_type().getText(), 0, 0, SymbolType.VAR);
         if (! symbolTable.addSymbol(symbolID)) {
             throw new ParseCancellationException("ParseError - id " + ctx.ID(0).getText() + " is already declared.");
