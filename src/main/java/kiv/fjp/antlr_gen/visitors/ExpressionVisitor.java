@@ -57,7 +57,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         if(ctx.ID().size() == 2) {
             visitID(ctx.ID(1).getText(), ctx);
         }else {
-            visitInteger(ctx.integer());
+            instructionList.add(new Instruction(IntType.LIT, 0, Integer.valueOf(ctx.integer().getText())));
         }
 
         instructionList.add(new Instruction(IntType.POS, 0, 0));

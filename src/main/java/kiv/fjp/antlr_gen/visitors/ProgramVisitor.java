@@ -83,7 +83,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
             Symbol symbol;
             if (ctx.param_item(i).array_param() != null) {
                 symbol = new Symbol(ctx.param_item(i).array_param().ID().getText(),
-                        ctx.param_item(i).array_param().data_type().getText(),  level,0, SymbolType.VAR);
+                        ctx.param_item(i).array_param().data_type().getText(), level,0, SymbolType.VAR);
                 symbol.setArray(true);
             } else {
                 symbol = new Symbol(ctx.param_item(i).ID().getText(), ctx.param_item(i).data_type().getText(),
