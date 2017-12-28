@@ -6,13 +6,49 @@ import java.util.HashMap;
 import kiv.fjp.antlr_gen.structures.Instruction;
 
 public class Interpreter {
+	/**
+	 * Maximal size of stack
+	 */
 	private static final int STACK_SIZE = 200;
-
+	/**
+	 * shift to second position(1) relevate to the top of stack (first is top)
+	 */
 	private static final int SECOND_STACK_POS_SHIFT = 1;
+	/**
+	 * shift to third position(2) relevate to the top of stack (first is top)
+	 */
 	private static final int THIRD_STACK_POS_SHIFT = 2;
+	/**
+	 * shift to fourth position(3) relevate to the top of stack (first is top)
+	 */
 	private static final int FOURTH_STACK_POS_SHIFT = 3;
+	/**
+	 * value for remap number of intruction to position in stack.
+	 */
 	private static final int INSTR_STACK_MAP_SHIFT = 1;
+	/**
+	 * flag for first activation record
+	 */
 	private static final int FIRST_ACT_REC = -1;
+	/**
+	 * shift to next instruction
+	 */
+	private static final int NEXT_INST_SHIFT = 1;
+	/**
+	 * Shift to instruction from base
+	 */
+	private static final int BASE_SHIFT_TO_INSTR = 1;
+	/**
+	 * Shift to stackpointer position from base 
+	 */
+	private static final int BASE_SHIFT_STACK_POS = 2;
+	/**
+	 * Shift to last item in heap
+	 */
+	private static final int LAST_ITEM_SHIFT = 1;
+	/**
+	 * List of instructions
+	 */
 	private ArrayList<Instruction> instructions;
 
 	private int base;
@@ -29,7 +65,11 @@ public class Interpreter {
 		base = 1;
 		stackPointer = FIRST_ACT_REC;
 	}
-
+	/**
+	 * Method for proccess all instructions in list.
+	 * @return
+	 * @throws InterpreterException
+	 */
 	public ArrayList<InterpreterStep> runInterpret() throws InterpreterException{
 		ArrayList<InterpreterStep> steps = new ArrayList<>();
 		try {
@@ -81,7 +121,7 @@ public class Interpreter {
 					break;
 				}
 				steps.add(new InterpreterStep(actualInstruction, instructionPointer, base, stackPointer, stack.clone()));
-				System.out.print(steps.get(steps.size()-1));
+				//System.out.print(steps.get(steps.size()-1));
 			}
 		} catch(InterpreterException e){
 			throw e;
@@ -91,7 +131,11 @@ public class Interpreter {
 		}
 		return steps;
 	}
-
+	/**
+	 * Find new base according to level
+	 * @param level level for new base
+	 * @return
+	 */
 	private int findNewBaseByLevel(int level) {
 		int newBase = base;
 		for (int i = 0; i < level; i++) {
@@ -135,7 +179,7 @@ public class Interpreter {
 	private void processCAL() {
 		stack[stackPointer + SECOND_STACK_POS_SHIFT] = findNewBaseByLevel(instruction.getLevel());
 		stack[stackPointer + THIRD_STACK_POS_SHIFT] = base;
-		stack[stackPointer + FOURTH_STACK_POS_SHIFT] = instructionPointer + 1;
+		stack[stackPointer + FOURTH_STACK_POS_SHIFT] = instructionPointer + NEXT_INST_SHIFT;
 		base = stackPointer + THIRD_STACK_POS_SHIFT;
 		instructionPointer = instruction.getValue();
 	}
@@ -151,15 +195,15 @@ public class Interpreter {
 	}
 
 	private void processRET() {
-		instructionPointer = stack[base + 1];
-		stackPointer = base - 2;
+		instructionPointer = stack[base + BASE_SHIFT_TO_INSTR];
+		stackPointer = base - BASE_SHIFT_STACK_POS;
 		base = stack[base];
 	}
 
 	private void processALC() {
 		heap.add(new int[stack[stackPointer]]);
 		stackPointer--;
-		stack[stackPointer] = heap.size() - 1;
+		stack[stackPointer] = heap.size() - LAST_ITEM_SHIFT;
 		instructionPointer++;
 		
 	}
@@ -195,7 +239,10 @@ public class Interpreter {
 		stack[stackPointer] = length;
 		instructionPointer++;
 	}
-
+	/**
+	 * Process instruction for operators. According to input value performs operation
+	 * @param value value for operation
+	 */
 	private void processOPR(int value) {
 
 		switch (Instruction.OPRType.values()[value]) {

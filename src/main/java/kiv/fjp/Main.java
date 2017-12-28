@@ -34,7 +34,7 @@ public class Main {
 			String outputCompPath = args[1];
 			String interOutput = args[2];
 			if(!new File(codePath).exists()) {
-				System.out.println("File: " +codePath+"not exists");
+				System.out.println("File: " +codePath+" not exists");
 				return;
 			}
 			try {

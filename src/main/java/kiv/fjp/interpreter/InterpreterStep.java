@@ -3,8 +3,13 @@ package kiv.fjp.interpreter;
 import java.util.Arrays;
 
 import kiv.fjp.antlr_gen.structures.Instruction;
-
+/**
+ * Class representing step of interpreter
+ * @author Ludek Kanak
+ *
+ */
 public class InterpreterStep {
+
 	private Instruction instruction;
 	private int nextInstruction;
 	private int base;
