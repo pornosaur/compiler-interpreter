@@ -29,6 +29,7 @@ public class SymbolTable {
 	}
 
     public void addSymbolList() {
+	    this.incAdr = 0;
         symbolsStack.push( new ArrayList<>());
     }
 	

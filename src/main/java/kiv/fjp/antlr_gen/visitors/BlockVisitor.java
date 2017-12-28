@@ -31,9 +31,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
 			    //TODO for ELSE => seperate addSymbolList and remove to IF, ELSE and LOOP
 
-                symbolTable.addSymbolList();
 				visit(ctx.getChild(i));
-                symbolTable.removeSymbolList();
 
 			}else { // its declar or define of variables
 				visit(ctx.getChild(i));
