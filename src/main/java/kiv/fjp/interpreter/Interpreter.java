@@ -6,7 +6,7 @@ import java.util.HashMap;
 import kiv.fjp.antlr_gen.structures.Instruction;
 
 public class Interpreter {
-	private static final int STACK_SIZE = 32;
+	private static final int STACK_SIZE = 200;
 
 	private static final int SECOND_STACK_POS_SHIFT = 1;
 	private static final int THIRD_STACK_POS_SHIFT = 2;
@@ -168,6 +168,7 @@ public class Interpreter {
 		int [] arr = heap.get(stack[stackPointer - SECOND_STACK_POS_SHIFT]);
 		if(stack[stackPointer] < arr.length) {
 			int tmp = arr[stack[stackPointer]];
+			stackPointer--;
 			stack[stackPointer] = tmp;
 			instructionPointer++;
 		}else {
