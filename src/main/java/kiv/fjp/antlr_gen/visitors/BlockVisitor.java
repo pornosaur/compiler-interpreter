@@ -27,13 +27,13 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
 	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
 		for(int i = 0; i < ctx.getChildCount();i++) {
-			if(ctx.getChild(i) instanceof StatementContext || ctx.getChild(i) instanceof GrammarParser.LoopContext) {
+			if(ctx.getChild(i) instanceof GrammarParser.LoopContext) {
 
 			    //TODO for ELSE => seperate addSymbolList and remove to IF, ELSE and LOOP
 
-
+                symbolTable.addSymbolList();
 				visit(ctx.getChild(i));
-
+                symbolTable.removeSymbolList();
 
 			}else { // its declar or define of variables
 				visit(ctx.getChild(i));
