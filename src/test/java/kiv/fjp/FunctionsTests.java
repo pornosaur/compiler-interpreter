@@ -36,6 +36,16 @@ public class FunctionsTests extends CompilerTest{
 		assertEquals(SAME_FILES,testFiles(compFolder+"params_ret.c", compFolder+"exp_params_ret"));
 	}
 	
+	@Test
+	public void testNumBool() throws IOException {
+		assertEquals(SAME_FILES,testFiles(compFolder+"num_bool.c", compFolder+"exp_num_bool"));
+	}
+	
+	@Test
+	public void testBoolNum() throws IOException {
+		assertEquals(SAME_FILES,testFiles(compFolder+"bool_num.c", compFolder+"exp_bool_num"));
+	}
+	
 	@Test(expected = ParseCancellationException.class)
 	public void negative1Test(){
 		Main.compile(compFolder+"negative1.c", GEN_FILE + compFolder+"negative1_output");
