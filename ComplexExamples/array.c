@@ -18,4 +18,8 @@ void main() {
 	}
 	
 	a = countArray(b, a);
+	
+	foreach(integer tmp : b){
+		a = tmp + a;	
+	}
 }
