@@ -287,9 +287,10 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
        if (sw != null && sw instanceof GrammarParser.FuncContext) {
             if (c instanceof GrammarParser.ValueContext) {
                 GrammarParser.ValueContext gp = (GrammarParser.ValueContext) c;
-                int i = gp.getChildCount() - 1;
+                int i = ((GrammarParser.FuncContext) sw).value().indexOf(c);
                 Symbol func = symbolTable.findSymbol(((GrammarParser.FuncContext) sw).ID().getText(), Symbol.SymbolType.FUNCTION);
                 Symbol param = func.getParams().get(i);
+
                 if (param.isArray() != symbol.isArray()) {
                     throw new ParseCancellationException("ParseError - type in params are not compatible.");
                 }
