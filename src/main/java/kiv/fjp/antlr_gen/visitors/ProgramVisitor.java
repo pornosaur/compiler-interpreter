@@ -10,17 +10,42 @@ import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 import kiv.fjp.antlr_gen.structures.SymbolTable;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class ProgramVisitor extends GrammarVisitor<String> {
 
-    private static final int DEF_LEVEL = 0;
+    /**
+     * Constant for name of main function.
+     */
+    private static final String MAIN_FUNC_NAME = "main";
 
+    /**
+     * Constant fo name of void return type.
+     */
+    private static final String VOID_NAME = "void";
+
+    /**
+     * List of parameters for actual function.
+     */
     private List<Symbol> params;
+
+    /**
+     * Check if non-void function has return at the end.
+     */
     private boolean isReturn;
+
+    /**
+     * Check if non-void function has return as array type.
+     */
     private boolean returnArr;
+
+    /**
+     * Check if function is void type.
+     */
     private boolean voidRet;
 
+    /**
+     * The first call of parsing, program is entry point.
+     */
     public ProgramVisitor() {
 		super();
 		instructionList = new ArrayList<>();
@@ -30,12 +55,11 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     @Override
     public String visitFunc_def(GrammarParser.Func_defContext ctx)  {
         params = new ArrayList<>();
-        level = DEF_LEVEL;
         isReturn = false;
         returnArr = ctx.return_type().array_type() != null;
 
         if (! returnArr) {
-            voidRet = ctx.return_type().getText().compareTo("void") == 0;
+            voidRet = ctx.return_type().getText().compareTo(VOID_NAME) == 0;
         }
 
         DataType returnType = new DataType(ctx.return_type().getText());
@@ -62,10 +86,10 @@ public class ProgramVisitor extends GrammarVisitor<String> {
 
         if (returnType.getType() != DataType.Type.VOID) {
             if (! isReturn) {
-                throw new ParseCancellationException("ParseError - you have to put return at the end of this function.");
+                throw new ContextParseCancellationException("you have to put return at the end of this function.", ctx);
             }
 
-            instructionList.add(new Instruction(IntType.STO, 0, -countParam-1)); //store ret. value at adr = 3;
+            instructionList.add(new Instruction(IntType.STO, 0, -countParam - 1)); //store ret. value at adr = 3;
         }
 
         if(! isReturn) {
@@ -83,11 +107,11 @@ public class ProgramVisitor extends GrammarVisitor<String> {
             Symbol symbol;
             if (ctx.param_item(i).array_param() != null) {
                 symbol = new Symbol(ctx.param_item(i).array_param().ID().getText(),
-                        ctx.param_item(i).array_param().data_type().getText(), level,0, SymbolType.VAR);
+                        ctx.param_item(i).array_param().data_type().getText(), 0,0, SymbolType.VAR);
                 symbol.setArray(true);
             } else {
                 symbol = new Symbol(ctx.param_item(i).ID().getText(), ctx.param_item(i).data_type().getText(),
-                        level,0, SymbolType.VAR);
+                        0,0, SymbolType.VAR);
             }
 
             symbolTable.addSymbol(symbol);
@@ -99,15 +123,19 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     }
     
     @Override public String visitBlock(GrammarParser.BlockContext ctx) {
-    	BlockVisitor blockVisitor = new BlockVisitor(level, params.size(), returnArr, voidRet);
+    	BlockVisitor blockVisitor = new BlockVisitor(params.size(), returnArr, voidRet);
         blockVisitor.visitBlock(ctx);
         isReturn = ctx.r_return()!= null;
 
         return null;
     }
-    
 
+    /**
+     * The method find main function in table of symbols.
+     *
+     * @return Symbol with the main function.
+     */
     public Symbol getMain() {
-        return symbolTable.findSymbol("main", SymbolType.FUNCTION);
+        return symbolTable.findSymbol(MAIN_FUNC_NAME, SymbolType.FUNCTION);
     }
 }

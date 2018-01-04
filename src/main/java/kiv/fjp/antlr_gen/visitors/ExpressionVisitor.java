@@ -7,27 +7,75 @@ import kiv.fjp.antlr_gen.structures.Instruction.IntType;
 import kiv.fjp.antlr_gen.structures.Instruction.OPRType;
 import kiv.fjp.antlr_gen.structures.Symbol;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
+
+import static kiv.fjp.antlr_gen.GrammarParser.*;
 
 public class ExpressionVisitor extends GrammarVisitor<String>{
 
-	private int level;
-	private BlockVisitor block;
-	private RuleContext sw;
+    /**
+     * Jump to next instruction in list.
+     */
+    private static int NEXT_INT = 1;
 
-    public ExpressionVisitor(int level, BlockVisitor block, RuleContext sw) {
-        this.level = level;
+    /**
+     * Constant name for integer variable type.
+     */
+    private static final String INTEGER_NAME = "integer";
+
+    /**
+     * Constant name for bool variable type.
+     */
+    private static final String BOOL_NAME = "bool";
+
+    /**
+     * Constant name for plus symbol.
+     */
+    private static final String PLUS_NAME = "+";
+
+    /**
+     * Constant name for minus symbol.
+     */
+    private static final String MINUS_NAME = "-";
+
+    /**
+     * Constant name for multiple symbol.
+     */
+    private static final String MULTIPLE_NAME = "*";
+
+    /**
+     * Instance of caller block visitor.
+     */
+	private final BlockVisitor block;
+
+    /**
+     * Instance of caller context.
+     */
+	private final RuleContext callerContext;
+
+    /**
+     * Check if input is array type.
+     */
+	private final boolean isVarArray;
+
+    public ExpressionVisitor(BlockVisitor block, RuleContext callerContext, boolean isVarArray) {
         this.block = block;
-        this.sw = sw;
+        this.callerContext = callerContext;
+        this.isVarArray = isVarArray;
     }
-
-	public ExpressionVisitor(int level, BlockVisitor block) {
-		this(level, block, null);
-	}
 
     @Override
     public String visitIntegers(GrammarParser.IntegersContext ctx) {
+        if ((callerContext instanceof Parallel_defContext || callerContext instanceof Multiple_defContext
+                || callerContext instanceof Ternar_operContext || callerContext instanceof DefContext
+                || callerContext instanceof R_returnContext) && isVarArray) {
+            throw new ContextParseCancellationException("you can not assign non-array to array or conversely.", ctx);
+        }
+        if (ctx.parent instanceof DeclarContext && isVarArray) {
+            throw new ContextParseCancellationException("you can not assign non-array to array or conversely.", ctx);
+        }
+
         instructionList.add(new Instruction(IntType.LIT, 0, Integer.valueOf(ctx.getText())));
 
         return null;
@@ -50,7 +98,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
         Symbol symbol = symbolTable.findSymbol(id);
         if(symbol == null) {
-            throw new ParseCancellationException("ParseError - id " + id + " is not declared before.");
+            throw new ContextParseCancellationException("id `" + id + "` is not declared before.", ctx);
         }
 
         instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
@@ -70,7 +118,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 		visit(ctx.num_exp(0));
 		visit(ctx.num_exp(1));
 
-        OPRType oprType = (ctx.op.getText().compareTo("*") == 0) ? OPRType.MULTI : OPRType.DIV;
+        OPRType oprType = (ctx.op.getText().compareTo(MULTIPLE_NAME) == 0) ? OPRType.MULTI : OPRType.DIV;
         instructionList.add(new Instruction(IntType.OPR, 0, oprType.ordinal()));
 
 		return null;
@@ -81,7 +129,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 		visit(ctx.num_exp(0));
 		visit(ctx.num_exp(1));
 
-		OPRType oprType = (ctx.op.getText().compareTo("+") == 0) ? OPRType.PLUS : OPRType.MINUS;
+		OPRType oprType = (ctx.op.getText().compareTo(PLUS_NAME) == 0) ? OPRType.PLUS : OPRType.MINUS;
         instructionList.add(new Instruction(IntType.OPR, 0, oprType.ordinal()));
 
 		return null;
@@ -89,15 +137,13 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitSigned(GrammarParser.SignedContext ctx){
-        if (ctx.parent != null) {
-            if (ctx.parent instanceof GrammarParser.SignedContext) {
-                throw new ParseCancellationException("ParseError - too much operators!");
-            }
+        if (ctx.parent != null && ctx.parent instanceof SignedContext) {
+            throw new ContextParseCancellationException("too much operators.", ctx);
         }
 
         visit(ctx.num_exp());
 
-        if (ctx.sign.getText().compareTo("-") == 0) {
+        if (ctx.sign.getText().compareTo(MINUS_NAME) == 0) {
             instructionList.add(new Instruction(IntType.OPR, 0, OPRType.UNARY_MINUS.ordinal()));
         }
 
@@ -127,7 +173,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
                 break;
         }
 
-        instructionList.add(new Instruction(IntType.OPR, level, oprType.ordinal()));
+        instructionList.add(new Instruction(IntType.OPR, 0, oprType.ordinal()));
 
         return null;
     }
@@ -147,8 +193,8 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitNumID(GrammarParser.NumIDContext ctx) {
-        if (sw != null && sw instanceof GrammarParser.S_switchContext) {
-            throw new ParseCancellationException("ParseError - you could not put id to switch");
+        if (callerContext instanceof S_switchContext) {
+            throw new ContextParseCancellationException("you could not put id to switch.", ctx);
         }
         visitID(ctx.getText(), ctx);
         return ctx.getText();
@@ -156,28 +202,27 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
     @Override
     public String visitNumFunc(GrammarParser.NumFuncContext ctx){
-        if (sw != null && sw instanceof GrammarParser.S_switchContext) {
-            throw new ParseCancellationException("ParseError - you could not put function to switch");
+        if (callerContext instanceof S_switchContext) {
+            throw new ContextParseCancellationException("you could not put function to switch.", ctx);
         }
 
-        String s = block.visitFunc(ctx.func());
-        if (s.compareTo("integer") != 0) {
-            throw new ParseCancellationException("ParseError - you could not call '"+ s +"' function in num expression.");
+        String retType = block.visitFunc(ctx.func());
+        if (retType.compareTo(INTEGER_NAME) != 0) {
+            throw new ContextParseCancellationException("you could not call '"+ retType +"' function in num expression.", ctx);
         }
-
 
         return null;
     }
 
     @Override
     public String visitBoolFunc(GrammarParser.BoolFuncContext ctx){
-        if (sw != null && sw instanceof GrammarParser.S_switchContext) {
-            throw new ParseCancellationException("ParseError - you could not put function to switch");
+        if (callerContext instanceof S_switchContext) {
+            throw new ContextParseCancellationException("you could not put function to switch.", ctx);
         }
 
-        String s = block.visitFunc(ctx.func());
-        if (s.compareTo("bool") != 0) {
-            throw new ParseCancellationException("ParseError - you could not call '"+ s +"' function in bool expression.");
+        String retType = block.visitFunc(ctx.func());
+        if (retType.compareTo(BOOL_NAME) != 0) {
+            throw new ContextParseCancellationException("you could not call '"+ retType +"' function in bool expression.", ctx);
         }
 
         return null;
@@ -226,34 +271,38 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         Instruction jmpEndElse = new Instruction(IntType.JMP, 0, 0);
         instructionList.add(jmpEndElse);
 
-        int elseJmp = instructionList.size() + 1;
+        int elseJmp = instructionList.size() + NEXT_INT;
         visit(ctx.value(1));
 
         jmcInt.setValue(elseJmp);
-        jmpEndElse.setValue(instructionList.size() + 1);
+        jmpEndElse.setValue(instructionList.size() + NEXT_INT);
 
         return null;
     }
 
     @Override
     public String visitNumArray(GrammarParser.NumArrayContext ctx) {
-        if (sw != null && sw instanceof GrammarParser.S_switchContext) {
-            throw new ParseCancellationException("ParseError - you could not put array to switch");
+        if (callerContext instanceof S_switchContext) {
+            throw new ContextParseCancellationException("you could not put array to switch.", ctx);
         }
+
         visitID(ctx.ID().getText(), ctx);
         visit(ctx.num_exp());
         instructionList.add(new Instruction(IntType.POS, 0, 0));
+
         return null;
     }
 
     @Override
     public String visitBoolArray(GrammarParser.BoolArrayContext ctx) {
-        if (sw != null && sw instanceof GrammarParser.S_switchContext) {
-            throw new ParseCancellationException("ParseError - you could not put array to switch");
+        if (callerContext instanceof S_switchContext) {
+            throw new ContextParseCancellationException("you could not put array to switch.", ctx);
         }
+
         visitID(ctx.ID().getText(), ctx);
         visit(ctx.num_exp());
         instructionList.add(new Instruction(IntType.POS, 0, 0));
+
         return null;
     }
 
@@ -262,53 +311,53 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
         return visitID(ctx.getText(), ctx);
     }
 
-	private String visitID(String id, RuleContext c) {
+	private String visitID(String id, ParserRuleContext context) {
         Symbol symbol;
         if ((symbol = symbolTable.findSymbol(id)) == null) {
-            throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+            throw new ContextParseCancellationException("id `" + id + "` is not declared.", context);
         }
-        if (sw != null && sw instanceof GrammarParser.Loop_forContext) {
-            if (symbol.getType() != DataType.Type.BOOL && c.parent instanceof GrammarParser.Loop_forContext) {
-                throw new ParseCancellationException("ParseError - id in condition must be boolean!");
+        if (callerContext instanceof Loop_forContext) {
+            if (symbol.getType() != DataType.Type.BOOL && context.parent instanceof Loop_forContext) {
+                throw new ContextParseCancellationException("id in condition must be boolean!", context);
             }
         }
-        if (c instanceof GrammarParser.NumArrayContext) {
-            if (! symbol.isArray()) {
-                throw new ParseCancellationException("ParseError - id `" + symbol.getIndentificator() + "` is not array.");
-            }
+        if (context instanceof NumArrayContext && !symbol.isArray()) {
+            throw new ContextParseCancellationException("id `" + symbol.getIndentificator() + "` is not array.", context);
+
         }
 
-        if (sw != null && sw instanceof GrammarParser.R_returnContext) {
-            if (symbol.isArray() != block.isReturnArr()) {
-                throw new ParseCancellationException("ParseError - bad return type.");
-            }
+        if ((callerContext instanceof Parallel_defContext || callerContext instanceof Multiple_defContext) && (symbol.isArray() != isVarArray)) {
+            throw new ContextParseCancellationException("you can not assign non-array to array or conversely.", context);
         }
 
-       if (sw != null && sw instanceof GrammarParser.FuncContext) {
-            if (c instanceof GrammarParser.ValueContext) {
-                GrammarParser.ValueContext gp = (GrammarParser.ValueContext) c;
-                int i = ((GrammarParser.FuncContext) sw).value().indexOf(c);
-                Symbol func = symbolTable.findSymbol(((GrammarParser.FuncContext) sw).ID().getText(), Symbol.SymbolType.FUNCTION);
-                Symbol param = func.getParams().get(i);
-
-                if (param.isArray() != symbol.isArray()) {
-                    throw new ParseCancellationException("ParseError - type in params are not compatible.");
-                }
-                if (param.getType() != symbol.getType()) {
-                    System.out.println("Warning - you passed " + symbol.getType().toString() + " into " + param.getType().toString()
-                            + " as parameter.");
-                }
-            }
+        if (callerContext instanceof R_returnContext && symbol.isArray() != isVarArray) {
+            throw new ContextParseCancellationException("bad return type.", context);
         }
 
-        if (symbol.getType() == DataType.Type.INTEGER && c instanceof GrammarParser.Bool_expContext) {
-            throw new ParseCancellationException("ParseError - integer can not be in bool expression.");
-        }
-        if (symbol.getType() == DataType.Type.BOOL && c instanceof GrammarParser.Num_expContext) {
-            throw new ParseCancellationException("ParseError - bool can not be in number expression. ");
+        if ((callerContext instanceof DefContext) && (symbol.isArray() != isVarArray) && !(context instanceof NumArrayContext
+                || context instanceof  BoolArrayContext)) {
+            throw new ContextParseCancellationException("you could not put non-array type to array type or conversely.", context);
         }
 
-        instructionList.add(new Instruction(IntType.LOD, level, symbol.getAdr()));
+       if (callerContext instanceof FuncContext && context instanceof ValueContext) {
+           int i = ((FuncContext) callerContext).value().indexOf(context);
+
+           Symbol func = symbolTable.findSymbol(((FuncContext) callerContext).ID().getText(), Symbol.SymbolType.FUNCTION);
+           Symbol param = func.getParams().get(i);
+
+           if (param.isArray() != symbol.isArray()) {
+                    throw new ContextParseCancellationException("type in params are not compatible.", context);
+           }
+        }
+
+        if (symbol.getType() == DataType.Type.INTEGER && context instanceof Bool_expContext) {
+            throw new ContextParseCancellationException("integer can not be in bool expression.", context);
+        }
+        if (symbol.getType() == DataType.Type.BOOL && context instanceof Num_expContext) {
+            throw new ContextParseCancellationException("bool can not be in number expression.", context);
+        }
+
+        instructionList.add(new Instruction(IntType.LOD, 0, symbol.getAdr()));
 
         return symbol.getIndentificator().toString();
     }

@@ -84,7 +84,7 @@ multiple_def
     ;
 
 parallel_def
-    : '{' ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}'
+    :   '{' ID (',' ID)*'}' '=' '{' (func | value) (',' (func | value))* '}'
     ;
     
 array_def
@@ -103,7 +103,7 @@ num_exp
     ;
 
 integer
-    :  NUMVAL
+    :   NUMVAL
     ;
 
 bool_exp
@@ -194,7 +194,7 @@ CHARS
     ;
 
 NUMVAL
-    : NUMERIC+
+    :   NUMERIC+
     ;
 
 ALPHABET_NUMERIC
@@ -202,7 +202,7 @@ ALPHABET_NUMERIC
     ;
 
 ALPHABET
-    :  ('A'..'Z' | 'a'..'z')
+    :   ('A'..'Z' | 'a'..'z')
     ;
 
 MULTIDIV

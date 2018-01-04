@@ -8,14 +8,24 @@ import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.SymbolTable;
 
 public class GrammarVisitor<T> extends GrammarBaseVisitor<T>{
-	protected static List<Instruction> instructionList = new ArrayList<>();
-    protected int level = 0;
-    
+
+    /**
+     * List of whole instruction of input source code.
+     */
+    protected static List<Instruction> instructionList = new ArrayList<>();
+
+    /**
+     * Symbol table.
+     */
     protected static SymbolTable symbolTable = new SymbolTable();
 	
-	public GrammarVisitor(){
-		
-	}
+	public GrammarVisitor() {}
+
+    /**
+     * Getter for list of instructions.
+     *
+     * @return List of instructions.
+     */
     public List<Instruction> getInstructions(){
     	return instructionList;
     }

@@ -1,47 +1,66 @@
 package kiv.fjp.antlr_gen.visitors;
 
 import kiv.fjp.antlr_gen.GrammarParser;
-import kiv.fjp.antlr_gen.GrammarParser.StatementContext;
 import kiv.fjp.antlr_gen.structures.DataType;
 import kiv.fjp.antlr_gen.structures.Instruction;
 import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 import kiv.fjp.antlr_gen.structures.Instruction.IntType;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlockVisitor extends GrammarVisitor<String>{
 
+    /**
+     * Constant name for non-void return type.
+     */
+    private static final String VOID_RET_NAME = "void";
+
+    /**
+     * Constant name for integer variable type.
+     */
+    private static final String INTEGER_NAME = "integer";
+
+    /**
+     * Constant name for break in loops.
+     */
+    private static final String BREAK_NAME = "break;";
+
+    /**
+     * Jump to next instruction in list.
+     */
+    private static int NEXT_INT = 1;
+
+    /**
+     * Check if return type of function is array.
+     */
     private boolean returnArr;
+
+    /**
+     * Count of parameters in function.
+     */
     private int params;
+
+    /**
+     * Check if return type of function is void.
+     */
     private boolean voidRet;
 	
-	public BlockVisitor(int level, int params, boolean returnArr, boolean voidRet){
-	    this.level = level;
+	public BlockVisitor(int params, boolean returnArr, boolean voidRet){
 	    this.params = params;
 	    this.returnArr = returnArr;
 	    this.voidRet = voidRet;
 	}
 
 	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
-		for(int i = 0; i < ctx.getChildCount();i++) {
-			if(ctx.getChild(i) instanceof GrammarParser.LoopContext) {
+	    visitChildren(ctx);
 
-			    //TODO for ELSE => seperate addSymbolList and remove to IF, ELSE and LOOP
-
-				visit(ctx.getChild(i));
-
-			}else { // its declar or define of variables
-				visit(ctx.getChild(i));
-			}
-		}
         return null;
     }
 	
 	@Override public String visitStatement(GrammarParser.StatementContext ctx) {
-	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
+	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, false);
 		expressionVisitor.visit(ctx.bool_exp());
 
         Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
@@ -57,13 +76,13 @@ public class BlockVisitor extends GrammarVisitor<String>{
         }
 
         //+1 because of jump end of if or else
-        int jmpEndElsePos = instructionList.size() + 1, elseJmpPos = instructionList.size() + 1;
+        int jmpEndElsePos = instructionList.size() + NEXT_INT, elseJmpPos = instructionList.size() + NEXT_INT;
 		if(ctx.block().size() == 2) {
             symbolTable.addSymbolList(symbolTable.getActualSize());
             visit(ctx.block(1));
             instructionList.add(new Instruction(IntType.INT, 0, -symbolTable.getActualSize()));
             symbolTable.removeSymbolList();
-            jmpEndElsePos = instructionList.size() + 1;
+            jmpEndElsePos = instructionList.size() + NEXT_INT;
 		}
 
         jmpEndElse.setValue(jmpEndElsePos);
@@ -75,15 +94,15 @@ public class BlockVisitor extends GrammarVisitor<String>{
     @Override public String visitS_switch(GrammarParser.S_switchContext ctx) {
         Symbol symbol = symbolTable.findSymbol(ctx.ID().getText());
         if(symbol == null) {
-            throw new ParseCancellationException("ParseError - id " + ctx.ID().getText() + " must be defined before.");
+            throw new ContextParseCancellationException("id `" + ctx.ID().getText() + "` must be defined before.", ctx);
         }
         if (symbol.getType()== DataType.Type.BOOL) {
-            throw new ParseCancellationException("ParseError - could not be bool type in switch.");
+            throw new ContextParseCancellationException("could not be bool type in switch.", ctx);
         }
 
         symbolTable.addSymbolList(symbolTable.getActualSize());
         List<Instruction> breakList = new ArrayList<>();
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, false);
         if (!ctx.num_exp().isEmpty()) {
             int caseCount = ctx.num_exp().size();
 
@@ -98,26 +117,26 @@ public class BlockVisitor extends GrammarVisitor<String>{
                 instructionList.add(intJMC);
 
                 if (skipBreak != null) {
-                    skipBreak.setValue(instructionList.size() + 1);
+                    skipBreak.setValue(instructionList.size() + NEXT_INT);
                 }
 
                 visitBlock(ctx.block(i));
 
                 Instruction jmpInt = new Instruction(IntType.JMP, 0,0);
                 instructionList.add(jmpInt);
-                if (ctx.s_break(i).getText().compareTo("break;") == 0) {
+                if (ctx.s_break(i).getText().compareTo(BREAK_NAME) == 0) {
                     breakList.add(jmpInt);
                     skipBreak = null;
                 } else {
                     skipBreak = jmpInt;
                 }
 
-                intJMC.setValue(instructionList.size() + 1);
+                intJMC.setValue(instructionList.size() + NEXT_INT);
             }
         }
 
         for (Instruction i : breakList) {
-            i.setValue(instructionList.size() + 1);
+            i.setValue(instructionList.size() + NEXT_INT);
         }
 
         instructionList.add(new Instruction(IntType.INT, 0, -symbolTable.getActualSize()));
@@ -128,25 +147,25 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
     @Override public String visitForeach(GrammarParser.ForeachContext ctx) {
         instructionList.add(new Instruction(IntType.INT, 0 , 1));
-	    Symbol symbol = new Symbol("", "integer", 0, 0, SymbolType.VAR);
+	    Symbol symbol = new Symbol("", INTEGER_NAME, 0, 0, SymbolType.VAR);
         if (! symbolTable.addSymbol(symbol)) {
-            throw new ParseCancellationException("ParseError - problem with variable for position in FOREACH.");
+            throw new ContextParseCancellationException("problem with variable for position in FOREACH.", ctx);
         }
 
         instructionList.add(new Instruction(IntType.INT, 0 , 1));
         Symbol symbolID = new Symbol(ctx.ID(0).getText(), ctx.data_type().getText(), 0, 0, SymbolType.VAR);
         if (! symbolTable.addSymbol(symbolID)) {
-            throw new ParseCancellationException("ParseError - id " + ctx.ID(0).getText() + " is already declared.");
+            throw new ContextParseCancellationException("id `" + ctx.ID(0).getText() + "` is already declared.", ctx);
         }
 
 	    Symbol sArr = symbolTable.findSymbol(ctx.ID(1).getText());
 	    if (sArr == null) {
-            throw new ParseCancellationException("ParseError - array " + sArr.getIndentificator() + " is not defined before.");
+            throw new ContextParseCancellationException("array `" + sArr.getIndentificator() + "` is not defined before.", ctx);
         }
 
         instructionList.add(new Instruction(IntType.LIT, 0 , 0));
         instructionList.add(new Instruction(IntType.STO, 0 , symbol.getAdr()));
-        int jmpSize = instructionList.size() + 1;
+        int jmpSize = instructionList.size() + NEXT_INT;
 
         instructionList.add(new Instruction(IntType.LOD, 0, sArr.getAdr()));
         instructionList.add(new Instruction(IntType.LEN, 0, 0));
@@ -167,23 +186,22 @@ public class BlockVisitor extends GrammarVisitor<String>{
         instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.PLUS.ordinal()));
         instructionList.add(new Instruction(IntType.STO, 0, symbol.getAdr()));
         instructionList.add(new Instruction(IntType.JMP, 0, jmpSize));
-        intJMP.setValue(instructionList.size() + 1);
+        intJMP.setValue(instructionList.size() + NEXT_INT);
 
 	    return null;
     }
     @Override public String visitLoop(GrammarParser.LoopContext ctx) {
         symbolTable.addSymbolList(symbolTable.getActualSize());
         visitChildren(ctx);
-        //instructionList.add(new Instruction(IntType.INT, 0, -symbolTable.getActualSize()));
         symbolTable.removeSymbolList();
 
         return null;
     }
 
 	@Override public String visitLoop_while(GrammarParser.Loop_whileContext ctx) {
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, false);
 
-        int jmpBoolAdr = instructionList.size() + 1;
+        int jmpBoolAdr = instructionList.size() + NEXT_INT;
         expressionVisitor.visit(ctx.bool_exp());
 
 
@@ -193,14 +211,14 @@ public class BlockVisitor extends GrammarVisitor<String>{
         visit(ctx.block());
 
         instructionList.add(new Instruction(IntType.JMP, 0, jmpBoolAdr));
-        jmcInt.setValue(instructionList.size() + 1); //+1 => jump out of while
+        jmcInt.setValue(instructionList.size() + NEXT_INT);
 
         return null;
     }
 
     @Override public String visitDo_while(GrammarParser.Do_whileContext ctx) {
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level,this);
-        int jmpToDo = instructionList.size() + 1;
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, false);
+        int jmpToDo = instructionList.size() + NEXT_INT;
 
         visitBlock(ctx.block());
         expressionVisitor.visit(ctx.bool_exp());
@@ -213,8 +231,8 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitRepeat_until(GrammarParser.Repeat_untilContext ctx) {
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level,this);
-        int jmpToDo = instructionList.size() + 1;
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, false);
+        int jmpToDo = instructionList.size() + NEXT_INT;
 
         visitBlock(ctx.block());
         expressionVisitor.visit(ctx.bool_exp());
@@ -225,12 +243,12 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 	
 	@Override public String visitLoop_for(GrammarParser.Loop_forContext ctx) {
-        ExpressionVisitor ev = new ExpressionVisitor(level, this, ctx);
+        ExpressionVisitor ev = new ExpressionVisitor(this, ctx, false);
         String id = ctx.def(0).ID().getText();
 
-        Symbol symbol = new Symbol(id, ctx.data_type().getText(), level, 0, SymbolType.VAR);
+        Symbol symbol = new Symbol(id, ctx.data_type().getText(), 0, 0, SymbolType.VAR);
         if (! symbolTable.addSymbol(symbol)) {
-            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+            throw new ContextParseCancellationException("id `" + id + "` is already declared.", ctx);
         }
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));
@@ -239,9 +257,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
         Instruction notCheckFirst = new Instruction(IntType.JMP, 0 , 0);
         instructionList.add(notCheckFirst);
 
-        int jmpBoolAdr = instructionList.size() + 1;
+        int jmpBoolAdr = instructionList.size() + NEXT_INT;
         visit(ctx.def(1));
-        notCheckFirst.setValue(instructionList.size() + 1);
+        notCheckFirst.setValue(instructionList.size() + NEXT_INT);
         ev.visit(ctx.bool_exp());
 
         Instruction jmcInt = new Instruction(IntType.JMC, 0, 0);
@@ -250,7 +268,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
         visit(ctx.block());
 
         instructionList.add(new Instruction(IntType.JMP, 0, jmpBoolAdr));
-        jmcInt.setValue(instructionList.size() + 1); //+1 => jump out of while
+        jmcInt.setValue(instructionList.size() + NEXT_INT);
 
         return null;
     }
@@ -260,9 +278,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String id = ctx.def().ID().getText();
         String varType = ctx.data_type().getText();
 
-        Symbol symbol = new Symbol(id, varType, level, 0, SymbolType.VAR);
+        Symbol symbol = new Symbol(id, varType, 0, 0, SymbolType.VAR);
         if (! symbolTable.addSymbol(symbol)) {
-            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+            throw new ContextParseCancellationException("id `" + id + "` is already declared.", ctx);
         }
 
         visitDef(ctx.def());
@@ -280,28 +298,28 @@ public class BlockVisitor extends GrammarVisitor<String>{
         if (ctx.ID(1) != null) {
             idRight = ctx.ID(1).getText();
             symbolRight = symbolTable.findSymbol(idRight);
+
             if (symbolRight == null) {
-                throw new ParseCancellationException("ParseError - id " + idRight + " is not declared before.");
+                throw new ContextParseCancellationException("id `" + idRight + "` is not declared before.", ctx);
             }
         } else {
-            /*idRight = ctx.func().ID().getText();
-            symbolRight = symbolTable.findSymbol(ctx.func().ID().getText(), SymbolType.FUNCTION);*/
+            Symbol symbolFunc = symbolTable.findSymbol(ctx.func().ID().getText(), SymbolType.FUNCTION);
+            if (symbolFunc == null) {
+                throw new ContextParseCancellationException("function `" + ctx.func().ID().getText() + "` not exists.", ctx);
+            }
+            if (! symbolFunc.isArray()) {
+                throw new ContextParseCancellationException("you could not assign non-array to array.", ctx);
+            }
+
             visitFunc(ctx.func());
         }
 
-
-
-        Symbol symbolArr = new Symbol(id, varType, level, 0, SymbolType.VAR);
-        /*if (! symbolRight.isArray()) {
-            throw new ParseCancellationException("ParseError - you cannot assign non-array type to array.");
-        }*/
+        Symbol symbolArr = new Symbol(id, varType, 0, 0, SymbolType.VAR);
         if(! symbolTable.addSymbol(symbolArr)) {
-            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+            throw new ContextParseCancellationException("id `" + id + "` is already declared.", ctx);
         }
         symbolArr.setArray(true);
 
-
-        //instructionList.add(new Instruction(IntType.LOD, 0, symbolRight.getAdr()));
         instructionList.add(new Instruction(IntType.STO, 0, symbolArr.getAdr()));
 
         return null;
@@ -312,9 +330,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String varType = ctx.data_type().getText();
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));
-        Symbol symbol = new Symbol(id, varType, level, 0, SymbolType.VAR);
+        Symbol symbol = new Symbol(id, varType, 0, 0, SymbolType.VAR);
         if(! symbolTable.addSymbol(symbol)) {
-            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+            throw new ContextParseCancellationException("id `" + id + "` is already declared.", ctx);
         }
 
         if (symbol.getType()== DataType.Type.INTEGER || symbol.getType() == DataType.Type.BOOL) {
@@ -330,8 +348,8 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String varType = ctx.data_type().getText();
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));
-        if(! symbolTable.addSymbol(new Symbol(id, varType, level, 0, SymbolType.VAR))) {
-            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+        if(! symbolTable.addSymbol(new Symbol(id, varType, 0, 0, SymbolType.VAR))) {
+            throw new ContextParseCancellationException("id `" + id + "` is already declared.", ctx);
         }
 
         visitDef(ctx.def());
@@ -345,10 +363,10 @@ public class BlockVisitor extends GrammarVisitor<String>{
         String varType = ctx.data_type().getText();
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));
-        Symbol symbol = new Symbol(id, varType, level, 0, SymbolType.VAR);
+        Symbol symbol = new Symbol(id, varType, 0, 0, SymbolType.VAR);
         symbol.setArray(true);
         if(! symbolTable.addSymbol(symbol)) {
-            throw new ParseCancellationException("ParseError - id " + id + " is already declared.");
+            throw new ContextParseCancellationException("id `" + id + "` is already declared.", ctx);
         }
         
         if(ctx.ID().size() == 2) {
@@ -359,7 +377,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
         	}
         }else {
         	int size = Integer.valueOf(ctx.integer().getText());
-        	instructionList.add(new Instruction(IntType.LIT, level, size));
+        	instructionList.add(new Instruction(IntType.LIT, 0, size));
         	instructionList.add(new Instruction(IntType.ALC, 0, 0));
         }
         
@@ -371,14 +389,14 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
 		Symbol symbol;
 		if ((symbol = symbolTable.findSymbol(id)) == null) {
-			throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+			throw new ContextParseCancellationException("id `" + id + "` is not declared.", ctx);
 		}
 
 		if (! symbol.isArray()) {
-            throw new ParseCancellationException("ParseError - identificator " + id + " is not array type.");
+            throw new ContextParseCancellationException("id `" + id + "` is not array type.", ctx);
         }
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, symbol.isArray());
         instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), symbol.getAdr()));
         expressionVisitor.visitValue(ctx.value(0));
         
@@ -388,8 +406,8 @@ public class BlockVisitor extends GrammarVisitor<String>{
             expressionVisitor.visitTernar_oper(ctx.ternar_oper());
         } else {
             String s = visitFunc(ctx.func());
-            if (s.compareTo("void") == 0) {
-                throw new ParseCancellationException("ParseError - you could not assigned void function.");
+            if (s.compareTo(VOID_RET_NAME) == 0) {
+                throw new ContextParseCancellationException("you could not assigned " + VOID_RET_NAME + " function.", ctx);
             }
         }
 
@@ -400,12 +418,11 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitParallel_def(GrammarParser.Parallel_defContext ctx) {
-	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
         int idSize = ctx.ID().size();
         int valSize = ctx.value() == null ? ctx.func().size() : ctx.value().size();
 
         if (idSize != valSize ){
-            throw new ParseCancellationException("ParseError - size of both sides must be equal.");
+            throw new ContextParseCancellationException("size of both sides must be equal.", ctx);
         }
 
         for (int i = 0; i < idSize; i++) {
@@ -413,19 +430,20 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
             Symbol symbol;
             if ((symbol = symbolTable.findSymbol(id)) == null) {
-                throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+                throw new ContextParseCancellationException("id `" + id + "` is not declared.", ctx);
             }
 
             if (symbol.getSymbolType() == SymbolType.CONST_VAR) {
-                throw new ParseCancellationException("ParseError - identificator " + id + " is const.");
+                throw new ContextParseCancellationException("id `" + id + "` is const.", ctx);
             }
 
+            ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, symbol.isArray());
             if (ctx.value() != null) {
                 expressionVisitor.visitValue(ctx.value(i));
             } else {
                 String s = visitFunc(ctx.func(i));
-                if (s.compareTo("void") == 0) {
-                    throw new ParseCancellationException("ParseError - you could not assigned void function.");
+                if (s.compareTo(VOID_RET_NAME) == 0) {
+                    throw new ContextParseCancellationException("you could not assigned `" + VOID_RET_NAME + "` function.", ctx);
                 }
             }
 
@@ -437,22 +455,26 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitR_return(GrammarParser.R_returnContext ctx) {
-	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
+	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, returnArr);
 
 	    if (voidRet && (ctx.func() != null || ctx.ternar_oper() != null || ctx.value() != null)) {
-            throw new ParseCancellationException("ParseError - you could return value in void type function.");
+            throw new ContextParseCancellationException("you could return value in void type function.", ctx);
+        }
+
+        if (!voidRet && ctx.value() == null && ctx.ternar_oper() == null && ctx.func() == null) {
+            throw new ContextParseCancellationException("you have return a value in non-void function.", ctx);
         }
 
 	    if (ctx.func() == null) {
 	        expressionVisitor.visit(ctx);
         } else {
 	       String s = visitFunc(ctx.func());
-	       if (s.compareTo("void") == 0) {
-               throw new ParseCancellationException("ParseError - you could not call void function in return.");
+	       if (s.compareTo(VOID_RET_NAME) == 0) {
+               throw new ContextParseCancellationException("you could not call " + VOID_RET_NAME + " function in return.", ctx);
            }
         }
 
-        instructionList.add(new Instruction(IntType.STO, 0, -params - 1));
+        instructionList.add(new Instruction(IntType.STO, 0, -params - NEXT_INT));
         instructionList.add(new Instruction(IntType.RET, 0, 0));
 	    return null;
     }
@@ -462,26 +484,29 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
 		Symbol symbol;
 		if ((symbol = symbolTable.findSymbol(id)) == null) {
-			throw new ParseCancellationException("ParseError - identificator " + id + " is not declared.");
+			throw new ContextParseCancellationException("id `" + id + "` is not declared.", ctx);
 		}
 
 		if (symbol.getSymbolType() == SymbolType.CONST_VAR) {
-            throw new ParseCancellationException("ParseError - identificator " + id + " is const.");
+            throw new ContextParseCancellationException("id `" + id + "` is const.", ctx);
         }
 
-        if (symbol.isArray()) {
-            throw new ParseCancellationException("ParseError - id `" + symbol.getIndentificator() + "` is array.");
-        }
-
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, symbol.isArray());
         if (ctx.value() != null) {
             expressionVisitor.visitValue(ctx.value());
         } else if (ctx.ternar_oper() != null) {
             expressionVisitor.visitTernar_oper(ctx.ternar_oper());
         } else {
+            Symbol symbolFunc = symbolTable.findSymbol(ctx.func().ID().getText(), SymbolType.FUNCTION);
+            if (symbolFunc == null) {
+                throw new ContextParseCancellationException("function `" + ctx.func().ID().getText() + "` not exists!", ctx);
+            }
+            if (symbolFunc.isArray()) {
+                throw new ContextParseCancellationException("you could not assign array to non-array!", ctx);
+            }
             String s = visitFunc(ctx.func());
-            if (s.compareTo("void") == 0) {
-                throw new ParseCancellationException("ParseError - you could not assigned void function.");
+            if (s.compareTo(VOID_RET_NAME) == 0) {
+                throw new ContextParseCancellationException("you could not assigned " + VOID_RET_NAME + " function.", ctx);
             }
         }
 
@@ -498,22 +523,22 @@ public class BlockVisitor extends GrammarVisitor<String>{
         Symbol lastID = symbolTable.findSymbol(lastIDName);
 
         if (lastID == null) {
-            throw new ParseCancellationException("ParseError - identificator `" + lastIDName + "` is not declared.");
+            throw new ContextParseCancellationException("id `" + lastIDName + "` is not declared.", ctx);
         }
 
         if (lastID.getSymbolType() == SymbolType.CONST_VAR) {
-            throw new ParseCancellationException("ParseError - identificator " + lastIDName + " is const.");
+            throw new ContextParseCancellationException("id `" + lastIDName + "` is const.", ctx);
         }
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, lastID.isArray());
         if (ctx.value() != null) {
             expressionVisitor.visitValue(ctx.value());
         } else if (ctx.ternar_oper() != null) {
             expressionVisitor.visitTernar_oper(ctx.ternar_oper());
         } else {
             String s = visitFunc(ctx.func());
-            if (s.compareTo("void") == 0) {
-                throw new ParseCancellationException("ParseError - you could not assigned void function.");
+            if (s.compareTo(VOID_RET_NAME) == 0) {
+                throw new ContextParseCancellationException("you could not assigned " + VOID_RET_NAME + " function.", ctx);
             }
         }
 
@@ -524,10 +549,13 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
             Symbol symbol;
             if ((symbol = symbolTable.findSymbol(symbolID)) == null) {
-                throw new ParseCancellationException("ParseError - identificator `" + symbolID + "` is not declared.");
+                throw new ContextParseCancellationException("id `" + symbolID + "` is not declared.", ctx);
             }
             if (symbol.getSymbolType() == SymbolType.CONST_VAR) {
-                throw new ParseCancellationException("ParseError - identificator " + symbolID + " is const.");
+                throw new ContextParseCancellationException("id `" + symbolID + "` is const.", ctx);
+            }
+            if (symbol.isArray() != lastID.isArray()) {
+                throw new ContextParseCancellationException("you can not assign non-array to array.", ctx);
             }
 
             instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), lastID.getAdr()));
@@ -544,22 +572,22 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
         Symbol symbol = symbolTable.findSymbol(id, SymbolType.FUNCTION);
         if (symbol == null) {
-            throw new ParseCancellationException("ParseError - function " + id + " is not declared before.");
+            throw new ContextParseCancellationException("function `" + id + "` is not declared before.", ctx);
         }
         if (symbol.isArray()) {
             if (ctx.parent instanceof GrammarParser.NumFuncContext || ctx.parent instanceof GrammarParser.BoolFuncContext) {
-                throw new ParseCancellationException("ParseError - you have to assign array into the variable at the first.");
+                throw new ContextParseCancellationException("you have to assign array into the variable at the first.", ctx);
             }
         }
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(level, this, ctx);
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, false);
 
         int paramCount = ctx.value().size();
         if (paramCount != symbol.getSize()) {
-            throw new ParseCancellationException("ParseError - function expects " + symbol.getSize() +
-                    " parameter(s), but you passed " + paramCount + "!");
+            throw new ContextParseCancellationException("function expects " + symbol.getSize() +
+                    " parameter(s), but you passed " + paramCount + "!", ctx);
         }
 
         for (int i = paramCount - 1; i >= 0; i--) {
@@ -572,6 +600,12 @@ public class BlockVisitor extends GrammarVisitor<String>{
 	    return String.valueOf(symbol.getType());
     }
 
+    /**
+     * Implicit type conversion integer to bool. Greater or equal number to 1 => 1(true). Less or equal number to 0
+     * => 0(false).
+     *
+     * @param symbol input symbol.
+     */
     private void testBool(Symbol symbol) {
         if (symbol.getType() == DataType.Type.BOOL) {
             instructionList.add(new Instruction(IntType.LIT, symbol.getLevel(), 1));
@@ -583,7 +617,4 @@ public class BlockVisitor extends GrammarVisitor<String>{
         }
     }
 
-    public boolean isReturnArr() {
-        return returnArr;
-    }
 }

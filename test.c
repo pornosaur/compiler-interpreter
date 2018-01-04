@@ -1,10 +1,8 @@
-integer[] f() {
-    integer f;
-    return f;
-}
-
 void main() {
-    integer f = 1;
-    if (f() > 1) {
-    }
+integer a[5];
+integer f[8];
+integer g[1];
+
+{a, f, g} = {1, 2, 3};
+
 }

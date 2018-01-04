@@ -12,7 +12,10 @@ public class SymbolTable {
 	 */
 	private Stack<ArrayList<Symbol>> symbolsStack;
 
-	private  int incAdr = 0;
+    /**
+     * Number of symbols declared before.
+     */
+	private int incAdr = 0;
 
 
 	/**
@@ -23,11 +26,19 @@ public class SymbolTable {
 		symbolsStack.add(new ArrayList<>());
 	}
 
+    /**
+     * Add new symbol table at the top of stack.
+     *
+     * @param incAdr number of symbols before.
+     */
 	public void addSymbolList(int incAdr) {
 		this.incAdr = incAdr;
 		symbolsStack.push( new ArrayList<>());
 	}
 
+    /**
+     * Add new symbol table at the top of stack.
+     */
     public void addSymbolList() {
 	    this.incAdr = 0;
         symbolsStack.push( new ArrayList<>());
@@ -61,11 +72,11 @@ public class SymbolTable {
 	}
 
 	/**
-	 * Find symbol in list of symbols by identificator. If list doesnt contain the search symbol return null,
+	 * Find symbol in list of symbols by id. If list doesn't contain the search symbol return null,
 	 *  otherwise, it is returned a symbol.
 	 * 
 	 * @param symbolId Identification of search symbol.
-	 * @return search symbol or null if list doesnt contain it.
+	 * @return search symbol or null if list doesn't contain it.
 	 */
 	public Symbol findSymbol(String symbolId) {
         for (Symbol symbol : symbolsStack.peek()) {
@@ -84,6 +95,14 @@ public class SymbolTable {
 		return null;
 	}
 
+	/**
+	 * Find symbol in list of symbols by id. If list doesn't contain the search symbol return null,
+	 *  otherwise, it is returned a symbol. According to symbol type.
+	 *
+	 * @param symbolId Identification of search symbol.
+     * @param type symbol type.
+	 * @return search symbol or null if list doesn't contain it.
+	 */
 	public Symbol findSymbol(String symbolId, Symbol.SymbolType type) {
         for (ArrayList<Symbol> symbols : symbolsStack) {
             for (Symbol symbol : symbols) {
@@ -95,6 +114,11 @@ public class SymbolTable {
         return null;
     }
 
+    /**
+     * Getter for actual size of symbol table at the top of stack.
+     *
+     * @return size of actual symbol table.
+     */
     public int getActualSize() {
 	    return symbolsStack.peek().size();
     }
