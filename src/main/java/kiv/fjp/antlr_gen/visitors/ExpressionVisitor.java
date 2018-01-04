@@ -8,7 +8,6 @@ import kiv.fjp.antlr_gen.structures.Instruction.OPRType;
 import kiv.fjp.antlr_gen.structures.Symbol;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RuleContext;
 
 import static kiv.fjp.antlr_gen.GrammarParser.*;
 
@@ -59,10 +58,17 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
      */
 	private final boolean isVarArray;
 
+	private final DataType.Type retType;
+
     public ExpressionVisitor(BlockVisitor block, ParserRuleContext callerContext, boolean isVarArray) {
+        this(block, callerContext, isVarArray, null);
+    }
+
+    public ExpressionVisitor(BlockVisitor block, ParserRuleContext callerContext, boolean isVarArray, DataType.Type retType) {
         this.block = block;
         this.callerContext = callerContext;
         this.isVarArray = isVarArray;
+        this.retType = retType;
     }
 
     @Override
@@ -326,6 +332,10 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
 
         }
 
+        if (retType != null && symbol.getType() != retType && isVarArray) {
+            throw new ContextParseCancellationException("you could not assign array to array with different data type.", context);
+        }
+
         if ((callerContext instanceof Parallel_defContext || callerContext instanceof Multiple_defContext) && (symbol.isArray() != isVarArray)) {
             throw new ContextParseCancellationException("you can not assign non-array to array or conversely.", context);
         }
@@ -339,6 +349,7 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
             throw new ContextParseCancellationException("you could not put non-array type to array type or conversely.", context);
         }
 
+
        if (callerContext instanceof FuncContext && context instanceof ValueContext) {
            int i = ((FuncContext) callerContext).value().indexOf(context);
 
@@ -346,7 +357,10 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
            Symbol param = func.getParams().get(i);
 
            if (param.isArray() != symbol.isArray()) {
-                    throw new ContextParseCancellationException("type in params are not compatible.", context);
+               throw new ContextParseCancellationException("type in params are not compatible.", context);
+           }
+           if (param.isArray() && param.getType() != symbol.getType()) {
+               throw new ContextParseCancellationException("type in params are not compatible.", context);
            }
         }
 

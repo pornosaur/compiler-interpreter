@@ -1,8 +1,14 @@
-void main() {
-integer a[5];
-integer f[8];
-integer g[1];
+integer[] f() {
+    integer k[6];
+    return k;
+}
 
-{a, f, g} = {1, 2, 3};
+void main() {
+    integer s[5];
+    bool a[5];
+
+    {a} = {f()};
 
 }
+
+

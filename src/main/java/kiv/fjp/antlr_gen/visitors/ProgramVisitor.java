@@ -11,6 +11,8 @@ import kiv.fjp.antlr_gen.structures.Symbol;
 import kiv.fjp.antlr_gen.structures.Symbol.SymbolType;
 import kiv.fjp.antlr_gen.structures.SymbolTable;
 
+import javax.xml.crypto.Data;
+
 public class ProgramVisitor extends GrammarVisitor<String> {
 
     /**
@@ -38,10 +40,8 @@ public class ProgramVisitor extends GrammarVisitor<String> {
      */
     private boolean returnArr;
 
-    /**
-     * Check if function is void type.
-     */
-    private boolean voidRet;
+
+    private DataType.Type retType;
 
     /**
      * The first call of parsing, program is entry point.
@@ -58,8 +58,13 @@ public class ProgramVisitor extends GrammarVisitor<String> {
         isReturn = false;
         returnArr = ctx.return_type().array_type() != null;
 
-        if (! returnArr) {
-            voidRet = ctx.return_type().getText().compareTo(VOID_NAME) == 0;
+        String ret = ctx.return_type().array_type() == null ? ctx.return_type().getText() : ctx.return_type().array_type().data_type().getText();
+        if (ret.compareTo("integer") == 0) {
+            retType = DataType.Type.INTEGER;
+        } else if (ret.compareTo("void") == 0) {
+            retType = DataType.Type.VOID;
+        } else if (ret.compareTo("bool") == 0) {
+            retType = DataType.Type.BOOL;
         }
 
         DataType returnType = new DataType(ctx.return_type().getText());
@@ -68,7 +73,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
         Instruction intInstructionFunc = new Instruction(IntType.INT, 0, 3);
         instructionList.add(intInstructionFunc);
 
-        Symbol sFunc = new Symbol(ctx.ID().getText(),ctx.return_type().getText(), 0,
+        Symbol sFunc = new Symbol(ctx.ID().getText(), ret, 0,
                 countParam, SymbolType.FUNCTION);
         if (ctx.return_type().array_type() != null) {
             sFunc.setArray(true);
@@ -123,7 +128,7 @@ public class ProgramVisitor extends GrammarVisitor<String> {
     }
     
     @Override public String visitBlock(GrammarParser.BlockContext ctx) {
-    	BlockVisitor blockVisitor = new BlockVisitor(params.size(), returnArr, voidRet);
+    	BlockVisitor blockVisitor = new BlockVisitor(params.size(), returnArr, retType);
         blockVisitor.visitBlock(ctx);
         isReturn = ctx.r_return()!= null;
 

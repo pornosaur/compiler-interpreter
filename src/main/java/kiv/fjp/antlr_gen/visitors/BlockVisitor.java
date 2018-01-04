@@ -42,15 +42,12 @@ public class BlockVisitor extends GrammarVisitor<String>{
      */
     private int params;
 
-    /**
-     * Check if return type of function is void.
-     */
-    private boolean voidRet;
+    private DataType.Type typeRet;
 	
-	public BlockVisitor(int params, boolean returnArr, boolean voidRet){
+	public BlockVisitor(int params, boolean returnArr, DataType.Type typeRet){
 	    this.params = params;
 	    this.returnArr = returnArr;
-	    this.voidRet = voidRet;
+	    this.typeRet = typeRet;
 	}
 
 	@Override public String visitBlock(GrammarParser.BlockContext ctx) {
@@ -302,6 +299,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
             if (symbolRight == null) {
                 throw new ContextParseCancellationException("id `" + idRight + "` is not declared before.", ctx);
             }
+
         } else {
             Symbol symbolFunc = symbolTable.findSymbol(ctx.func().ID().getText(), SymbolType.FUNCTION);
             if (symbolFunc == null) {
@@ -310,13 +308,16 @@ public class BlockVisitor extends GrammarVisitor<String>{
             if (! symbolFunc.isArray()) {
                 throw new ContextParseCancellationException("you could not assign non-array to array.", ctx);
             }
-
+            symbolRight = symbolFunc;
             visitFunc(ctx.func());
         }
 
         Symbol symbolArr = new Symbol(id, varType, 0, 0, SymbolType.VAR);
         if(! symbolTable.addSymbol(symbolArr)) {
             throw new ContextParseCancellationException("id `" + id + "` is already declared.", ctx);
+        }
+        if (symbolRight.getType() != symbolArr.getType()) {
+            throw new ContextParseCancellationException("you could not assign array to array with different data type.", ctx);
         }
         symbolArr.setArray(true);
 
@@ -419,7 +420,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
     @Override public String visitParallel_def(GrammarParser.Parallel_defContext ctx) {
         int idSize = ctx.ID().size();
-        int valSize = ctx.value() == null ? ctx.func().size() : ctx.value().size();
+        int valSize = ctx.value().size() + ctx.func().size();
 
         if (idSize != valSize ){
             throw new ContextParseCancellationException("size of both sides must be equal.", ctx);
@@ -437,10 +438,20 @@ public class BlockVisitor extends GrammarVisitor<String>{
                 throw new ContextParseCancellationException("id `" + id + "` is const.", ctx);
             }
 
-            ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, symbol.isArray());
-            if (ctx.value() != null) {
+            ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, symbol.isArray(), symbol.getType());
+            if (ctx.value(i) != null) {
                 expressionVisitor.visitValue(ctx.value(i));
             } else {
+                Symbol symbolFunc = symbolTable.findSymbol(ctx.func(i).ID().getText(), SymbolType.FUNCTION);
+                if (symbolFunc == null) {
+                    throw new ContextParseCancellationException("function `" + ctx.func(i).ID().getText() + "` not exists!", ctx);
+                }
+                if (symbol.isArray() != symbolFunc.isArray()) {
+                    throw new ContextParseCancellationException("you could not assign array to non-array and conversely.", ctx);
+                }
+                if (symbol.isArray() && symbolFunc.isArray() && (symbol.getType() != symbolFunc.getType())) {
+                    throw new ContextParseCancellationException("you could not assign array to array with different data type.", ctx);
+                }
                 String s = visitFunc(ctx.func(i));
                 if (s.compareTo(VOID_RET_NAME) == 0) {
                     throw new ContextParseCancellationException("you could not assigned `" + VOID_RET_NAME + "` function.", ctx);
@@ -455,13 +466,13 @@ public class BlockVisitor extends GrammarVisitor<String>{
     }
 
     @Override public String visitR_return(GrammarParser.R_returnContext ctx) {
-	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, returnArr);
+	    ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, returnArr, typeRet);
 
-	    if (voidRet && (ctx.func() != null || ctx.ternar_oper() != null || ctx.value() != null)) {
+	    if (typeRet == DataType.Type.VOID && (ctx.func() != null || ctx.ternar_oper() != null || ctx.value() != null)) {
             throw new ContextParseCancellationException("you could return value in void type function.", ctx);
         }
 
-        if (!voidRet && ctx.value() == null && ctx.ternar_oper() == null && ctx.func() == null) {
+        if (typeRet != DataType.Type.VOID && ctx.value() == null && ctx.ternar_oper() == null && ctx.func() == null) {
             throw new ContextParseCancellationException("you have return a value in non-void function.", ctx);
         }
 
@@ -474,6 +485,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
            }
         }
 
+        testBool(typeRet);
         instructionList.add(new Instruction(IntType.STO, 0, -params - NEXT_INT));
         instructionList.add(new Instruction(IntType.RET, 0, 0));
 	    return null;
@@ -491,7 +503,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
             throw new ContextParseCancellationException("id `" + id + "` is const.", ctx);
         }
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, symbol.isArray());
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, symbol.isArray(), symbol.getType());
         if (ctx.value() != null) {
             expressionVisitor.visitValue(ctx.value());
         } else if (ctx.ternar_oper() != null) {
@@ -501,8 +513,11 @@ public class BlockVisitor extends GrammarVisitor<String>{
             if (symbolFunc == null) {
                 throw new ContextParseCancellationException("function `" + ctx.func().ID().getText() + "` not exists!", ctx);
             }
-            if (symbolFunc.isArray()) {
-                throw new ContextParseCancellationException("you could not assign array to non-array!", ctx);
+            if (symbolFunc.isArray() != symbol.isArray()) {
+                throw new ContextParseCancellationException("you could not assign array to non-array or conversely!", ctx);
+            }
+            if (symbol.isArray() && symbolFunc.isArray() && (symbol.getType() != symbolFunc.getType())) {
+                throw new ContextParseCancellationException("you could not assign array to array with different data type.", ctx);
             }
             String s = visitFunc(ctx.func());
             if (s.compareTo(VOID_RET_NAME) == 0) {
@@ -530,15 +545,25 @@ public class BlockVisitor extends GrammarVisitor<String>{
             throw new ContextParseCancellationException("id `" + lastIDName + "` is const.", ctx);
         }
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, lastID.isArray());
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, lastID.isArray(), lastID.getType());
         if (ctx.value() != null) {
             expressionVisitor.visitValue(ctx.value());
         } else if (ctx.ternar_oper() != null) {
             expressionVisitor.visitTernar_oper(ctx.ternar_oper());
         } else {
             String s = visitFunc(ctx.func());
+            Symbol symbolFunc = symbolTable.findSymbol(ctx.func().ID().getText(), SymbolType.FUNCTION);
+            if (symbolFunc == null) {
+                throw new ContextParseCancellationException("function `" + ctx.func().ID().getText() + "` not exists!", ctx);
+            }
+            if (lastID.isArray() != symbolFunc.isArray()) {
+                throw new ContextParseCancellationException("you could not assign array to non-array and conversely.", ctx);
+            }
             if (s.compareTo(VOID_RET_NAME) == 0) {
                 throw new ContextParseCancellationException("you could not assigned " + VOID_RET_NAME + " function.", ctx);
+            }
+            if (lastID.isArray() && symbolFunc.isArray() && (lastID.getType() != symbolFunc.getType())) {
+                throw new ContextParseCancellationException("you could not assign array to array with different data type.", ctx);
             }
         }
 
@@ -556,6 +581,9 @@ public class BlockVisitor extends GrammarVisitor<String>{
             }
             if (symbol.isArray() != lastID.isArray()) {
                 throw new ContextParseCancellationException("you can not assign non-array to array.", ctx);
+            }
+            if (lastID.isArray() && symbol.isArray() && (lastID.getType() != symbol.getType())) {
+                throw new ContextParseCancellationException("you could not assign array to array with different data type.", ctx);
             }
 
             instructionList.add(new Instruction(IntType.LOD, symbol.getLevel(), lastID.getAdr()));
@@ -582,7 +610,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
 
         instructionList.add(new Instruction(IntType.INT, 0, 1));    //Store on stack for return value
 
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, false);
+
 
         int paramCount = ctx.value().size();
         if (paramCount != symbol.getSize()) {
@@ -590,6 +618,7 @@ public class BlockVisitor extends GrammarVisitor<String>{
                     " parameter(s), but you passed " + paramCount + "!", ctx);
         }
 
+        ExpressionVisitor expressionVisitor = new ExpressionVisitor(this, ctx, returnArr);
         for (int i = paramCount - 1; i >= 0; i--) {
             expressionVisitor.visitValue(ctx.value(i));
         }
@@ -608,13 +637,23 @@ public class BlockVisitor extends GrammarVisitor<String>{
      */
     private void testBool(Symbol symbol) {
         if (symbol.getType() == DataType.Type.BOOL) {
-            instructionList.add(new Instruction(IntType.LIT, symbol.getLevel(), 1));
-            instructionList.add(new Instruction(IntType.OPR, symbol.getLevel(), Instruction.OPRType.GREATER_EQ.ordinal()));
-            instructionList.add(new Instruction(IntType.JMC, symbol.getLevel(), instructionList.size() + 4));
-            instructionList.add(new Instruction(IntType.LIT, symbol.getLevel(), 1));
-            instructionList.add(new Instruction(IntType.JMP, symbol.getLevel(), instructionList.size() + 3));
-            instructionList.add(new Instruction(IntType.LIT, symbol.getLevel(), 0));
+            boolConvert();
         }
+    }
+
+    private void testBool(DataType.Type type) {
+        if (type == DataType.Type.BOOL) {
+           boolConvert();
+        }
+    }
+
+    private void boolConvert() {
+        instructionList.add(new Instruction(IntType.LIT, 0, 1));
+        instructionList.add(new Instruction(IntType.OPR, 0, Instruction.OPRType.GREATER_EQ.ordinal()));
+        instructionList.add(new Instruction(IntType.JMC, 0, instructionList.size() + 4));
+        instructionList.add(new Instruction(IntType.LIT, 0, 1));
+        instructionList.add(new Instruction(IntType.JMP, 0, instructionList.size() + 3));
+        instructionList.add(new Instruction(IntType.LIT, 0, 0));
     }
 
 }
