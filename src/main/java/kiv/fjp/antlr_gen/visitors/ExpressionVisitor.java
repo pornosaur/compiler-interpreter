@@ -52,14 +52,14 @@ public class ExpressionVisitor extends GrammarVisitor<String>{
     /**
      * Instance of caller context.
      */
-	private final RuleContext callerContext;
+	private final ParserRuleContext callerContext;
 
     /**
      * Check if input is array type.
      */
 	private final boolean isVarArray;
 
-    public ExpressionVisitor(BlockVisitor block, RuleContext callerContext, boolean isVarArray) {
+    public ExpressionVisitor(BlockVisitor block, ParserRuleContext callerContext, boolean isVarArray) {
         this.block = block;
         this.callerContext = callerContext;
         this.isVarArray = isVarArray;
