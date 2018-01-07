@@ -10,7 +10,14 @@ public class Symbol {
         FUNCTION,
     }
 
+	/**
+	 * Name of variable.
+	 */
 	private String indentificator;
+
+	/**
+	 * Data type
+	 */
 	private DataType type;
 	private int level;
 	private int adr;

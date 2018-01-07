@@ -375,8 +375,10 @@ public class BlockVisitor extends GrammarVisitor<String>{
         	if(symbol2 != null) {
         		instructionList.add(new Instruction(IntType.LOD, symbol2.getLevel(), symbol2.getAdr()));
         		instructionList.add(new Instruction(IntType.ALC, 0,0));
-        	}
-        }else {
+        	} else {
+                throw new ContextParseCancellationException("id `" + ctx.ID(1).getText() + "` is not declared before.", ctx);
+            }
+        } else {
         	int size = Integer.valueOf(ctx.integer().getText());
         	instructionList.add(new Instruction(IntType.LIT, 0, size));
         	instructionList.add(new Instruction(IntType.ALC, 0, 0));
