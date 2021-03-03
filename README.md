@@ -2,5 +2,6 @@
 
 * Implementation: In Java using ANTLR library
 * Architecture: Instruction set -- PL/0
-* Author: Patrik Patera -- developing compiler; desinging grammer,
-*         Ludek Kanak   -- developing interpreter; validating grammar.
+* Authors: 
+** Patrik Patera -- developing compiler; desinging grammer,
+** Ludek Kanak   -- developing interpreter; validating grammar.
